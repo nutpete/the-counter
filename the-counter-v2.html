@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Counter | Rewire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --black: #0a0a0a;
+  --white: #fafafa;
+  --cream: #fdf8f0;
+  --cream-deep: #f5ead6;
+  --gray-50: #f7f7f8;
+  --gray-100: #ececee;
+  --gray-200: #d4d4d8;
+  --gray-300: #a1a1aa;
+  --gray-400: #71717a;
+  --gray-500: #52525b;
+  --gray-600: #3f3f46;
+  --gray-700: #27272a;
+  --gray-800: #18181b;
+  --warm: #b45309;
+  --warm-light: #d97706;
+  --warm-bright: #f59e0b;
+  --warm-glow: rgba(180, 83, 9, 0.08);
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
+}
+
+html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+body {
+  font-family: var(--font-sans);
+  color: var(--gray-700);
+  background: var(--cream);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 clamp(24px, 5vw, 80px);
+}
+
+/* ========== NAV ========== */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 20px 0;
+  background: rgba(253, 248, 240, 0.92);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid rgba(180, 83, 9, 0.08);
+}
+
+nav .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-logo {
+  font-weight: 800;
+  font-size: 1.15rem;
+  letter-spacing: -0.03em;
+  color: var(--black);
+  text-decoration: none;
+}
+.nav-logo span { color: var(--warm); }
+
+.nav-links {
+  display: flex;
+  gap: 36px;
+  align-items: center;
+  list-style: none;
+}
+
+.nav-links a {
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--gray-500);
+  transition: color 0.3s;
+}
+.nav-links a:hover { color: var(--black); }
+
+.nav-cta {
+  background: var(--warm);
+  color: var(--white) !important;
+  padding: 10px 24px;
+  border-radius: 100px;
+  font-size: 0.85rem !important;
+  transition: all 0.3s ease !important;
+}
+.nav-cta:hover {
+  background: var(--warm-light);
+  transform: translateY(-1px);
+}
+
+/* ========== SCROLL REVEAL ========== */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1), transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.stagger-1 { transition-delay: 0.1s; }
+.stagger-2 { transition-delay: 0.2s; }
+.stagger-3 { transition-delay: 0.3s; }
+
+/* ========== SECTION STRIPE TRANSITIONS ========== */
+body.stripe-mode {
+  overflow: hidden;
+  height: 100vh;
+}
+
+.stripe-viewport {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  overflow: hidden;
+}
+
+/* Each section wraps in a panel */
+.section-panel {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  min-height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  will-change: transform, opacity;
+  transition: none;
+}
+
+/* Bottom breadcrumb bar — builds up as you progress */
+.stripe-breadcrumbs {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column-reverse;
+  pointer-events: none;
+}
+
+.stripe-breadcrumbs .stripe-crumb {
+  width: 100%;
+  height: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: height 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  cursor: pointer;
+  pointer-events: auto;
+  position: relative;
+}
+
+.stripe-breadcrumbs .stripe-crumb.visible {
+  height: 28px;
+}
+
+.stripe-crumb-label {
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 0.4s ease 0.2s;
+  white-space: nowrap;
+}
+
+.stripe-crumb.visible .stripe-crumb-label {
+  opacity: 0.85;
+}
+
+.stripe-crumb:hover .stripe-crumb-label {
+  opacity: 1;
+}
+
+/* Transition overlay for section swaps */
+.section-transition-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 55;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.section-transition-overlay.active {
+  opacity: 1;
+}
+
+/* ========== BUTTONS ========== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 36px;
+  border-radius: 100px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
+}
+
+.btn--warm { background: var(--warm); color: var(--white); }
+.btn--warm:hover {
+  background: var(--warm-light);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(180, 83, 9, 0.25);
+}
+
+.btn--outline {
+  background: transparent;
+  color: var(--gray-500);
+  border: 1px solid var(--gray-300);
+}
+.btn--outline:hover { color: var(--black); border-color: var(--gray-500); }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========== SECTION LABELS ========== */
+.section-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--warm);
+  margin-bottom: 20px;
+}
+
+/* ========== HERO ========== */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding-top: 80px;
+  background: var(--black);
+}
+
+.hero-content {
+  display: grid;
+  grid-template-columns: 5fr 6fr;
+  gap: 40px;
+  align-items: center;
+  width: 100%;
+}
+
+.hero-left {
+  text-align: left;
+}
+
+.hero-right {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+}
+
+.hero-right video {
+  width: 100%;
+  display: block;
+  border-radius: 16px;
+}
+
+.hero-counters {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 40px;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.3s forwards;
+}
+
+.hero-counter-block {
+  padding: 40px;
+  border-radius: 16px;
+  position: relative;
+}
+
+.hero-counter-block--spending {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.15);
+}
+
+.hero-counter-block--usage {
+  background: rgba(180, 83, 9, 0.08);
+  border: 1px solid rgba(180, 83, 9, 0.15);
+}
+
+.hero-counter-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.hero-counter-block--spending .hero-counter-label {
+  color: #ef4444;
+}
+
+.hero-counter-block--usage .hero-counter-label {
+  color: var(--warm-bright);
+}
+
+.hero-counter-number {
+  font-size: clamp(2.8rem, 6vw, 4.5rem);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.hero-counter-block--spending .hero-counter-number {
+  color: #ef4444;
+}
+
+.hero-counter-block--usage .hero-counter-number {
+  color: var(--gray-600);
+}
+
+.hero-counter-sub {
+  font-size: 0.85rem;
+  color: var(--gray-500);
+  margin-top: 8px;
+}
+
+.hero-counter-source {
+  font-size: 0.68rem;
+  color: var(--gray-600);
+  margin-top: 12px;
+  letter-spacing: 0.02em;
+  font-style: italic;
+}
+
+.hero h1 {
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.04em;
+  color: var(--white);
+  margin-bottom: 20px;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.8s forwards;
+  text-align: left;
+}
+
+.hero h1 em {
+  font-style: normal;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  color: var(--warm-bright);
+}
+
+.hero-sub {
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: var(--gray-400);
+  max-width: 520px;
+  margin: 0 0 36px;
+  opacity: 0;
+  animation: fadeUp 0.8s 1s forwards;
+  text-align: left;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: flex-start;
+  opacity: 0;
+  animation: fadeUp 0.8s 1.2s forwards;
+}
+
+.hero-visual {
+  position: relative;
+  opacity: 0;
+  animation: fadeUp 1s 0.5s forwards;
+}
+
+/* ========== PLACEHOLDER ASSET BOXES ========== */
+.placeholder {
+  background: var(--cream-deep);
+  border: 2px dashed var(--warm-light);
+  border-radius: 16px;
+  padding: 48px 32px;
+  text-align: center;
+  position: relative;
+}
+
+.placeholder-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--warm);
+  margin-bottom: 12px;
+}
+
+.placeholder-desc {
+  font-size: 0.9rem;
+  color: var(--gray-400);
+  line-height: 1.6;
+  max-width: 380px;
+  margin: 0 auto;
+}
+
+.placeholder--dark {
+  background: var(--gray-800);
+  border-color: var(--gray-600);
+}
+.placeholder--dark .placeholder-label { color: var(--warm-bright); }
+.placeholder--dark .placeholder-desc { color: var(--gray-400); }
+
+/* ========== THE PROBLEM SECTION ========== */
+.problem {
+  padding: 0;
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.problem-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.problem-text {
+  max-width: 560px;
+}
+
+.problem-img {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.problem-img img {
+  width: 100%;
+  display: block;
+  border-radius: 12px;
+}
+
+.problem h2 {
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  color: var(--black);
+  line-height: 1.15;
+  margin-bottom: 28px;
+}
+
+.problem p {
+  font-size: 1.05rem;
+  line-height: 1.85;
+  color: var(--gray-500);
+  margin-bottom: 20px;
+}
+
+.problem p:last-of-type {
+  margin-bottom: 0;
+}
+
+.problem-highlight {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--black) !important;
+  border-left: 3px solid var(--warm);
+  padding-left: 20px;
+  margin: 36px 0 !important;
+}
+
+/* ========== EXPERIENCE SECTION ========== */
+.experience {
+  padding: 140px 0;
+  background: var(--cream);
+}
+
+.experience-header {
+  margin-bottom: 80px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.experience-header-text {
+  max-width: 540px;
+}
+
+.experience-header-img {
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.experience-header-img img {
+  width: 100%;
+  display: block;
+  border-radius: 16px;
+}
+
+.experience-header h2 {
+  font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  color: var(--black);
+  line-height: 1.15;
+  margin-bottom: 16px;
+}
+
+.experience-header p {
+  font-size: 1.05rem;
+  color: var(--gray-400);
+}
+
+.exp-step {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+  margin-bottom: 120px;
+}
+
+.exp-step:last-child { margin-bottom: 0; }
+
+.exp-step--reverse { direction: rtl; }
+.exp-step--reverse > * { direction: ltr; }
+
+.exp-step-num {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--warm);
+  margin-bottom: 16px;
+}
+
+.exp-step h3 {
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--black);
+  line-height: 1.15;
+  margin-bottom: 16px;
+}
+
+.exp-step p {
+  font-size: 1.02rem;
+  line-height: 1.8;
+  color: var(--gray-500);
+}
+
+/* ========== PROOF / WORK SECTION ========== */
+.proof {
+  padding: 140px 0;
+  background: var(--black);
+  color: var(--white);
+}
+
+.proof-header {
+  margin-bottom: 72px;
+  max-width: 640px;
+}
+
+.proof-header h2 {
+  font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  color: var(--white);
+  line-height: 1.15;
+  margin-bottom: 16px;
+}
+
+.proof-header p {
+  font-size: 1.05rem;
+  color: var(--gray-400);
+}
+
+.proof-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+.proof-card {
+  background: var(--gray-800);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.proof-card-visual {
+  padding: 0;
+  min-height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.proof-card-body {
+  padding: 32px;
+}
+
+.proof-card-tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--warm-bright);
+  margin-bottom: 12px;
+}
+
+.proof-card h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 10px;
+  line-height: 1.3;
+}
+
+.proof-card p {
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--gray-400);
+}
+
+.proof-stat-row {
+  display: flex;
+  gap: 32px;
+  margin-top: 16px;
+}
+
+.proof-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.proof-stat-num {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--warm-bright);
+  letter-spacing: -0.03em;
+}
+
+.proof-stat-label {
+  font-size: 0.75rem;
+  color: var(--gray-400);
+  margin-top: 2px;
+}
+
+/* ========== QUOTE BAND ========== */
+.quote-band {
+  padding: 0;
+  background: var(--warm);
+  color: var(--white);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.quote-band blockquote {
+  font-family: var(--font-serif);
+  font-size: clamp(1.4rem, 2.8vw, 2.2rem);
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--white);
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.quote-band cite {
+  display: block;
+  margin-top: 28px;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-style: normal;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* ========== DELIVERABLES ========== */
+.deliverables {
+  padding: 140px 0;
+  background: var(--white);
+}
+
+.deliverables-header {
+  margin-bottom: 72px;
+}
+
+.deliverables-header h2 {
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  color: var(--black);
+  max-width: 650px;
+}
+
+.deliverables-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 48px;
+}
+
+.deliverable-item {
+  position: relative;
+  padding-top: 24px;
+}
+
+.deliverable-item::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 40px;
+  height: 3px;
+  background: var(--warm);
+  border-radius: 2px;
+}
+
+.deliverable-item h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 10px;
+}
+
+.deliverable-item p {
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: var(--gray-500);
+}
+
+/* ========== ABOUT ========== */
+.about {
+  padding: 140px 0;
+  background: var(--cream);
+}
+
+.about-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+
+.about h2 {
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  color: var(--black);
+  line-height: 1.15;
+  margin-bottom: 24px;
+}
+
+.about p {
+  font-size: 1.02rem;
+  line-height: 1.8;
+  color: var(--gray-500);
+  margin-bottom: 20px;
+}
+
+.about-people {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.about-person {
+  display: flex;
+  gap: 20px;
+  align-items: start;
+}
+
+.about-person-photo {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--cream-deep);
+  border: 2px dashed var(--warm-light);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--warm);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.about-person-info h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 4px;
+}
+
+.about-person-info p {
+  font-size: 0.9rem;
+  color: var(--gray-400);
+  margin-bottom: 0;
+}
+
+/* ========== CTA ========== */
+.cta {
+  padding: 140px 0;
+  background: var(--black);
+  text-align: center;
+}
+
+.cta h2 {
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  color: var(--white);
+  margin-bottom: 20px;
+}
+
+.cta p {
+  font-size: 1.05rem;
+  color: var(--gray-400);
+  max-width: 520px;
+  margin: 0 auto 40px;
+  line-height: 1.7;
+}
+
+/* ========== FOOTER ========== */
+footer {
+  padding: 40px 0;
+  background: var(--black);
+  border-top: 1px solid var(--gray-800);
+}
+
+footer .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+footer p {
+  font-size: 0.8rem;
+  color: var(--gray-500);
+}
+
+footer a {
+  font-size: 0.8rem;
+  color: var(--gray-400);
+  text-decoration: none;
+}
+footer a:hover { color: var(--white); }
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+  .hero-content,
+  .hero-counters,
+  .problem-inner,
+  .experience-header,
+  .exp-step,
+  .proof-grid,
+  .deliverables-row,
+  .about-inner {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  .hero-left { text-align: center; }
+  .hero h1, .hero-sub { text-align: center; }
+  .hero-actions { justify-content: center; }
+  .exp-step--reverse { direction: ltr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav>
+  <div class="container">
+    <a href="#" class="nav-logo">The <span>Counter</span></a>
+    <ul class="nav-links">
+      <li><a href="faq.html">FAQ</a></li>
+      <li><a href="#contact" class="nav-cta">Start a Conversation</a></li>
+    </ul>
+  </div>
+</nav>
+
+
+<!-- ======================================================
+     SECTION 1: HERO
+     Dark background. Two animated counters side by side:
+     - Left: Corporate AI spending (racing upward, red)
+     - Right: Teams actually using it (barely moving, amber/dim)
+     The contrast IS the pitch. Then the tagline reframes it.
+     ====================================================== -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+
+      <div class="hero-left">
+        <div class="hero-counters">
+          <div class="hero-counter-block hero-counter-block--spending">
+            <p class="hero-counter-label">Global AI Spending in 2026</p>
+            <p class="hero-counter-number" id="spending-counter">$0</p>
+            <p class="hero-counter-sub">and climbing</p>
+            <p class="hero-counter-source">Gartner, 2026</p>
+          </div>
+          <div class="hero-counter-block hero-counter-block--usage">
+            <p class="hero-counter-label">Companies seeing real ROI</p>
+            <p class="hero-counter-number" id="usage-counter">0%</p>
+            <p class="hero-counter-sub">barely moving</p>
+            <p class="hero-counter-source">MIT / Ignitec Research, 2025</p>
+          </div>
+        </div>
+
+        <h1>You're burning money on AI<br>with <em>no results.</em></h1>
+        <p class="hero-sub">Your teams aren't using it. Problems aren't getting solved. And nothing about how people work actually changes. People know AI exists — they just don't see what it can do. That's why we built The Counter.</p>
+        <div class="hero-actions">
+          <a href="#experience" class="btn btn--warm">See How It Works <span>&rarr;</span></a>
+          <a href="#proof" class="btn btn--outline" style="color: var(--gray-400); border-color: var(--gray-600);">View Examples</a>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <video controls playsinline preload="metadata" poster="founder-video-poster.jpg">
+          <source src="founder-video-headlines.mp4" type="video/mp4">
+        </video>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ======================================================
+     SECTION 2: THE PROBLEM
+     Empathy section. Speaks directly to their experience
+     of AI initiatives that didn't land.
+     ====================================================== -->
+<section class="problem" id="problem">
+  <div class="container">
+    <div class="problem-inner reveal" style="display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center; width:100%;">
+      <div class="problem-text">
+        <p class="section-label">The reality</p>
+        <h2>You've already tried. It probably looked something like this.</h2>
+        <p>A company-wide workshop. Lunch-and-learn with slides about what's possible. Your team nodded, asked polite questions, went back to work exactly as before.</p>
+        <p class="problem-highlight">Nobody showed them what AI could do with <em>their</em> problems, in <em>their</em> work, in a way they could actually see.</p>
+      </div>
+      <div class="problem-img">
+        <img src="kenny-eliason-1-aA2Fadydc-unsplash.jpg" alt="A typical corporate training session" style="width:100%; max-height:60vh; object-fit:cover; border-radius:12px; display:block; box-shadow: 0 4px 24px rgba(0,0,0,0.08);">
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ======================================================
+     SECTION 3: HOW THE COUNTER WORKS
+     3 beats: Listen → Build → Reveal
+     ====================================================== -->
+<section class="experience" id="experience">
+  <div class="container">
+    <div class="experience-header reveal">
+      <div class="experience-header-text">
+        <p class="section-label">How the Counter works</p>
+        <h2>We show up with your teams for a few days.</h2>
+        <p>We send them a brief on what defines a good problem to bring to us, to help build and visualize where AI could actually change how they work.</p>
+      </div>
+      <div class="experience-header-img">
+        <img src="Modern office teamwork at the counter.png" alt="The Counter setup — a casual workspace where teams bring their problems">
+      </div>
+    </div>
+
+    <!-- BEAT 1: LISTEN -->
+    <div class="exp-step reveal">
+      <div>
+        <img src="Conversation.png" alt="Two people in conversation at a counter — one explaining a problem, laptop open" style="width:100%; border-radius:12px; display:block;">
+        <!-- Arrow flowing from conversation down to the blueprint -->
+        <div style="display:flex; align-items:center; gap:12px; margin:16px 0;">
+          <img src="Arrow.png" alt="" style="width:48px; height:auto; flex-shrink:0;">
+          <span style="font-size:0.78rem; color:var(--gray-400); font-weight:500;">Together, we fill out a Problem Blueprint</span>
+        </div>
+        <!-- Small blueprint image -->
+        <img src="POWERPNT_mLyofacdHU.png" alt="Problem Blueprint — the intake form used at The Counter" style="width:75%; border-radius:8px; display:block; box-shadow: 0 4px 16px rgba(0,0,0,0.08);">
+      </div>
+      <div>
+        <p class="exp-step-num">01 — We Listen</p>
+        <h3>Your people bring problems in their work. We listen, build, and document.</h3>
+        <p>This could be something that eats their week, a workaround they've been dealing with, or a gap between what they have and what they need. We sit down, talk through it, and write out a Problem Blueprint to lay out what the problem is, how they get around it now, and what could change if they were able to fix it.</p>
+      </div>
+    </div>
+
+    <!-- BEAT 2: BUILD -->
+    <div class="exp-step exp-step--reverse reveal">
+      <div>
+        <!-- =============================================
+             PLACEHOLDER: Screen recording of Claude Code /
+             Cowork building a tool — sped up, showing code
+             on one side and a UI forming on the other.
+             Drew will record this.
+
+             Supplementary: Claude Code + ChatGPT logos
+             can appear as small badges showing the tools
+             used. Save logos as "claude-code-logo.png" and
+             "chatgpt-logo.png"
+             ============================================= -->
+        <div style="border-radius:12px; overflow:hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.12);">
+          <video autoplay loop muted playsinline style="width:100%; display:block; border-radius:12px;">
+            <source src="demo-build-cropped.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+      <div>
+        <p class="exp-step-num">02 — We Build</p>
+        <h3>Working tools in hours, not months.</h3>
+        <p>We build actual tools, not mockups or decks. An operations team says they can't track something? We build how that could work and bring it back. Finance says they're pulling data from three systems? We show how they could connect. Speed shows people what's possible when AI comes from their problem, not a generic case study or guides on 'how to prompt.'</p>
+      </div>
+    </div>
+
+    <!-- BEAT 3: REVEAL -->
+    <div class="exp-step reveal">
+      <div>
+        <!-- =============================================
+             PLACEHOLDER: Video of Drew walking someone
+             through a prototype. This is where the founder
+             video / Loom recording would live.
+             Could also embed the full 2-min video here.
+             ============================================= -->
+        <div style="border-radius:12px; overflow:hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.12);">
+          <video autoplay loop muted playsinline style="width:100%; display:block; border-radius:12px;">
+            <source src="demo-walkthrough.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+      <div>
+        <p class="exp-step-num">03 — We Reveal</p>
+        <h3>Teams see what's possible to define what's next.</h3>
+        <p>At the counter itself or a follow-up, we give live walkthroughs of what's been built based on their problems. The conversation shifts from "what could AI do" to "when can we have this." We help setup a "Counter Log" (a way to see everything built throughout the engagement) so your team can keep building, sharing ideas with one another so the momentum around AI starts to become real.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ===== QUOTE BAND ===== -->
+<section class="quote-band">
+  <div class="container">
+    <div class="reveal">
+      <blockquote>People don't adopt AI because you told them it's important. They adopt it when they see it solve the thing they've been struggling with.</blockquote>
+      <cite>The principle behind what we do</cite>
+    </div>
+  </div>
+</section>
+
+
+<!-- ======================================================
+     SECTION 4: PROOF / VIDEO + DATA
+
+     Drew's note: Removing the individual case study cards
+     for now. This section will hold:
+     - The founder video (expense tracker → JTech spectrum)
+     - Some type of data/chart (TBD — needs thinking on
+       the right data to show, e.g. time-to-build,
+       problems surfaced, adoption metrics)
+     ====================================================== -->
+<section class="proof" id="proof">
+  <div class="container">
+    <div class="proof-header reveal">
+      <p class="section-label" style="color: var(--warm-bright);">See it in action</p>
+      <h2>A look into a fully operational platform.</h2>
+      <p>Starting from the problem and developing a deep, connected system. Here's what the work looks like.</p>
+    </div>
+
+    <!-- VIDEO EMBED AREA -->
+    <div class="reveal">
+      <!-- =============================================
+           This is where the founder video lives.
+           The 2-minute walkthrough: expense tracker →
+           JTech platform → pivot to The Counter.
+
+           Embed as: Loom embed, YouTube embed, or
+           self-hosted video with poster frame.
+           ============================================= -->
+      <div style="border-radius:16px; overflow:hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.3);">
+        <video controls playsinline preload="metadata" poster="jtech-walkthrough-poster.jpg" style="width:100%; display:block; border-radius:16px;">
+          <source src="jtech-walkthrough.mp4" type="video/mp4">
+        </video>
+      </div>
+    </div>
+
+
+  </div>
+</section>
+
+
+<!-- ======================================================
+     SECTION 5: WHAT YOU WALK AWAY WITH
+     ====================================================== -->
+<section class="deliverables" id="deliverables">
+  <div class="container">
+    <div class="deliverables-header reveal">
+      <p class="section-label">What you walk away with</p>
+      <h2>Real tools and real proof. A foundation to keep building on.</h2>
+    </div>
+    <div class="deliverables-row">
+      <div class="deliverable-item reveal stagger-1">
+        <h3>Working Tools That Start</h3>
+        <p>Built from your actual problems. Not a concept. Not a deck. Functional prototypes that solve real issues and give you a concrete foundation to iterate on or build further.</p>
+      </div>
+      <div class="deliverable-item reveal stagger-2">
+        <h3>Your Team's Real Reaction</h3>
+        <p>Unfiltered evidence from the people who lived the problem. What they'd change, time they'd save, what it means to their work. Nothing beats that kind of proof.</p>
+      </div>
+      <div class="deliverable-item reveal stagger-3">
+        <h3>A Counter Log and Clear Next Steps</h3>
+        <p>Everything we built gets cataloged so your team can keep exploring, sharing ideas, and building on what we started. Plus a prioritized map of the highest-impact opportunities — what's feasible, what matters most, where to go from here. For tools with real legs, we can help you sandbox with IT so teams can actually access and use them.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ======================================================
+     SECTION 6: ABOUT / WHO WE ARE
+     ====================================================== -->
+<section class="about" id="about">
+  <div class="container">
+    <div class="about-inner">
+      <div class="reveal">
+        <p class="section-label">Who we are</p>
+        <h2>Two people tired of watching AI workshops fail.</h2>
+        <p>We've spent years watching companies spend millions on AI initiatives that go nowhere. Workshops don't stick. Strategy decks don't ship. The only thing that works is sitting with people, showing them what's possible with the problems they actually face every day.</p>
+        <p>That's The Counter. It's not rocket science, but it works because it starts with what real people need.</p>
+      </div>
+      <div class="about-people reveal stagger-2">
+        <div class="about-person">
+          <!-- PLACEHOLDER: Drew's headshot -->
+          <div class="about-person-photo">Photo</div>
+          <div class="about-person-info">
+            <h4>Drew Castellaw</h4>
+            <p>Leads the engagements, builds the prototypes, and works directly with your teams. Background in [brief credibility signal — industry, years of experience, relevant domain].</p>
+          </div>
+        </div>
+        <div class="about-person">
+          <!-- PLACEHOLDER: Partner's headshot -->
+          <div class="about-person-photo">Photo</div>
+          <div class="about-person-info">
+            <h4>[Partner Name]</h4>
+            <p>[Partner's role and brief credibility signal. Handles the relationship side — scoping, alignment with leadership, making sure the engagement connects to business priorities.]</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ======================================================
+     SECTION 7: CTA
+     Low friction. Warm. Not "buy now" — "let's talk."
+     ====================================================== -->
+<section class="cta" id="contact">
+  <div class="container">
+    <div class="reveal">
+      <h2>Ready to see what your team can actually do with AI?</h2>
+      <p>Tell us about your team and what you're working with. We'll have a plan back to you within a week. No commitment, no 40-page proposal.</p>
+      <a href="mailto:drew@castellawconsulting.com" class="btn btn--warm">Start a Conversation <span>&rarr;</span></a>
+    </div>
+    <div style="margin-top: 80px; padding-top: 32px; border-top: 1px solid var(--gray-800); display:flex; justify-content:space-between; align-items:center;">
+      <p style="font-size:0.8rem; color:var(--gray-500);">&copy; 2026 Rewire</p>
+      <a href="#" style="font-size:0.8rem; color:var(--gray-400); text-decoration:none;" onclick="event.preventDefault(); document.querySelector('.section-panel') && (function(){ /* handled by nav */ })();">Back to Top</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== SCRIPTS ===== -->
+<script>
+// ===== Hero Counter Animation =====
+// Phase 1: Fast count-up to starting point (~3 sec)
+// Phase 2: Never stops — spending keeps ticking, usage barely crawls
+function animateCounters() {
+  const spendingEl = document.getElementById('spending-counter');
+  const usageEl = document.getElementById('usage-counter');
+  if (!spendingEl || !usageEl) return;
+
+  // Format: values in billions → "$2.5T" or "$1,842B"
+  function formatSpending(valInBillions) {
+    if (valInBillions >= 1000) {
+      return '$' + (valInBillions / 1000).toFixed(2) + 'T';
+    }
+    return '$' + valInBillions.toFixed(0) + 'B';
+  }
+
+  // --- Phase 1: Fast count-up to starting values ---
+  // Real data: Gartner projects $2.5T in worldwide AI spending for 2026
+  // Real data: 95% of companies see no measurable ROI → only 5% seeing results
+  const spendingStartB = 2500;  // $2,500B = $2.5T (Gartner 2026 figure)
+  const usageStart = 5.0;       // 5% of companies seeing real ROI
+  const countUpDuration = 3500;
+  const startTime = performance.now();
+
+  function countUp(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / countUpDuration, 1);
+
+    // Spending: fast ease-in
+    const spendingEase = 1 - Math.pow(1 - progress, 2);
+    const spendingVal = spendingEase * spendingStartB;
+    spendingEl.textContent = formatSpending(spendingVal);
+
+    // Usage: slower ease, arrives at 5%
+    const usageEase = 1 - Math.pow(1 - progress, 4);
+    const usageVal = usageEase * usageStart;
+    usageEl.textContent = usageVal.toFixed(1) + '%';
+
+    if (progress < 1) {
+      requestAnimationFrame(countUp);
+    } else {
+      startEndlessTick();
+    }
+  }
+
+  // --- Phase 2: Never-ending tick ---
+  function startEndlessTick() {
+    let spendingB = spendingStartB;
+    let usage = usageStart;
+
+    // Spending: ticks up visually — ~$50B per minute (~$0.83B/sec)
+    // At 60fps that's ~$0.014B per frame
+    const spendingPerFrame = 0.014;
+
+    // Usage: barely moves — 0.1% for every $50B of spending
+    const usagePerFrame = 0.1 / (50 / spendingPerFrame);
+
+    let lastTime = performance.now();
+
+    function tick(now) {
+      const delta = (now - lastTime) / (1000 / 60);
+      lastTime = now;
+
+      spendingB += spendingPerFrame * delta;
+      usage += usagePerFrame * delta;
+
+      spendingEl.textContent = formatSpending(spendingB);
+      usageEl.textContent = usage.toFixed(1) + '%';
+
+      requestAnimationFrame(tick);
+    }
+
+    requestAnimationFrame(tick);
+  }
+
+  // Start after a short delay so user sees the zeros first
+  setTimeout(() => requestAnimationFrame(countUp), 800);
+}
+
+animateCounters();
+
+// ===== Section Stripe Transition System =====
+(function() {
+  const TRANSITION_MS = 700;
+  const SCROLL_THRESHOLD = 80;
+
+  // Section config: color, label, and label text color
+  const sectionConfig = [
+    { color: '#0a0a0a', label: 'The Counter', textColor: '#ffffff' },
+    { color: '#fafafa', label: 'The Reality', textColor: '#3f3f46' },
+    { color: '#fdf8f0', label: 'How It Works', textColor: '#78716c' },
+    { color: '#b45309', label: 'The Principle', textColor: '#ffffff' },
+    { color: '#0a0a0a', label: 'See It In Action', textColor: '#ffffff' },
+    { color: '#fafafa', label: 'What You Get', textColor: '#3f3f46' },
+    { color: '#fdf8f0', label: 'Who We Are', textColor: '#78716c' },
+    { color: '#0a0a0a', label: 'Get Started', textColor: '#ffffff' },
+  ];
+
+  const sections = Array.from(document.querySelectorAll('section'));
+  if (sections.length === 0) return;
+
+  let currentIdx = 0;
+  let isTransitioning = false;
+  let scrollAccumulator = 0;
+  let panelScrollable = null;
+
+  // --- Build DOM ---
+  document.body.classList.add('stripe-mode');
+
+  const viewport = document.createElement('div');
+  viewport.className = 'stripe-viewport';
+
+  // Bottom breadcrumb bar
+  const breadcrumbs = document.createElement('div');
+  breadcrumbs.className = 'stripe-breadcrumbs';
+
+  // Wrap each section in a panel
+  const panels = sections.map((sec, i) => {
+    const panel = document.createElement('div');
+    panel.className = 'section-panel';
+    panel.style.background = sectionConfig[i]?.color || '#fafafa';
+    sec.parentNode.insertBefore(panel, sec);
+    panel.appendChild(sec);
+    viewport.appendChild(panel);
+    return panel;
+  });
+
+  // Build breadcrumb stripes (one per section, builds from bottom up)
+  const crumbs = sectionConfig.map((cfg, i) => {
+    const crumb = document.createElement('div');
+    crumb.className = 'stripe-crumb';
+    crumb.style.background = cfg.color;
+
+    const label = document.createElement('span');
+    label.className = 'stripe-crumb-label';
+    label.style.color = cfg.textColor;
+    label.textContent = cfg.label;
+    crumb.appendChild(label);
+
+    // Click to jump to that section
+    crumb.addEventListener('click', () => {
+      if (!isTransitioning && i !== currentIdx) goTo(i, true);
+    });
+
+    breadcrumbs.appendChild(crumb);
+    return crumb;
+  });
+
+  document.body.appendChild(viewport);
+  document.body.appendChild(breadcrumbs);
+
+  // --- State management ---
+  function updateView(animate) {
+    const dur = animate ? TRANSITION_MS : 0;
+
+    panels.forEach((panel, i) => {
+      if (i === currentIdx) {
+        panel.style.transition = animate ? `transform ${dur}ms cubic-bezier(0.22, 1, 0.36, 1), opacity ${dur}ms ease` : 'none';
+        panel.style.transform = 'translateY(0)';
+        panel.style.opacity = '1';
+        panel.style.zIndex = '2';
+        panel.style.pointerEvents = 'auto';
+        panel.style.overflowY = 'auto';
+        panel.style.height = '100vh';
+        panelScrollable = panel;
+      } else if (i < currentIdx) {
+        panel.style.transition = animate ? `transform ${dur}ms cubic-bezier(0.22, 1, 0.36, 1), opacity ${dur * 0.6}ms ease` : 'none';
+        panel.style.transform = 'translateY(-100%)';
+        panel.style.opacity = '0';
+        panel.style.zIndex = '1';
+        panel.style.pointerEvents = 'none';
+      } else {
+        panel.style.transition = animate ? `transform ${dur}ms cubic-bezier(0.22, 1, 0.36, 1), opacity ${dur * 0.6}ms ease` : 'none';
+        panel.style.transform = 'translateY(100%)';
+        panel.style.opacity = '0';
+        panel.style.zIndex = '1';
+        panel.style.pointerEvents = 'none';
+      }
+    });
+
+    // Update breadcrumbs — show stripes for all PASSED sections
+    crumbs.forEach((crumb, i) => {
+      crumb.style.transition = animate ? `height 0.6s cubic-bezier(0.22, 1, 0.36, 1)` : 'none';
+      if (i < currentIdx) {
+        crumb.classList.add('visible');
+      } else {
+        crumb.classList.remove('visible');
+      }
+    });
+
+    // Trigger reveal animations
+    if (animate) {
+      setTimeout(() => {
+        const reveals = panels[currentIdx].querySelectorAll('.reveal');
+        reveals.forEach(el => el.classList.add('visible'));
+      }, dur * 0.4);
+    } else {
+      const reveals = panels[currentIdx].querySelectorAll('.reveal');
+      reveals.forEach(el => el.classList.add('visible'));
+    }
+  }
+
+  function goTo(idx, animate) {
+    if (idx < 0 || idx >= panels.length) return;
+    if (idx === currentIdx) return;
+    isTransitioning = true;
+    currentIdx = idx;
+    updateView(animate !== false);
+    setTimeout(() => {
+      isTransitioning = false;
+      scrollAccumulator = 0;
+    }, animate !== false ? TRANSITION_MS : 0);
+  }
+
+  // --- Scroll handling ---
+  function isAtBottom(panel) {
+    return panel.scrollTop + panel.clientHeight >= panel.scrollHeight - 5;
+  }
+
+  function isAtTop(panel) {
+    return panel.scrollTop <= 5;
+  }
+
+  function handleWheel(e) {
+    if (isTransitioning) { e.preventDefault(); return; }
+
+    const panel = panelScrollable;
+    const contentScrollable = panel && panel.scrollHeight > panel.clientHeight + 10;
+
+    // If content is scrollable and we're not at an edge, let native scroll happen
+    if (contentScrollable) {
+      if (e.deltaY > 0 && !isAtBottom(panel)) return;
+      if (e.deltaY < 0 && !isAtTop(panel)) return;
+    }
+
+    e.preventDefault();
+    scrollAccumulator += e.deltaY;
+
+    if (scrollAccumulator > SCROLL_THRESHOLD) {
+      // Scroll down → next section
+      if (currentIdx < panels.length - 1) {
+        if (panelScrollable) panelScrollable.scrollTop = 0;
+        goTo(currentIdx + 1, true);
+      }
+      scrollAccumulator = 0;
+    } else if (scrollAccumulator < -SCROLL_THRESHOLD) {
+      // Scroll up → previous section
+      if (currentIdx > 0) {
+        goTo(currentIdx - 1, true);
+      }
+      scrollAccumulator = 0;
+    }
+  }
+
+  // --- Keyboard nav ---
+  function handleKey(e) {
+    if (isTransitioning) return;
+    if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+      const panel = panelScrollable;
+      if (panel && panel.scrollHeight > panel.clientHeight + 10 && !isAtBottom(panel)) return;
+      e.preventDefault();
+      if (currentIdx < panels.length - 1) goTo(currentIdx + 1, true);
+    }
+    if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+      const panel = panelScrollable;
+      if (panel && panel.scrollHeight > panel.clientHeight + 10 && !isAtTop(panel)) return;
+      e.preventDefault();
+      if (currentIdx > 0) goTo(currentIdx - 1, true);
+    }
+  }
+
+  // --- Touch support ---
+  let touchStartY = 0;
+  function handleTouchStart(e) { touchStartY = e.touches[0].clientY; }
+  function handleTouchEnd(e) {
+    if (isTransitioning) return;
+    const delta = touchStartY - e.changedTouches[0].clientY;
+    const panel = panelScrollable;
+    const contentScrollable = panel && panel.scrollHeight > panel.clientHeight + 10;
+
+    if (delta > 60) {
+      if (contentScrollable && !isAtBottom(panel)) return;
+      if (currentIdx < panels.length - 1) goTo(currentIdx + 1, true);
+    } else if (delta < -60) {
+      if (contentScrollable && !isAtTop(panel)) return;
+      if (currentIdx > 0) goTo(currentIdx - 1, true);
+    }
+  }
+
+  // --- Nav link clicks → jump to section ---
+  document.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const target = link.getAttribute('href').slice(1);
+      if (!target) return;
+      const idx = sections.findIndex(sec => sec.id === target || sec.querySelector('#' + target));
+      if (idx >= 0) {
+        e.preventDefault();
+        goTo(idx, true);
+      }
+    });
+  });
+
+  // --- Initialize ---
+  window.addEventListener('wheel', handleWheel, { passive: false });
+  window.addEventListener('keydown', handleKey);
+  window.addEventListener('touchstart', handleTouchStart, { passive: true });
+  window.addEventListener('touchend', handleTouchEnd, { passive: true });
+
+  // Fix nav z-index to be above stripes
+  const nav = document.querySelector('nav');
+  if (nav) nav.style.zIndex = '200';
+
+  updateView(false);
+})();
+</script>
+
+</body>
+</html>

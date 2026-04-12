@@ -1,0 +1,2970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Counter | Rewire</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.82/build/spline-viewer.js"></script>
+
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --charcoal-blue: #454851;
+      --sage-green: #73956F;
+      --muted-teal: #7BAE7F;
+      --celadon: #95D7AE;
+      --lavender-blush: #FCEFF9;
+      --white: #fafafa;
+      --dark-gray: #1a1a1e;
+      --medium-gray: #64748b;
+      --light-gray: #e2e8f0;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    html {
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--dark-gray);
+      background: var(--charcoal-blue);
+      line-height: 1.7;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' seed='2' /%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noiseFilter)' /%3E%3C/svg%3E");
+      z-index: 1;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 clamp(24px, 5vw, 80px);
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Scroll Progress Bar */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      background: var(--celadon);
+      width: 0%;
+      z-index: 1000;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 99;
+      padding: 20px 0;
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      background: transparent;
+      transition: background 0.3s ease;
+    }
+
+    nav.scrolled {
+      background: rgba(252, 239, 249, 0.9);
+      border-bottom: 1px solid rgba(115, 149, 111, 0.1);
+    }
+
+    nav .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: -0.03em;
+      color: var(--charcoal-blue);
+      text-decoration: none;
+      position: relative;
+      z-index: 3;
+    }
+
+    nav.scrolled .nav-logo {
+      color: var(--charcoal-blue);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      align-items: center;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.6);
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: var(--sage-green);
+    }
+
+    .nav-cta {
+      background: var(--sage-green);
+      color: var(--white) !important;
+      padding: 10px 24px;
+      border-radius: 100px;
+      font-size: 0.85rem !important;
+      transition: all 0.3s ease !important;
+      border: none;
+      cursor: pointer;
+    }
+
+    .nav-cta:hover {
+      background: var(--muted-teal);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(115, 149, 111, 0.25);
+    }
+
+    /* Section Waypoint Dots */
+    .waypoint-dots {
+      position: fixed;
+      right: 24px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .waypoint-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(115, 149, 111, 0.3);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .waypoint-dot.active {
+      background: var(--sage-green);
+      width: 12px;
+      height: 12px;
+      border-color: var(--muted-teal);
+    }
+
+    .waypoint-dot:hover {
+      background: var(--muted-teal);
+    }
+
+    @media (max-width: 768px) {
+      .waypoint-dots {
+        display: none;
+      }
+    }
+
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      padding-top: 80px;
+      padding-bottom: 80px;
+      background: var(--charcoal-blue);
+    }
+
+    .hero-spline {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .hero-spline spline-viewer {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Soft vignette overlay on the Spline scene to ensure text readability */
+    .hero-spline::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(ellipse at center, rgba(69, 72, 81, 0.2) 0%, rgba(69, 72, 81, 0.55) 60%, rgba(69, 72, 81, 0.8) 100%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+
+    /* Fallback gradient while Spline loads */
+    .hero-spline-fallback {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(ellipse at 30% 50%, rgba(115, 149, 111, 0.2) 0%, transparent 60%),
+                  radial-gradient(ellipse at 70% 70%, rgba(123, 174, 127, 0.12) 0%, transparent 50%),
+                  var(--charcoal-blue);
+      z-index: 0;
+      transition: opacity 1.5s ease;
+    }
+
+    .hero-content {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+      align-items: center;
+      width: 100%;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-counters {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 40px;
+      max-width: 680px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-counter-block {
+      padding: 40px;
+      border-radius: 16px;
+      position: relative;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(149, 215, 174, 0.2);
+    }
+
+    .hero-counter-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--celadon);
+      margin-bottom: 16px;
+    }
+
+    .hero-counter-number {
+      font-family: var(--font-mono);
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      color: var(--celadon);
+      margin-bottom: 8px;
+    }
+
+    .hero-counter-sub {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .hero-counter-source {
+      font-size: 0.68rem;
+      color: rgba(255, 255, 255, 0.5);
+      margin-top: 12px;
+      letter-spacing: 0.02em;
+      font-style: italic;
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 3.5vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.04em;
+      color: var(--white);
+      margin-bottom: 24px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--celadon);
+    }
+
+    .hero-sub {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: rgba(255, 255, 255, 0.8);
+      max-width: 600px;
+      margin: 0 auto 36px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 36px;
+      border-radius: 100px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: none;
+      font-family: var(--font-body);
+    }
+
+    .btn-primary {
+      background: var(--celadon);
+      color: var(--charcoal-blue);
+    }
+
+    .btn-primary:hover {
+      background: var(--muted-teal);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(149, 215, 174, 0.3);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--celadon);
+      border: 2px solid var(--celadon);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(149, 215, 174, 0.1);
+      border-color: var(--muted-teal);
+      color: var(--muted-teal);
+    }
+
+    .btn-secondary-light {
+      background: transparent;
+      color: var(--sage-green);
+      border: 2px solid var(--sage-green);
+    }
+
+    .btn-secondary-light:hover {
+      background: rgba(115, 149, 111, 0.1);
+      border-color: var(--muted-teal);
+      color: var(--muted-teal);
+    }
+
+    /* Section Label */
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--sage-green);
+      margin-bottom: 20px;
+    }
+
+    /* Light Sections */
+    .light-section {
+      background: var(--lavender-blush);
+      color: var(--dark-gray);
+      padding: 80px 0;
+    }
+
+    .light-section h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--dark-gray);
+      line-height: 1.15;
+      margin-bottom: 28px;
+    }
+
+    .light-section em {
+      color: var(--sage-green);
+      font-style: normal;
+    }
+
+    .light-section p {
+      color: var(--medium-gray);
+    }
+
+    /* Dark Sections */
+    .dark-section {
+      background: var(--charcoal-blue);
+      color: var(--white);
+      padding: 80px 0;
+      position: relative;
+    }
+
+    .dark-section h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--white);
+      line-height: 1.15;
+      margin-bottom: 28px;
+    }
+
+    .dark-section em {
+      color: var(--celadon);
+      font-style: normal;
+    }
+
+    .dark-section p {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    /* Gap Section */
+    .gap {
+      background: var(--lavender-blush);
+      padding: 80px 0;
+      position: relative;
+    }
+
+    .gap-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .gap-video {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      aspect-ratio: 16 / 9;
+      background: rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--medium-gray);
+    }
+
+    /* Logo Ticker */
+    .logo-ticker {
+      background: var(--lavender-blush);
+      padding: 24px 0;
+      overflow: hidden;
+      position: relative;
+      margin-bottom: 40px;
+    }
+
+    .logo-ticker-label {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 180px;
+      background: linear-gradient(90deg, var(--lavender-blush) 55%, transparent);
+      display: flex;
+      align-items: center;
+      padding-left: clamp(24px, 5vw, 80px);
+      z-index: 2;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--medium-gray);
+      white-space: nowrap;
+    }
+
+    .logo-ticker-fade-right {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 100px;
+      background: linear-gradient(270deg, var(--lavender-blush) 20%, transparent);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .logo-ticker-track {
+      display: flex;
+      align-items: center;
+      gap: 60px;
+      width: max-content;
+      animation: scroll-continuous 35s linear infinite;
+      padding-left: 200px;
+    }
+
+    @keyframes scroll-continuous {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .logo-ticker-track img {
+      height: 26px;
+      width: auto;
+      object-fit: contain;
+      filter: grayscale(100%);
+      opacity: 0.5;
+      transition: opacity 0.3s ease, filter 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .logo-ticker-track img:hover {
+      filter: grayscale(0%);
+      opacity: 0.85;
+    }
+
+    .logo-ticker-track img.logo-lg { height: 36px; }
+    .logo-ticker-track img.logo-xl { height: 46px; }
+
+    .logo-ticker-track img.logo-invert {
+      filter: grayscale(100%) invert(1);
+      opacity: 0.4;
+    }
+    .logo-ticker-track img.logo-invert:hover {
+      filter: invert(1);
+      opacity: 0.7;
+    }
+
+    @media (max-width: 768px) {
+      .gap-inner {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Fluency Section */
+    .fluency-section {
+      background: var(--lavender-blush);
+      padding: 80px 0;
+    }
+
+    .fluency-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .fluency-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin-top: 32px;
+      text-align: left;
+    }
+
+    .fluency-phrase {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: var(--medium-gray);
+    }
+
+    .fluency-phrase .underline {
+      text-decoration: underline;
+      color: var(--sage-green);
+      font-weight: 600;
+    }
+
+    /* Animated Comparison — Split Zones */
+    .race-compare {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .race-split {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 0;
+      align-items: start;
+    }
+
+    /* Zone headers */
+    .race-zone {
+      padding: 0 32px;
+    }
+
+    .race-zone-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .race-zone-header h3 {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--charcoal-blue);
+      margin-bottom: 4px;
+    }
+
+    .race-zone--fluency .race-zone-header h3 {
+      color: var(--sage-green);
+    }
+
+    .race-zone-header p {
+      font-size: 0.8rem;
+      color: var(--medium-gray);
+    }
+
+    /* Vertical divider */
+    .race-divider {
+      width: 1px;
+      background: linear-gradient(180deg, transparent 0%, rgba(115, 149, 111, 0.25) 15%, rgba(115, 149, 111, 0.25) 85%, transparent 100%);
+      align-self: stretch;
+      min-height: 100%;
+    }
+
+    /* Lane columns within each zone */
+    .race-lane-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .race-lane {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 28px 22px;
+      border: 1px solid rgba(115, 149, 111, 0.08);
+      position: relative;
+    }
+
+    .race-lane--counter {
+      border-color: rgba(115, 149, 111, 0.2);
+      background: linear-gradient(180deg, var(--white) 0%, rgba(149, 215, 174, 0.06) 100%);
+    }
+
+    .race-lane-title {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-align: center;
+      color: var(--medium-gray);
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(115, 149, 111, 0.08);
+    }
+
+    .race-lane--counter .race-lane-title {
+      color: var(--sage-green);
+    }
+
+    /* Checklist items */
+    .race-items {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .race-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 0;
+      opacity: 0.25;
+      transition: opacity 0.4s ease;
+    }
+
+    .race-item.checked {
+      opacity: 1;
+    }
+
+    .race-item-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: rgba(115, 149, 111, 0.06);
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    .race-item.checked .race-item-icon {
+      background: rgba(115, 149, 111, 0.12);
+      transform: scale(1.1);
+    }
+
+    .race-lane--counter .race-item.checked .race-item-icon {
+      background: var(--sage-green);
+    }
+
+    .race-item-icon svg {
+      width: 13px;
+      height: 13px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .race-item.checked .race-item-icon svg {
+      opacity: 1;
+    }
+
+    .race-item-label {
+      font-size: 0.82rem;
+      color: var(--medium-gray);
+      line-height: 1.4;
+    }
+
+    .race-item.checked .race-item-label {
+      color: var(--charcoal-blue);
+    }
+
+    .race-lane--counter .race-item.checked .race-item-label {
+      font-weight: 500;
+    }
+
+    /* Barrier — red X that shakes */
+    .race-barrier {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 0;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .race-barrier.hit {
+      opacity: 1;
+    }
+
+    .race-barrier-line {
+      width: 100%;
+      height: 2px;
+      background: rgba(180, 60, 60, 0.2);
+      border-radius: 1px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .race-barrier-x {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(180, 60, 60, 0.08);
+      border: 2px solid rgba(180, 60, 60, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+    }
+
+    .race-barrier-x svg {
+      width: 14px;
+      height: 14px;
+      stroke: rgba(180, 60, 60, 0.6);
+    }
+
+    @keyframes barrierShake {
+      0%, 100% { transform: translateX(0); }
+      15% { transform: translateX(-6px) rotate(-6deg); }
+      30% { transform: translateX(5px) rotate(5deg); }
+      45% { transform: translateX(-4px) rotate(-3deg); }
+      60% { transform: translateX(3px) rotate(2deg); }
+      75% { transform: translateX(-1px); }
+    }
+
+    .race-barrier.hit .race-barrier-x {
+      animation: barrierShake 0.6s ease;
+    }
+
+    /* Blocked items below barrier */
+    .race-item.blocked {
+      opacity: 0.1;
+    }
+
+    @media (max-width: 768px) {
+      .race-split {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+
+      .race-divider {
+        width: 100%;
+        height: 1px;
+        background: linear-gradient(90deg, transparent 0%, rgba(115, 149, 111, 0.25) 15%, rgba(115, 149, 111, 0.25) 85%, transparent 100%);
+        min-height: auto;
+      }
+
+      .race-zone {
+        padding: 0;
+      }
+
+      .race-lane-group {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    /* What Section */
+    .what-section {
+      background: var(--charcoal-blue);
+      padding: 80px 0;
+    }
+
+    .what-inner {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .what-description {
+      font-size: 1.1rem;
+      line-height: 1.85;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    /* Process Section — Full-width cards with corner Lottie */
+    .process {
+      background: var(--lavender-blush);
+      padding: 100px 0 80px;
+    }
+
+    .process-header {
+      text-align: center;
+      margin-bottom: 80px;
+    }
+
+    .process-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .process-step-card {
+      background: var(--white);
+      border-radius: 28px;
+      padding: 56px 60px;
+      border: 1px solid rgba(115, 149, 111, 0.08);
+      position: relative;
+      overflow: hidden;
+      min-height: 260px;
+      opacity: 0.4;
+      transform: translateY(16px);
+      transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.5s ease, border-color 0.5s ease;
+    }
+
+    .process-step-card.active {
+      opacity: 1;
+      transform: translateY(0);
+      box-shadow: 0 16px 48px rgba(69, 72, 81, 0.07);
+      border-color: rgba(115, 149, 111, 0.18);
+    }
+
+    /* Lottie animation — positioned in the top-right corner of each card */
+    .process-step-card .step-lottie {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 180px;
+      height: 180px;
+      opacity: 0.25;
+      transition: opacity 0.6s ease;
+      pointer-events: none;
+      border: none;
+    }
+
+    .process-step-card.active .step-lottie {
+      opacity: 0.45;
+    }
+
+    /* Content area — kept away from the Lottie corner */
+    .step-card-content {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+    }
+
+    .step-card-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .step-card-number {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--sage-green), var(--muted-teal));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .step-card-phase-tag {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--sage-green);
+      background: rgba(115, 149, 111, 0.1);
+      padding: 5px 14px;
+      border-radius: 100px;
+    }
+
+    .step-card-title {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--charcoal-blue);
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+
+    .step-card-text {
+      color: var(--medium-gray);
+      line-height: 1.85;
+      font-size: 1rem;
+    }
+
+    /* Left accent bar on active card */
+    .process-step-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(180deg, var(--sage-green), var(--celadon));
+      border-radius: 0 2px 2px 0;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .process-step-card.active::before {
+      opacity: 1;
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 768px) {
+      .process-step-card {
+        padding: 40px 32px;
+        min-height: auto;
+        opacity: 1;
+        transform: none;
+      }
+
+      .process-step-card .step-lottie {
+        width: 120px;
+        height: 120px;
+        top: -5px;
+        right: -5px;
+      }
+
+      .step-card-title {
+        font-size: 1.3rem;
+      }
+
+      .process-step-card.active {
+        box-shadow: none;
+      }
+    }
+
+    /* Outcomes Section */
+    .outcomes {
+      background: var(--charcoal-blue);
+      padding: 80px 0;
+    }
+
+    .outcomes-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .outcomes-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 28px;
+    }
+
+    @media (max-width: 900px) {
+      .outcomes-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 520px) {
+      .outcomes-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .outcome-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(149, 215, 174, 0.2);
+      border-radius: 16px;
+      padding: 40px;
+      transition: all 0.3s ease;
+    }
+
+    .outcome-card:hover {
+      transform: translateY(-4px);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(149, 215, 174, 0.4);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    .outcome-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--sage-green);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .outcome-icon svg {
+      width: 24px;
+      height: 24px;
+      stroke: var(--white);
+      fill: none;
+    }
+
+    .outcome-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+
+    .outcome-card p {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    /* Case Studies Section */
+    .case-studies {
+      background: var(--lavender-blush);
+      padding: 80px 0;
+    }
+
+    .case-studies-header {
+      margin-bottom: 60px;
+    }
+
+    .cs-header-left h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--charcoal-blue);
+      margin-bottom: 16px;
+    }
+
+    .cs-tabs {
+      display: flex;
+      gap: 16px;
+      margin-top: 32px;
+    }
+
+    .cs-tab {
+      padding: 12px 24px;
+      border: 2px solid var(--sage-green);
+      background: transparent;
+      color: var(--sage-green);
+      border-radius: 100px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: var(--font-body);
+    }
+
+    .cs-tab.active {
+      background: var(--sage-green);
+      color: var(--white);
+    }
+
+    .cs-tab:hover {
+      border-color: var(--muted-teal);
+      color: var(--muted-teal);
+    }
+
+    .cs-carousel {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 60px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .cs-intro {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 60px;
+      margin-bottom: 60px;
+      align-items: start;
+    }
+
+    .cs-intro-tag {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--sage-green);
+      margin-bottom: 12px;
+    }
+
+    .cs-intro h3 {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--charcoal-blue);
+      line-height: 1.3;
+    }
+
+    .cs-intro-meta {
+      display: flex;
+      gap: 24px;
+    }
+
+    .cs-meta-item {
+      text-align: center;
+    }
+
+    .cs-meta-item .val {
+      font-family: var(--font-mono);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--sage-green);
+      margin-bottom: 4px;
+    }
+
+    .cs-meta-item .lbl {
+      font-size: 0.75rem;
+      color: var(--medium-gray);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .cs-slide-area {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 60px;
+      align-items: start;
+    }
+
+    .cs-visual {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      min-height: 400px;
+      background: var(--lavender-blush);
+    }
+
+    .cs-visual-slide {
+      display: none;
+    }
+
+    .cs-visual-slide.active {
+      display: block;
+    }
+
+    .cs-screen {
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--white);
+      border: 1px solid var(--light-gray);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    .cs-screen-bar {
+      background: var(--light-gray);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--light-gray);
+    }
+
+    .cs-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .cs-dot.r { background: #ef4444; }
+    .cs-dot.y { background: #f59e0b; }
+    .cs-dot.g { background: #10b981; }
+
+    .cs-screen-title {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--medium-gray);
+      margin-left: auto;
+    }
+
+    .cs-screen-body {
+      padding: 20px;
+      font-size: 0.875rem;
+      color: var(--dark-gray);
+    }
+
+    .d-screen {
+      border-radius: 8px;
+      overflow: hidden;
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #e2e8f0;
+    }
+
+    .d-screen-bar {
+      background: #1e293b;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .d-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .d-dot.r { background: #ef4444; }
+    .d-dot.y { background: #f59e0b; }
+    .d-dot.g { background: #10b981; }
+
+    .d-screen-title {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #94a3b8;
+      margin-left: auto;
+    }
+
+    .d-screen-body {
+      padding: 20px;
+      font-size: 0.875rem;
+    }
+
+    .d-tabs {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 12px;
+    }
+
+    .d-tab {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #64748b;
+      padding: 4px 8px;
+      cursor: pointer;
+    }
+
+    .d-tab.active {
+      color: #3b82f6;
+      border-bottom: 2px solid #3b82f6;
+      margin-bottom: -14px;
+      padding-bottom: 10px;
+    }
+
+    .d-kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .d-kpi {
+      background: rgba(59, 130, 246, 0.1);
+      padding: 12px;
+      border-radius: 6px;
+    }
+
+    .d-kpi-label {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+
+    .d-kpi-value {
+      font-family: var(--font-mono);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #e2e8f0;
+    }
+
+    .d-heatmap {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.75rem;
+    }
+
+    .d-heatmap th {
+      color: #94a3b8;
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .d-heatmap td {
+      padding: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .d-heat-cell {
+      color: #e2e8f0;
+      font-weight: 600;
+    }
+
+    .d-heat-intensity-1 { background: rgba(59, 130, 246, 0.1); }
+    .d-heat-intensity-2 { background: rgba(59, 130, 246, 0.25); }
+    .d-heat-intensity-3 { background: rgba(59, 130, 246, 0.4); }
+    .d-heat-intensity-4 { background: rgba(59, 130, 246, 0.6); }
+
+    .pj-screen {
+      border-radius: 8px;
+      overflow: hidden;
+      background: #1a1828;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #e4e2f0;
+    }
+
+    .pj-screen-bar {
+      background: #2a2640;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .pj-bar-icon {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #a78bfa;
+    }
+
+    .pj-bar-title {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #a78bfa;
+      margin-left: auto;
+    }
+
+    .pj-win-controls {
+      display: flex;
+      gap: 4px;
+      margin-left: auto;
+    }
+
+    .pj-win-btn {
+      font-size: 0.75rem;
+      color: #706c8a;
+      cursor: pointer;
+    }
+
+    .pj-screen-body {
+      padding: 16px;
+      font-size: 0.8rem;
+    }
+
+    .pj-tabs {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .pj-tab {
+      font-size: 0.75rem;
+      color: #706c8a;
+    }
+
+    .pj-tab.active {
+      color: #a78bfa;
+      border-bottom: 1px solid #a78bfa;
+    }
+
+    .pj-filter {
+      font-size: 0.75rem;
+      color: #706c8a;
+      margin-bottom: 12px;
+    }
+
+    .pj-filter span {
+      background: #3d3958;
+      color: #a78bfa;
+      padding: 2px 6px;
+      border-radius: 3px;
+      border: 1px solid #7c3aed;
+      margin: 0 4px;
+    }
+
+    .pj-filter .count {
+      float: right;
+      color: #706c8a;
+    }
+
+    .cs-text {
+      position: relative;
+      min-height: 400px;
+    }
+
+    .cs-text-slide {
+      display: none;
+      opacity: 0;
+    }
+
+    .cs-text-slide.active {
+      display: block;
+      opacity: 1;
+    }
+
+    .cs-text-slide p:first-child {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--sage-green);
+      margin-bottom: 16px;
+    }
+
+    .cs-text-slide h4 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--charcoal-blue);
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+
+    .cs-text-slide p {
+      color: var(--medium-gray);
+      line-height: 1.8;
+    }
+
+    .cs-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 40px;
+      padding-top: 40px;
+      border-top: 1px solid var(--light-gray);
+    }
+
+    .cs-nav-arrows {
+      display: flex;
+      gap: 16px;
+    }
+
+    .cs-arrow {
+      width: 44px;
+      height: 44px;
+      border: 2px solid var(--sage-green);
+      background: transparent;
+      color: var(--sage-green);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+      font-family: var(--font-body);
+      font-weight: 700;
+    }
+
+    .cs-arrow:hover:not(:disabled) {
+      background: var(--sage-green);
+      color: var(--white);
+    }
+
+    .cs-arrow:disabled {
+      border-color: var(--light-gray);
+      color: var(--light-gray);
+      cursor: not-allowed;
+    }
+
+    .cs-dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .cs-dot-nav {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--light-gray);
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .cs-dot-nav.active {
+      background: var(--sage-green);
+      width: 28px;
+      border-radius: 5px;
+    }
+
+    .cs-dot-nav:hover {
+      background: var(--muted-teal);
+    }
+
+    .cs-counter {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--medium-gray);
+    }
+
+    .cs-shift {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      height: 100%;
+      padding: 32px;
+    }
+
+    .cs-shift-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 32px;
+      border-radius: 12px;
+    }
+
+    .cs-shift-card.before {
+      background: rgba(100, 116, 139, 0.1);
+      border: 1px solid rgba(100, 116, 139, 0.2);
+      color: var(--medium-gray);
+    }
+
+    .cs-shift-card.after {
+      background: rgba(115, 149, 111, 0.1);
+      border: 1px solid rgba(115, 149, 111, 0.2);
+      color: var(--charcoal-blue);
+    }
+
+    .cs-shift-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 12px;
+    }
+
+    .cs-shift-pct {
+      font-family: var(--font-display);
+      font-size: 2.4rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .cs-shift-desc {
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    /* About Section */
+    .about {
+      background: var(--lavender-blush);
+      padding: 80px 0;
+    }
+
+    .about-inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .about-inner h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--charcoal-blue);
+      margin-bottom: 28px;
+    }
+
+    .about-inner > div:first-child p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--medium-gray);
+      margin-bottom: 24px;
+    }
+
+    .about-people {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      margin-top: 60px;
+    }
+
+    .about-person {
+      display: flex;
+      gap: 24px;
+    }
+
+    .about-person-photo {
+      width: 120px;
+      height: 120px;
+      min-width: 120px;
+      border-radius: 12px;
+      background: rgba(115, 149, 111, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--sage-green);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .about-person-info h4 {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--charcoal-blue);
+      margin-bottom: 8px;
+    }
+
+    .about-person-info p {
+      font-size: 0.95rem;
+      color: var(--medium-gray);
+      line-height: 1.7;
+    }
+
+    @media (max-width: 768px) {
+      .about-people {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* CTA Section */
+    .cta {
+      background: var(--charcoal-blue);
+      padding: 120px 0;
+      text-align: center;
+    }
+
+    .cta h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 3.5vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--white);
+      margin-bottom: 24px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta > div:first-child p:first-of-type {
+      font-size: 1.05rem;
+      color: rgba(255, 255, 255, 0.8);
+      max-width: 600px;
+      margin: 0 auto 40px;
+    }
+
+    .cta a {
+      display: inline-block;
+    }
+
+    .cta-footer {
+      margin-top: 80px;
+      padding-top: 32px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.8rem;
+    }
+
+    .cta-footer a {
+      color: rgba(255, 255, 255, 0.6);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .cta-footer a:hover {
+      color: var(--celadon);
+    }
+
+    /* Reveal Animation */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero-counters {
+        grid-template-columns: 1fr;
+      }
+
+      .fluency-split {
+        grid-template-columns: 1fr;
+      }
+
+      .cs-intro {
+        grid-template-columns: 1fr;
+      }
+
+      .cs-slide-area {
+        grid-template-columns: 1fr;
+      }
+
+      .cs-carousel {
+        padding: 40px;
+      }
+
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Scroll Progress Bar -->
+  <div class="scroll-progress"></div>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="container">
+      <a href="#hero" class="nav-logo">The Counter</a>
+      <ul class="nav-links">
+        <li><a href="#case-studies">Case Studies</a></li>
+        <li><a href="#contact" class="nav-cta">Start a Conversation</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Waypoint Dots -->
+  <div class="waypoint-dots">
+    <div class="waypoint-dot active" data-section="hero"></div>
+    <div class="waypoint-dot" data-section="gap"></div>
+    <div class="waypoint-dot" data-section="fluency"></div>
+    <div class="waypoint-dot" data-section="what"></div>
+    <div class="waypoint-dot" data-section="process"></div>
+    <div class="waypoint-dot" data-section="outcomes"></div>
+    <div class="waypoint-dot" data-section="case-studies"></div>
+    <div class="waypoint-dot" data-section="about"></div>
+    <div class="waypoint-dot" data-section="contact"></div>
+  </div>
+
+  <!-- HERO SECTION -->
+  <section class="hero" id="hero">
+    <div class="hero-spline">
+      <div class="hero-spline-fallback"></div>
+      <spline-viewer url="https://prod.spline.design/CL3GuOJE86k-IgGj/scene.splinecode" loading-anim-type="none" events-target="none"></spline-viewer>
+    </div>
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-counters">
+          <div class="hero-counter-block">
+            <p class="hero-counter-label">Global AI Investment in 2026</p>
+            <p class="hero-counter-number" id="spending-counter">$0</p>
+            <p class="hero-counter-sub">and climbing</p>
+            <p class="hero-counter-source">Gartner, 2026</p>
+          </div>
+          <div class="hero-counter-block">
+            <p class="hero-counter-label">Companies seeing real ROI</p>
+            <p class="hero-counter-number" id="usage-counter">0%</p>
+            <p class="hero-counter-sub">barely moving</p>
+            <p class="hero-counter-source">MIT / Ignitec Research, 2025</p>
+          </div>
+        </div>
+
+        <h1>The investment is there. Now it's time to make it <em>pay off.</em></h1>
+        <p class="hero-sub">Your teams have learned what AI can do. But knowing what's possible and knowing how to apply it to your work are two very different things. That's the gap we close.</p>
+        <div class="hero-actions">
+          <a href="#gap" class="btn btn-primary">See How It Works ↓</a>
+          <a href="#case-studies" class="btn btn-secondary">Case Studies</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GAP SECTION -->
+  <section class="gap light-section" id="gap">
+    <div class="logo-ticker">
+      <div class="logo-ticker-label">Trusted by</div>
+      <div class="logo-ticker-fade-right"></div>
+      <div class="logo-ticker-track">
+        <img src="Logos/AbbVie_logo.svg.png" alt="AbbVie">
+        <img src="Logos/Alexion_Logo.svg.png" alt="Alexion">
+        <img src="Logos/Beam_Suntory_logo.svg.png" alt="Beam Suntory">
+        <img src="Logos/BNY_logo_2024.svg.png" alt="BNY">
+        <img src="Logos/Chase-Logo.png" alt="Chase" class="logo-xl">
+        <img src="Logos/Comcast_(2013-2024)_logo.svg.png" alt="Comcast">
+        <img src="Logos/GSK_logo_2014.svg.png" alt="GSK">
+        <img src="Logos/Inova_Health_System_logo.png" alt="Inova Health System">
+        <img src="Logos/Kaiser-Permanente-Logo.png" alt="Kaiser Permanente" class="logo-xl">
+        <img src="Logos/Kimberly-Clark_Logo.png" alt="Kimberly-Clark">
+        <img src="Logos/logo-mckesson-corporation-vector-graphics-portable-network-graphics-brand-png-favpng-k7xEGkMYXKjK4LrEREHgeYJN4.jpg" alt="McKesson">
+        <img src="Logos/Nike-Logo-1978.png" alt="Nike" class="logo-lg">
+        <img src="Logos/NTT_2025.svg.png" alt="NTT">
+        <img src="Logos/tyson-1-logo-png-transparent.png" alt="Tyson" class="logo-xl logo-invert">
+        <img src="Logos/Washington-Post-Symbol.png" alt="The Washington Post" class="logo-xl">
+        <!-- Duplicate set for seamless loop -->
+        <img src="Logos/AbbVie_logo.svg.png" alt="AbbVie">
+        <img src="Logos/Alexion_Logo.svg.png" alt="Alexion">
+        <img src="Logos/Beam_Suntory_logo.svg.png" alt="Beam Suntory">
+        <img src="Logos/BNY_logo_2024.svg.png" alt="BNY">
+        <img src="Logos/Chase-Logo.png" alt="Chase" class="logo-xl">
+        <img src="Logos/Comcast_(2013-2024)_logo.svg.png" alt="Comcast">
+        <img src="Logos/GSK_logo_2014.svg.png" alt="GSK">
+        <img src="Logos/Inova_Health_System_logo.png" alt="Inova Health System">
+        <img src="Logos/Kaiser-Permanente-Logo.png" alt="Kaiser Permanente" class="logo-xl">
+        <img src="Logos/Kimberly-Clark_Logo.png" alt="Kimberly-Clark">
+        <img src="Logos/logo-mckesson-corporation-vector-graphics-portable-network-graphics-brand-png-favpng-k7xEGkMYXKjK4LrEREHgeYJN4.jpg" alt="McKesson">
+        <img src="Logos/Nike-Logo-1978.png" alt="Nike" class="logo-lg">
+        <img src="Logos/NTT_2025.svg.png" alt="NTT">
+        <img src="Logos/tyson-1-logo-png-transparent.png" alt="Tyson" class="logo-xl logo-invert">
+        <img src="Logos/Washington-Post-Symbol.png" alt="The Washington Post" class="logo-xl">
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="gap-inner reveal">
+        <div class="gap-text">
+          <p class="section-label">The gap</p>
+          <h2>A billion-dollar company was just built by <em>one person</em> using AI.</h2>
+          <p>Yet most teams inside large organizations are still using AI to summarize meetings. The Counter helps you close that gap.</p>
+        </div>
+        <div class="gap-video">
+          <video controls playsinline preload="metadata" poster="founder-video-poster.jpg" style="width: 100%; height: 100%; object-fit: cover;">
+            <source src="founder-video-headlines.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FLUENCY SECTION -->
+  <section class="fluency-section light-section" id="fluency">
+    <div class="container">
+      <div class="reveal fluency-header">
+        <p class="section-label">The difference</p>
+        <h2>Literacy teaches tools. <em>Fluency</em> transforms work.</h2>
+        <div class="fluency-split">
+          <p class="fluency-phrase">Organizations are investing in AI literacy. That teaches your teams how to <span class="underline">use</span> AI to do things faster.</p>
+          <p class="fluency-phrase">We build AI fluency. So they can <span class="underline">think and work with</span> AI in ways they couldn't before.</p>
+        </div>
+      </div>
+
+      <div class="race-compare reveal" id="raceCompare">
+        <div class="race-split">
+          <!-- LEFT ZONE: AI Literacy -->
+          <div class="race-zone race-zone--literacy">
+            <div class="race-zone-header">
+              <h3>AI Literacy</h3>
+              <p>Where everyone stops</p>
+            </div>
+            <div class="race-lane-group">
+              <div class="race-lane" data-lane="courses">
+                <div class="race-lane-title">Online Courses</div>
+                <ul class="race-items">
+                  <li class="race-item" data-row="1"><span class="race-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(69,72,81,0.5)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span class="race-item-label">Knowledge of AI tools</span></li>
+                  <li class="race-item" data-row="2"><span class="race-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(69,72,81,0.5)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span class="race-item-label">Ability to prompt and use AI</span></li>
+                  <li class="race-item" data-row="3"><span class="race-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(69,72,81,0.5)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span class="race-item-label">Faster on existing tasks</span></li>
+                  <li class="race-barrier"><div class="race-barrier-line"><div class="race-barrier-x"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div></div></li>
+                </ul>
+              </div>
+              <div class="race-lane" data-lane="workshops">
+                <div class="race-lane-title">Workshops / Trainings</div>
+                <ul class="race-items">
+                  <li class="race-item" data-row="1"><span class="race-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(69,72,81,0.5)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span class="race-item-label">Knowledge of AI tools</span></li>
+                  <li class="race-item" data-row="2"><span class="race-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(69,72,81,0.5)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span class="race-item-label">Ability to prompt and use AI</span></li>
+                  <li class="race-item" data-row="3"><span class="race-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="rgba(69,72,81,0.5)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span class="race-item-label">Faster on existing tasks</span></li>
+                  <li class="race-barrier"><div class="race-barrier-line"><div class="race-barrier-x"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div></div></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- DIVIDER -->
+          <div class="race-divider"></div>
+
+          <!-- RIGHT ZONE: AI Fluency (The Counter) -->
+          <div class="race-zone race-zone--fluency">
+            <div class="race-zone-header">
+              <h3>AI Fluency</h3>
+              <p>Where we take you</p>
+            </div>
+            <div class="race-lane race-lane--counter" data-lane="counter">
+              <div class="race-lane-title">The Counter</div>
+              <ul class="race-items">
+                <li class="race-item" data-row="1"><span class="race-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span class="race-item-label">Knowledge of AI tools</span></li>
+                <li class="race-item" data-row="2"><span class="race-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span class="race-item-label">Ability to prompt and use AI</span></li>
+                <li class="race-item" data-row="3"><span class="race-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span class="race-item-label">Faster on existing tasks</span></li>
+                <li class="race-item" data-row="4"><span class="race-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span class="race-item-label">Applied to their actual role</span></li>
+                <li class="race-item" data-row="5"><span class="race-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span class="race-item-label">New ways of thinking and working</span></li>
+                <li class="race-item" data-row="6"><span class="race-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span class="race-item-label">Solutions that didn't exist before</span></li>
+                <li class="race-item" data-row="7"><span class="race-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span class="race-item-label">Capability that sticks and compounds</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT SECTION -->
+  <section class="what-section dark-section" id="what">
+    <div class="container">
+      <div class="reveal">
+        <p class="section-label">What is the Counter?</p>
+        <div class="what-inner">
+          <h2>A pop-up workspace inside <em>your</em> office.</h2>
+          <p class="what-description">We set up in your office for a few days. Individuals show up with a real problem they face in their work. Through the process, they learn to think and work with AI to diagnose their problem, build a working solution in hours, and leave not just with something they made themselves — but with the fluency and belief to keep working this way.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS SECTION -->
+  <section class="process light-section" id="process">
+    <div class="container">
+      <div class="process-header reveal">
+        <p class="section-label">The process</p>
+        <h2>How a Counter engagement works.</h2>
+        <p>From finding the right starting point to building capability that sticks.</p>
+      </div>
+
+      <div class="process-steps">
+        <div class="process-step-card active" data-step="1">
+          <iframe class="step-lottie" src="https://lottie.host/embed/ef9e36b1-d272-4da0-bf10-2f39cfcc86c7/jmFBjeCuYa.lottie" loading="lazy"></iframe>
+          <div class="step-card-content">
+            <div class="step-card-header">
+              <div class="step-card-number">01</div>
+              <span class="step-card-phase-tag">Discover</span>
+            </div>
+            <h3 class="step-card-title">We find the right starting point.</h3>
+            <p class="step-card-text">Before we arrive, we help you identify the people and problems that are the best fit for this experience. Specifically, those who have something they're working on right now that they wish was faster, better, or simply possible. It could be something for their team, their customers, or just themselves.</p>
+          </div>
+        </div>
+
+        <div class="process-step-card" data-step="2">
+          <iframe class="step-lottie" src="https://lottie.host/embed/4382fae2-809f-4745-ad1b-f84802c0bae2/B4XLBiDpIr.lottie" loading="lazy"></iframe>
+          <div class="step-card-content">
+            <div class="step-card-header">
+              <div class="step-card-number">02</div>
+              <span class="step-card-phase-tag">Build</span>
+            </div>
+            <h3 class="step-card-title">Your people come to The Counter and build.</h3>
+            <p class="step-card-text">In pre-scheduled sessions, individuals sit down with us and their problem. Working side by side, we help them develop AI fluency in real time — learning how to think with AI to diagnose what's really going on, explore a wide range of potential solutions, and build a working minimum viable product that they can take back and test immediately.</p>
+          </div>
+        </div>
+
+        <div class="process-step-card" data-step="3">
+          <iframe class="step-lottie" src="https://lottie.host/embed/b9f516be-efb9-479c-8800-824ea84d9540/zh8J4X3pqu.lottie" loading="lazy"></iframe>
+          <div class="step-card-content">
+            <div class="step-card-header">
+              <div class="step-card-number">03</div>
+              <span class="step-card-phase-tag">Real Work</span>
+            </div>
+            <h3 class="step-card-title">They take it back into the real work.</h3>
+            <p class="step-card-text">Between sessions, each person puts what they built to work — testing it against real data, real deadlines, and real colleagues. This is where the gap between a demo and a tool becomes obvious, and where the most valuable feedback comes from.</p>
+          </div>
+        </div>
+
+        <div class="process-step-card" data-step="4">
+          <iframe class="step-lottie" src="https://lottie.host/embed/de69013f-3c44-4962-a02d-2092ac0671e8/PZFM5tc4SJ.lottie" loading="lazy"></iframe>
+          <div class="step-card-content">
+            <div class="step-card-header">
+              <div class="step-card-number">04</div>
+              <span class="step-card-phase-tag">Iterate</span>
+            </div>
+            <h3 class="step-card-title">We iterate and sharpen together.</h3>
+            <p class="step-card-text">They come back with what worked, what didn't, and what they wish it could do next. We rebuild, extend, and refine — not just the tool, but how they think about solving problems with AI. Each cycle compounds their fluency.</p>
+          </div>
+        </div>
+
+        <div class="process-step-card" data-step="5">
+          <iframe class="step-lottie" src="https://lottie.host/embed/699ab7ac-1740-4d1b-9eda-778cac295022/BvnRC2YmR6.lottie" loading="lazy"></iframe>
+          <div class="step-card-content">
+            <div class="step-card-header">
+              <div class="step-card-number">05</div>
+              <span class="step-card-phase-tag">Evidence</span>
+            </div>
+            <h3 class="step-card-title">You leave with evidence, not a pitch deck.</h3>
+            <p class="step-card-text">Working tools your people built themselves. Increased fluency they can apply again tomorrow. And the proof — visible to leadership, peers, and the builders themselves — that this way of working is real and worth investing in further.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OUTCOMES SECTION -->
+  <section class="outcomes dark-section" id="outcomes">
+    <div class="container">
+      <div class="outcomes-header reveal">
+        <p class="section-label">This is what fluency looks like</p>
+        <h2>What you leave with.</h2>
+        <p>Evidence to build this capability further — not a slide deck about what could be.</p>
+      </div>
+
+      <div class="outcomes-grid reveal">
+        <div class="outcome-card">
+          <div class="outcome-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+          </div>
+          <h3>Functional Tools</h3>
+          <p>Working solutions they built themselves, designed for the problems they actually face.</p>
+        </div>
+
+        <div class="outcome-card">
+          <div class="outcome-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          </div>
+          <h3>Increased AI Fluency</h3>
+          <p>The ability to keep working with AI to solve problems and prototype solutions in hours.</p>
+        </div>
+
+        <div class="outcome-card">
+          <div class="outcome-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          </div>
+          <h3>Belief & Inspiration</h3>
+          <p>The conviction that this way of working is real — and the motivation to continue it day-to-day.</p>
+        </div>
+
+        <div class="outcome-card">
+          <div class="outcome-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          </div>
+          <h3>Evidence to Scale</h3>
+          <p>Documented feedback, reported results, and proof points to make the case for continued investment.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CASE STUDIES SECTION -->
+  <section class="case-studies light-section" id="case-studies">
+    <div class="container">
+      <div class="case-studies-header reveal">
+        <div class="cs-header-left">
+          <p class="section-label">Case studies</p>
+          <h2>What this looks like in practice.</h2>
+          <p>Real problems, real builds, real results.</p>
+        </div>
+        <div class="cs-tabs">
+          <button class="cs-tab active" data-cs="0">Materials R&D</button>
+          <button class="cs-tab" data-cs="1">Financial Services</button>
+          <button class="cs-tab" data-cs="2">Healthcare</button>
+        </div>
+      </div>
+
+      <!-- CASE STUDY 1: Materials R&D -->
+      <div class="reveal" id="cs-panel-0">
+        <div class="cs-carousel">
+          <div class="cs-intro">
+            <div class="cs-intro-text">
+              <p class="cs-intro-tag">Consumer Goods — R&D</p>
+              <h3>A senior materials scientist had ten years of data. She was only using a fraction of it.</h3>
+            </div>
+            <div class="cs-intro-meta">
+              <div class="cs-meta-item">
+                <div class="val">60%</div>
+                <div class="lbl">Time on analysis</div>
+              </div>
+              <div class="cs-meta-item">
+                <div class="val">Days</div>
+                <div class="lbl">Build time</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cs-slide-area" id="cs1-slides">
+            <div class="cs-visual">
+              <div class="cs-visual-slide active" data-slide="0">
+                <div class="cs-screen">
+                  <div class="cs-screen-bar">
+                    <div class="cs-dot r"></div><div class="cs-dot y"></div><div class="cs-dot g"></div>
+                    <div class="cs-screen-title">Absorb — Materials R&D Analysis Platform</div>
+                  </div>
+                  <div class="cs-screen-body">
+                    <div style="font-weight:700; margin-bottom:12px; color:#1a1a2e;">Absorb</div>
+                    <div style="font-size:0.75rem; color:#6b7280; margin-bottom:16px;">580 records loaded</div>
+                    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:16px;">
+                      <div style="background:#f5f5f5; padding:8px; border-radius:6px;"><div style="font-size:0.7rem; color:#6b7280;">Total Tests</div><div style="font-weight:700; color:#1a1a2e;">580</div></div>
+                      <div style="background:#f5f5f5; padding:8px; border-radius:6px;"><div style="font-size:0.7rem; color:#6b7280;">Test Cycles</div><div style="font-weight:700; color:#1a1a2e;">29</div></div>
+                      <div style="background:#f5f5f5; padding:8px; border-radius:6px;"><div style="font-size:0.7rem; color:#6b7280;">Date Range</div><div style="font-weight:700; color:#1a1a2e;">2022–2026</div></div>
+                    </div>
+                    <div style="height:60px; background:#f5f5f5; border-radius:6px; padding:8px; display:flex; align-items:flex-end; gap:2px;">
+                      <div style="flex:1; height:85%; background:#2d5aa0; border-radius:3px;"></div>
+                      <div style="flex:1; height:90%; background:#2d5aa0; border-radius:3px;"></div>
+                      <div style="flex:1; height:70%; background:#2d5aa0; border-radius:3px;"></div>
+                      <div style="flex:1; height:75%; background:#2d5aa0; border-radius:3px;"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cs-visual-slide" data-slide="1">
+                <div class="cs-screen">
+                  <div class="cs-screen-bar">
+                    <div class="cs-dot r"></div><div class="cs-dot y"></div><div class="cs-dot g"></div>
+                    <div class="cs-screen-title">Absorb — Correlations</div>
+                  </div>
+                  <div class="cs-screen-body" style="font-size:0.75rem;">
+                    <div style="background:#f5f5f5; padding:8px; border-radius:6px; margin-bottom:12px;"><strong>Analyzing:</strong> Absorption Speed</div>
+                    <div style="display:flex; flex-direction:column; gap:6px;">
+                      <div><div style="color:#6b7280;">Particle Size</div><div style="display:flex; align-items:center; gap:8px; margin-top:2px;"><div style="flex:1; height:6px; background:#e5e7eb; border-radius:3px; position:relative;"><div style="position:absolute; left:50%; width:35%; height:100%; background:#2d5aa0; border-radius:3px;"></div></div><span>r=+0.412</span></div></div>
+                      <div><div style="color:#6b7280;">Surfactant Level</div><div style="display:flex; align-items:center; gap:8px; margin-top:2px;"><div style="flex:1; height:6px; background:#e5e7eb; border-radius:3px; position:relative;"><div style="position:absolute; left:50%; width:22%; height:100%; background:#2d5aa0; border-radius:3px;"></div></div><span>r=+0.287</span></div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cs-visual-slide" data-slide="2">
+                <div class="cs-screen">
+                  <div class="cs-screen-bar">
+                    <div class="cs-dot r"></div><div class="cs-dot y"></div><div class="cs-dot g"></div>
+                    <div class="cs-screen-title">Absorb — What-If Lab</div>
+                  </div>
+                  <div class="cs-screen-body" style="font-size:0.75rem;">
+                    <div style="background:#f5f5f5; padding:8px; border-radius:6px; margin-bottom:12px;">
+                      <div style="font-weight:600; margin-bottom:8px;">Parameters</div>
+                      <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Particle Size</span><span>420 μm</span></div>
+                      <div style="height:4px; background:#e5e7eb; border-radius:2px; margin-bottom:8px;"><div style="width:55%; height:100%; background:#2d5aa0; border-radius:2px;"></div></div>
+                    </div>
+                    <div style="background:var(--celadon); color:var(--charcoal-blue); padding:8px; border-radius:6px; text-align:center; font-weight:600;">Save Scenario</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cs-visual-slide" data-slide="3">
+                <div class="cs-screen">
+                  <div class="cs-screen-bar">
+                    <div class="cs-dot r"></div><div class="cs-dot y"></div><div class="cs-dot g"></div>
+                    <div class="cs-screen-title">Absorb_Report_2026-Q3.pdf</div>
+                  </div>
+                  <div class="cs-screen-body" style="font-size:0.75rem;">
+                    <div style="font-weight:700; margin-bottom:4px;">Absorption Test Cycle Report</div>
+                    <div style="color:#6b7280; margin-bottom:12px;">Cycle 2026-Q3 | 22 combinations</div>
+                    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px;">
+                      <div><div style="color:#6b7280;">Speed</div><div style="font-weight:700; font-size:1rem;">9.32</div><div style="color:#1a8a7d;">+1.1%</div></div>
+                      <div><div style="color:#6b7280;">Capacity</div><div style="font-weight:700; font-size:1rem;">465</div><div style="color:#c44e52;">-3.4%</div></div>
+                      <div><div style="color:#6b7280;">Rewet</div><div style="font-weight:700; font-size:1rem;">3.05</div><div style="color:#1a8a7d;">-4.7%</div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cs-visual-slide" data-slide="4">
+                <div class="cs-shift">
+                  <div class="cs-shift-card before">
+                    <div class="cs-shift-label">Before</div>
+                    <div class="cs-shift-pct">60%</div>
+                    <div class="cs-shift-desc">of time spent on documentation, formatting, and manual analysis.</div>
+                  </div>
+                  <div class="cs-shift-card after">
+                    <div class="cs-shift-label">After</div>
+                    <div class="cs-shift-pct">Inverted</div>
+                    <div class="cs-shift-desc">Reporting happens in clicks. Analysis is live. The hypothesis backlog became a conversation with the data itself.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="cs-text">
+              <div class="cs-text-slide active" data-slide="0">
+                <p>01 — See the Patterns</p>
+                <h4>Ten years of test data, live and answering questions no one had time to ask.</h4>
+                <p>Years of results had been sitting in disconnected spreadsheets. The tool brings it all into one view — surfacing trends, flagging which material properties actually predict performance, and revealing relationships that were suspected but never verified.</p>
+              </div>
+              <div class="cs-text-slide" data-slide="1">
+                <p>02 — Find the Drivers</p>
+                <h4>Which variables actually matter? Now the answer is instant.</h4>
+                <p>Instead of manually running statistical comparisons one variable at a time, the tool surfaces which material properties most predict each performance outcome.</p>
+              </div>
+              <div class="cs-text-slide" data-slide="2">
+                <p>03 — Explore What's Next</p>
+                <h4>Test a hypothesis in seconds instead of scheduling a lab cycle.</h4>
+                <p>Dial in material parameters. The tool scans historical data for the closest matches and predicts performance with confidence ranges.</p>
+              </div>
+              <div class="cs-text-slide" data-slide="3">
+                <p>04 — Generate the Report</p>
+                <h4>The afternoon that used to disappear? Now it's a single click.</h4>
+                <p>Committee-ready reports with cycle performance against baseline, anomaly flagging, weighted composite rankings, and auto-generated observations.</p>
+              </div>
+              <div class="cs-text-slide" data-slide="4">
+                <p>The Shift</p>
+                <h4>Same scientist. Same data. Completely different week.</h4>
+                <p>The tool didn't add anything to the process. It removed everything that was between the expertise and the science.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="cs-nav">
+            <div class="cs-nav-arrows">
+              <button class="cs-arrow" id="cs1-prev" aria-label="Previous" disabled>←</button>
+              <button class="cs-arrow" id="cs1-next" aria-label="Next">→</button>
+            </div>
+            <div class="cs-dots" id="cs1-dots">
+              <button class="cs-dot-nav active" data-slide="0"></button>
+              <button class="cs-dot-nav" data-slide="1"></button>
+              <button class="cs-dot-nav" data-slide="2"></button>
+              <button class="cs-dot-nav" data-slide="3"></button>
+              <button class="cs-dot-nav" data-slide="4"></button>
+            </div>
+            <div class="cs-counter"><span id="cs1-current">1</span> / 5</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CASE STUDY 2: Financial Services -->
+      <div class="reveal" id="cs-panel-1" style="display:none;">
+        <div class="cs-carousel">
+          <div class="cs-intro">
+            <div class="cs-intro-text">
+              <p class="cs-intro-tag">Financial Services — Fraud & Disputes</p>
+              <h3>A senior dispute analyst could see every pattern. She just couldn't get them out fast enough.</h3>
+            </div>
+            <div class="cs-intro-meta">
+              <div class="cs-meta-item">
+                <div class="val">6–8 hrs</div>
+                <div class="lbl">Weekly report time</div>
+              </div>
+              <div class="cs-meta-item">
+                <div class="val">Days</div>
+                <div class="lbl">Build time</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cs-slide-area" id="cs2-slides">
+            <div class="cs-visual">
+              <div class="cs-visual-slide active" data-slide="0">
+                <div class="d-screen">
+                  <div class="d-screen-bar">
+                    <div class="d-dot r"></div><div class="d-dot y"></div><div class="d-dot g"></div>
+                    <div class="d-screen-title">Disputer — Dispute Analytics Platform</div>
+                  </div>
+                  <div class="d-screen-body">
+                    <div class="d-tabs">
+                      <button class="d-tab active">Overview</button>
+                      <button class="d-tab">Trends</button>
+                      <button class="d-tab">Cross-Reference</button>
+                      <button class="d-tab">WoW Delta</button>
+                      <button class="d-tab">Weekly Report</button>
+                    </div>
+                    <div class="d-kpi-row">
+                      <div class="d-kpi"><div class="d-kpi-label">Filtered Disputes</div><div class="d-kpi-value">2,341</div></div>
+                      <div class="d-kpi"><div class="d-kpi-label">Avg Amount</div><div class="d-kpi-value">$94</div></div>
+                      <div class="d-kpi"><div class="d-kpi-label">Avg Resolution</div><div class="d-kpi-value">18.3d</div></div>
+                      <div class="d-kpi"><div class="d-kpi-label">Cardholder Win</div><div class="d-kpi-value">71.2%</div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cs-visual-slide" data-slide="1">
+                <div class="d-screen">
+                  <div class="d-screen-bar">
+                    <div class="d-dot r"></div><div class="d-dot y"></div><div class="d-dot g"></div>
+                    <div class="d-screen-title">Disputer — Cross-Reference</div>
+                  </div>
+                  <div class="d-screen-body">
+                    <div class="d-tabs">
+                      <button class="d-tab">Overview</button>
+                      <button class="d-tab">Trends</button>
+                      <button class="d-tab active">Cross-Reference</button>
+                      <button class="d-tab">WoW Delta</button>
+                      <button class="d-tab">Weekly Report</button>
+                    </div>
+                    <table class="d-heatmap">
+                      <thead>
+                        <tr><th>Dispute Type</th><th>Online Retail</th><th>Digital / SaaS</th><th>Travel</th><th>Electronics</th></tr>
+                      </thead>
+                      <tbody>
+                        <tr><th>Unauthorized Txn</th><td class="d-heat-intensity-2 d-heat-cell">847</td><td class="d-heat-intensity-4 d-heat-cell">1,527</td><td class="d-heat-intensity-1 d-heat-cell">234</td><td class="d-heat-intensity-2 d-heat-cell">612</td></tr>
+                        <tr><th>Merch Not Received</th><td class="d-heat-intensity-3 d-heat-cell">1,203</td><td class="d-heat-intensity-2 d-heat-cell">456</td><td class="d-heat-intensity-3 d-heat-cell">892</td><td class="d-heat-intensity-2 d-heat-cell">645</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cs-visual-slide" data-slide="2">
+                <div class="d-screen">
+                  <div class="d-screen-bar">
+                    <div class="d-dot r"></div><div class="d-dot y"></div><div class="d-dot g"></div>
+                    <div class="d-screen-title">Disputer — WoW Delta</div>
+                  </div>
+                  <div class="d-screen-body">
+                    <div class="d-tabs">
+                      <button class="d-tab">Overview</button>
+                      <button class="d-tab">Trends</button>
+                      <button class="d-tab">Cross-Reference</button>
+                      <button class="d-tab active">WoW Delta</button>
+                      <button class="d-tab">Weekly Report</button>
+                    </div>
+                    <div class="d-kpi-row">
+                      <div class="d-kpi"><div class="d-kpi-label">Volume Change</div><div class="d-kpi-value" style="color: #22c55e;">+8.3%</div></div>
+                      <div class="d-kpi"><div class="d-kpi-label">Exposure Change</div><div class="d-kpi-value" style="color: #ef4444;">+12.1%</div></div>
+                      <div class="d-kpi"><div class="d-kpi-label">Resolution Speed</div><div class="d-kpi-value">21.4d</div></div>
+                      <div class="d-kpi"><div class="d-kpi-label">Cardholder Win</div><div class="d-kpi-value">69.8%</div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cs-visual-slide" data-slide="3">
+                <div class="d-screen">
+                  <div class="d-screen-bar">
+                    <div class="d-dot r"></div><div class="d-dot y"></div><div class="d-dot g"></div>
+                    <div class="d-screen-title">Disputer — Weekly Report</div>
+                  </div>
+                  <div class="d-screen-body">
+                    <div class="d-tabs">
+                      <button class="d-tab">Overview</button>
+                      <button class="d-tab">Trends</button>
+                      <button class="d-tab">Cross-Reference</button>
+                      <button class="d-tab">WoW Delta</button>
+                      <button class="d-tab active">Weekly Report</button>
+                    </div>
+                    <div style="font-weight: 700; margin-bottom: 8px;">Weekly Intelligence Report</div>
+                    <p style="font-size: 0.8rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 12px;">This week shows elevated unauthorized transaction activity concentrated in digital services. Exposure increased 12.1% driven by SaaS merchants.</p>
+                    <div style="background: rgba(239, 68, 68, 0.15); border-left: 3px solid #ef4444; padding: 8px; border-radius: 4px; font-size: 0.75rem; color: #fca5a5;">HIGH — Unauthorized Txn up 26% vs 4-week avg</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cs-visual-slide" data-slide="4">
+                <div class="cs-shift" style="background: #0f172a; grid-template-columns: 1fr 1fr;">
+                  <div class="cs-shift-card before" style="background: rgba(100, 116, 139, 0.15); border-color: rgba(100, 116, 139, 0.3); color: #cbd5e1;">
+                    <div class="cs-shift-label">Before</div>
+                    <div class="cs-shift-pct">6–8 hrs</div>
+                    <div class="cs-shift-desc">Every week pulling from three systems, rebuilding pivots, hand-calculating deltas.</div>
+                  </div>
+                  <div class="cs-shift-card after" style="background: rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.3); color: #93c5fd;">
+                    <div class="cs-shift-label">After</div>
+                    <div class="cs-shift-pct">Minutes</div>
+                    <div class="cs-shift-desc">Cross-references are instant. Filters reshape every metric at once. She edits instead of assembles.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="cs-text">
+              <div class="cs-text-slide active" data-slide="0">
+                <p>01 — Filter, Don't Dig</p>
+                <h4>Every metric recalculates the moment focus narrows.</h4>
+                <p>She used to maintain separate spreadsheet tabs for each dispute type, each merchant category. Now she taps a filter pill and the entire view reshapes — KPIs recalculate, trends update, charts reflow.</p>
+              </div>
+              <div class="cs-text-slide" data-slide="1">
+                <p>02 — Cross-Reference, Don't Pivot</p>
+                <h4>The two-hour pivot table, replaced by two clicks.</h4>
+                <p>Finding where disputes concentrate used to mean exporting to Excel. Now she picks any two dimensions and the intersection appears instantly.</p>
+              </div>
+              <div class="cs-text-slide" data-slide="2">
+                <p>03 — See What Changed</p>
+                <h4>The 'what happened this week' view, now instant.</h4>
+                <p>Every Monday morning she needed to know what moved. Now the WoW Delta view auto-sorts the deltas for her. The patterns that changed most rise to the top.</p>
+              </div>
+              <div class="cs-text-slide" data-slide="3">
+                <p>04 — Generate the Report</p>
+                <h4>The six-hour report, assembled in minutes.</h4>
+                <p>Her weekly report to leadership isn't just dashboards — it's intelligence. A narrative summary of patterns and changes, conditional alerts built in.</p>
+              </div>
+              <div class="cs-text-slide" data-slide="4">
+                <p>The Shift</p>
+                <h4>Same analyst. Same data. Completely different Monday.</h4>
+                <p>The tool didn't make her smarter — she already knew the patterns. It removed the hours of assembly standing between her expertise and her team's inbox.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="cs-nav">
+            <div class="cs-nav-arrows">
+              <button class="cs-arrow" id="cs2-prev" aria-label="Previous" disabled>←</button>
+              <button class="cs-arrow" id="cs2-next" aria-label="Next">→</button>
+            </div>
+            <div class="cs-dots" id="cs2-dots">
+              <button class="cs-dot-nav active" data-slide="0"></button>
+              <button class="cs-dot-nav" data-slide="1"></button>
+              <button class="cs-dot-nav" data-slide="2"></button>
+              <button class="cs-dot-nav" data-slide="3"></button>
+              <button class="cs-dot-nav" data-slide="4"></button>
+            </div>
+            <div class="cs-counter"><span id="cs2-current">1</span> / 5</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CASE STUDY 3: Healthcare -->
+      <div class="reveal" id="cs-panel-2" style="display:none;">
+        <div class="cs-carousel">
+          <div class="cs-intro">
+            <div class="cs-intro-text">
+              <p class="cs-intro-tag">Top-15 Pharma — Commercial Insights</p>
+              <h3>She had more patient data than ever. She could only look at it twice a year.</h3>
+            </div>
+            <div class="cs-intro-meta">
+              <div class="cs-meta-item">
+                <div class="val">75%</div>
+                <div class="lbl">Time on assembly</div>
+              </div>
+              <div class="cs-meta-item">
+                <div class="val">Days</div>
+                <div class="lbl">Build time</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cs-slide-area" id="cs3-slides">
+            <div class="cs-visual" style="background: #1a1828;">
+              <div class="cs-visual-slide active" data-slide="0">
+                <div class="pj-screen">
+                  <div class="pj-screen-bar">
+                    <div class="pj-bar-icon"></div>
+                    <div class="pj-bar-title">Journey Tracker — Patient Journey Dashboard</div>
+                    <div class="pj-win-controls"><div class="pj-win-btn">—</div><div class="pj-win-btn">□</div><div class="pj-win-btn">✕</div></div>
+                  </div>
+                  <div class="pj-screen-body">
+                    <div class="pj-tabs">
+                      <div class="pj-tab active">Journey Overview</div>
+                      <div class="pj-tab">Treatment Flow</div>
+                      <div class="pj-tab">Segments</div>
+                      <div class="pj-tab">Barriers</div>
+                      <div class="pj-tab">Brief</div>
+                    </div>
+                    <div class="pj-filter">Severity: <span>All</span> Insurance: <span>All</span> Region: <span>All</span><span class="count">2,400 / 2,400 patients</span></div>
+                    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:12px;">
+                      <div style="background:rgba(59,130,246,0.2); padding:8px; border-radius:6px;"><div style="font-size:0.7rem; color:#cbd5e1;">Median Dx Delay</div><div style="font-weight:700; color:#e4e2f0;">14mo</div></div>
+                      <div style="background:rgba(124,58,237,0.2); padding:8px; border-radius:6px;"><div style="font-size:0.7rem; color:#cbd5e1;">Dx → 1L</div><div style="font-weight:700; color:#e4e2f0;">4mo</div></div>
+                      <div style="background:rgba(20,184,166,0.2); padding:8px; border-radius:6px;"><div style="font-size:0.7rem; color:#cbd5e1;">Avg Satisfaction</div><div style="font-weight:700; color:#e4e2f0;">5.8</div></div>
+                      <div style="background:rgba(245,158,11,0.2); padding:8px; border-radius:6px;"><div style="font-size:0.7rem; color:#cbd5e1;">Avg Adherence</div><div style="font-weight:700; color:#e4e2f0;">68%</div></div>
+                    </div>
+                    <div style="font-size:0.75rem;">
+                      <div style="margin-bottom:6px;"><span style="color:#cbd5e1;">Diagnosed Patients</span><span style="float:right;">2,400 (100%)</span></div>
+                      <div style="height:6px; background:rgba(59,130,246,0.3); border-radius:3px; overflow:hidden; margin-bottom:12px;"><div style="height:100%; background:#3b82f6; width:100%;"></div></div>
+                      <div style="margin-bottom:6px;"><span style="color:#cbd5e1;">Started 1L Treatment</span><span style="float:right;">2,400 (100%)</span></div>
+                      <div style="height:6px; background:rgba(124,58,237,0.3); border-radius:3px; overflow:hidden; margin-bottom:12px;"><div style="height:100%; background:#7c3aed; width:100%;"></div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cs-visual-slide" data-slide="1">
+                <div class="pj-screen">
+                  <div class="pj-screen-bar">
+                    <div class="pj-bar-icon"></div>
+                    <div class="pj-bar-title">Journey Tracker — Treatment Flow</div>
+                    <div class="pj-win-controls"><div class="pj-win-btn">—</div><div class="pj-win-btn">□</div><div class="pj-win-btn">✕</div></div>
+                  </div>
+                  <div class="pj-screen-body">
+                    <div class="pj-tabs">
+                      <div class="pj-tab">Journey Overview</div>
+                      <div class="pj-tab active">Treatment Flow</div>
+                      <div class="pj-tab">Segments</div>
+                      <div class="pj-tab">Barriers</div>
+                      <div class="pj-tab">Brief</div>
+                    </div>
+                    <div class="pj-filter">Insurance: <span style="background:#3d3958; color:#a78bfa; border-color:#7c3aed; border:1px solid;">Medicaid</span> Severity: <span>All</span><span class="count">362 / 2,400 patients</span></div>
+                    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:12px; font-size:0.75rem;">
+                      <div><div style="color:#706c8a;">Advanced Tx</div><div style="font-weight:700; color:#e4e2f0;">46%</div></div>
+                      <div><div style="color:#706c8a;">Reached 3rd Line</div><div style="font-weight:700; color:#e4e2f0;">58</div></div>
+                      <div><div style="color:#706c8a;">Biosimilar 2L</div><div style="font-weight:700; color:#e4e2f0;">38%</div></div>
+                      <div><div style="color:#706c8a;">JAKi 2L</div><div style="font-weight:700; color:#e4e2f0;">8%</div></div>
+                    </div>
+                    <svg viewBox="0 0 400 100" style="width:100%; height:80px;">
+                      <line x1="30" y1="80" x2="370" y2="80" stroke="#302d45" stroke-width="0.5"/>
+                      <line x1="30" y1="15" x2="30" y2="80" stroke="#302d45" stroke-width="0.5"/>
+                      <text x="200" y="98" text-anchor="middle" font-size="6" fill="#706c8a">1st Line → 2nd Line Patient Flows</text>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cs-visual-slide" data-slide="2">
+                <div class="pj-screen">
+                  <div class="pj-screen-bar">
+                    <div class="pj-bar-icon"></div>
+                    <div class="pj-bar-title">Journey Tracker — Barriers & Adherence</div>
+                    <div class="pj-win-controls"><div class="pj-win-btn">—</div><div class="pj-win-btn">□</div><div class="pj-win-btn">✕</div></div>
+                  </div>
+                  <div class="pj-screen-body">
+                    <div class="pj-tabs">
+                      <div class="pj-tab">Journey Overview</div>
+                      <div class="pj-tab">Treatment Flow</div>
+                      <div class="pj-tab">Segments</div>
+                      <div class="pj-tab active">Barriers</div>
+                      <div class="pj-tab">Brief</div>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px; font-size:0.75rem;">
+                      <div style="border-top:2px solid #3b82f6; padding-top:8px;">
+                        <div style="font-weight:600; color:#e4e2f0; margin-bottom:4px;">Pre-Diagnosis</div>
+                        <div style="color:#cbd5e1;">Lack of education: 312</div>
+                      </div>
+                      <div style="border-top:2px solid #7c3aed; padding-top:8px;">
+                        <div style="font-weight:600; color:#e4e2f0; margin-bottom:4px;">Treatment Initiation</div>
+                        <div style="color:#cbd5e1;">Cost / copay: 487</div>
+                      </div>
+                      <div style="border-top:2px solid #14b8a6; padding-top:8px;">
+                        <div style="font-weight:600; color:#e4e2f0; margin-bottom:4px;">On-Therapy</div>
+                        <div style="color:#cbd5e1;">Side effect concerns: 389</div>
+                      </div>
+                      <div style="border-top:2px solid #f59e0b; padding-top:8px;">
+                        <div style="font-weight:600; color:#e4e2f0; margin-bottom:4px;">Switching</div>
+                        <div style="color:#cbd5e1;">Cost / copay: 298</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cs-visual-slide" data-slide="3">
+                <div class="pj-screen">
+                  <div class="pj-screen-bar">
+                    <div class="pj-bar-icon"></div>
+                    <div class="pj-bar-title">Journey Tracker — Journey Brief</div>
+                    <div class="pj-win-controls"><div class="pj-win-btn">—</div><div class="pj-win-btn">□</div><div class="pj-win-btn">✕</div></div>
+                  </div>
+                  <div class="pj-screen-body" style="font-size:0.7rem;">
+                    <div style="font-weight:700; color:#e4e2f0; margin-bottom:12px;">PATIENT JOURNEY INTELLIGENCE BRIEF</div>
+                    <div style="color:#706c8a; margin-bottom:12px;">[FILTERED] Franchise • Filtered: 87 of 2,400 patients</div>
+                    <div style="border-bottom:1px solid #302d45; padding-bottom:8px; margin-bottom:8px;">
+                      <div style="font-weight:600; color:#e4e2f0; margin-bottom:4px;">Executive Summary</div>
+                      <div style="color:#cbd5e1; line-height:1.5;">Analysis of <strong>87 patient journeys</strong> reveals median diagnosis delay of <strong style="color:#7c3aed;">18 months</strong>. <strong>41%</strong> progress to advanced therapy.</div>
+                    </div>
+                    <div style="border-bottom:1px solid #302d45; padding-bottom:8px;">
+                      <div style="font-weight:600; color:#e4e2f0; margin-bottom:4px;">Key Findings</div>
+                      <div style="color:#cbd5e1;"><strong>1. Diagnosis Bottleneck.</strong> PCP → Referral averaging 11.2 months.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cs-visual-slide" data-slide="4">
+                <div class="cs-shift" style="background: #1a1828;">
+                  <div class="cs-shift-card before" style="background: rgba(100, 116, 139, 0.15); border-color: rgba(100, 116, 139, 0.3); color: #cbd5e1;">
+                    <div class="cs-shift-label">Before</div>
+                    <div class="cs-shift-pct">6–8 wks</div>
+                    <div class="cs-shift-desc">to produce the Patient Journey Landscape. 75% on data assembly. The interpretation compressed into final weeks.</div>
+                  </div>
+                  <div class="cs-shift-card after" style="background: rgba(167, 139, 250, 0.15); border-color: rgba(167, 139, 250, 0.3); color: #d8b4fe;">
+                    <div class="cs-shift-label">After</div>
+                    <div class="cs-shift-pct">Live</div>
+                    <div class="cs-shift-desc">The journey is always on. Any stakeholder can filter to their population. She spends time on hypotheses, not histograms.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="cs-text">
+              <div class="cs-text-slide active" data-slide="0">
+                <p>01 — See the Full Journey</p>
+                <h4>The biannual snapshot became a living, filterable funnel — with trend lines.</h4>
+                <p>The entire patient journey — diagnosis through treatment through long-term management — is now a live funnel she can slice by severity, insurance, region. Conversion rates between stages update instantly.</p>
+              </div>
+              <div class="cs-text-slide" data-slide="1">
+                <p>02 — Map the Treatment Flows</p>
+                <h4>Not just what patients are on — but where they came from and why they moved.</h4>
+                <p>Treatment sequencing used to be two separate bar charts. Now she sees actual patient flows — which first-line therapies feed into which advanced therapies, how thick each pathway is.</p>
+              </div>
+              <div class="cs-text-slide" data-slide="2">
+                <p>03 — See Where Patients Fall Off</p>
+                <h4>Barriers mapped to the stage where they actually matter.</h4>
+                <p>Every barrier is mapped to the journey stage where it causes the drop-off. Adherence isn't a single average anymore: it's a 12-month decay curve, segmented by insurance type.</p>
+              </div>
+              <div class="cs-text-slide" data-slide="3">
+                <p>04 — Generate the Brief</p>
+                <h4>The 50-slide deck she used to build by hand now writes itself.</h4>
+                <p>The Journey Brief recalculates in real time based on whatever filters are active. Filter to Medicaid patients in the Southeast and the brief rewrites itself: different bottleneck, different segment breakdown.</p>
+              </div>
+              <div class="cs-text-slide" data-slide="4">
+                <p>The Shift</p>
+                <h4>Same analyst. Same data sources. Completely different operating rhythm.</h4>
+                <p>The tool didn't give her new data. It removed the six weeks of assembly that stood between her and the interpretation only she could provide.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="cs-nav">
+            <div class="cs-nav-arrows">
+              <button class="cs-arrow" id="cs3-prev" aria-label="Previous" disabled>←</button>
+              <button class="cs-arrow" id="cs3-next" aria-label="Next">→</button>
+            </div>
+            <div class="cs-dots" id="cs3-dots">
+              <button class="cs-dot-nav active" data-slide="0"></button>
+              <button class="cs-dot-nav" data-slide="1"></button>
+              <button class="cs-dot-nav" data-slide="2"></button>
+              <button class="cs-dot-nav" data-slide="3"></button>
+              <button class="cs-dot-nav" data-slide="4"></button>
+            </div>
+            <div class="cs-counter"><span id="cs3-current">1</span> / 5</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT SECTION -->
+  <section class="about light-section" id="about">
+    <div class="container">
+      <div class="about-inner">
+        <div class="reveal">
+          <p class="section-label">Who we are</p>
+          <h2>Two people tired of watching AI workshops fail.</h2>
+          <p>We've spent years watching companies spend millions on AI initiatives that go nowhere. Workshops don't stick. Strategy decks don't ship. The only thing that works is sitting with people, showing them what's possible with the problems they actually face every day.</p>
+          <p>That's The Counter. It's not rocket science, but it works because it starts with what real people need.</p>
+        </div>
+        <div class="about-people reveal">
+          <div class="about-person">
+            <div class="about-person-photo">Photo</div>
+            <div class="about-person-info">
+              <h4>Drew Castellaw</h4>
+              <p>Leads the engagements, builds the prototypes, and works directly with your teams. Background in building AI-powered tools for enterprise clients.</p>
+            </div>
+          </div>
+          <div class="about-person">
+            <div class="about-person-photo">Photo</div>
+            <div class="about-person-info">
+              <h4>[Partner Name]</h4>
+              <p>Handles the relationship side — scoping, alignment with leadership, making sure the engagement connects to business priorities.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA SECTION -->
+  <section class="cta dark-section" id="contact">
+    <div class="container">
+      <div class="reveal">
+        <h2>Ready to see what your team can actually do with AI?</h2>
+        <p>Tell us about your team and what you're working with. We'll have a plan back to you within a week. No commitment, no 40-page proposal.</p>
+        <a href="mailto:drew@castellawconsulting.com" class="btn btn-primary">Start a Conversation →</a>
+      </div>
+      <div class="cta-footer">
+        <p>&copy; 2026 Rewire</p>
+        <a href="#hero">Back to Top</a>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Scroll Progress Bar
+    window.addEventListener('scroll', () => {
+      const scrollPercentage = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+      document.querySelector('.scroll-progress').style.width = scrollPercentage + '%';
+    });
+
+    // Navigation scroll effect
+    const nav = document.querySelector('nav');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    });
+
+    // Waypoint dots
+    const sections = document.querySelectorAll('section[id]');
+    const dots = document.querySelectorAll('.waypoint-dot');
+
+    const updateActiveDot = () => {
+      let currentSection = 0;
+      sections.forEach((section, index) => {
+        const rect = section.getBoundingClientRect();
+        if (rect.top <= window.innerHeight / 2) {
+          currentSection = index;
+        }
+      });
+
+      dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentSection);
+      });
+    };
+
+    window.addEventListener('scroll', updateActiveDot);
+
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        sections[index].scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+    // Hero counter animation
+    function animateCounters() {
+      const spendingEl = document.getElementById('spending-counter');
+      const usageEl = document.getElementById('usage-counter');
+      if (!spendingEl || !usageEl) return;
+
+      function formatSpending(valInBillions) {
+        if (valInBillions >= 1000) {
+          return '$' + (valInBillions / 1000).toFixed(2) + 'T';
+        }
+        return '$' + valInBillions.toFixed(0) + 'B';
+      }
+
+      const spendingStartB = 2500;
+      const usageStart = 5.0;
+      const countUpDuration = 3500;
+      const startTime = performance.now();
+
+      function countUp(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / countUpDuration, 1);
+
+        const spendingEase = 1 - Math.pow(1 - progress, 2);
+        const spendingVal = spendingEase * spendingStartB;
+        spendingEl.textContent = formatSpending(spendingVal);
+
+        const usageEase = 1 - Math.pow(1 - progress, 4);
+        const usageVal = usageEase * usageStart;
+        usageEl.textContent = usageVal.toFixed(1) + '%';
+
+        if (progress < 1) {
+          requestAnimationFrame(countUp);
+        } else {
+          startEndlessTick();
+        }
+      }
+
+      function startEndlessTick() {
+        let spendingB = spendingStartB;
+        let usage = usageStart;
+        const spendingPerFrame = 0.014;
+        const usagePerFrame = 0.1 / (50 / spendingPerFrame);
+        let lastTime = performance.now();
+
+        function tick(now) {
+          const delta = (now - lastTime) / (1000 / 60);
+          lastTime = now;
+          spendingB += spendingPerFrame * delta;
+          usage += usagePerFrame * delta;
+          spendingEl.textContent = formatSpending(spendingB);
+          usageEl.textContent = usage.toFixed(1) + '%';
+          requestAnimationFrame(tick);
+        }
+
+        requestAnimationFrame(tick);
+      }
+
+      setTimeout(() => requestAnimationFrame(countUp), 800);
+    }
+
+    animateCounters();
+
+    // Fade out Spline fallback gradient once the 3D scene loads
+    const splineViewer = document.querySelector('.hero-spline spline-viewer');
+    if (splineViewer) {
+      splineViewer.addEventListener('load', () => {
+        const fallback = document.querySelector('.hero-spline-fallback');
+        if (fallback) fallback.style.opacity = '0';
+      });
+      // Safety timeout: hide fallback after 8 seconds regardless
+      setTimeout(() => {
+        const fallback = document.querySelector('.hero-spline-fallback');
+        if (fallback) fallback.style.opacity = '0';
+      }, 8000);
+    }
+
+    // Reveal animations
+    const reveals = document.querySelectorAll('.reveal');
+    reveals.forEach(el => {
+      gsap.to(el, {
+        scrollTrigger: {
+          trigger: el,
+          onEnter: () => el.classList.add('visible'),
+          once: true,
+          markers: false
+        }
+      });
+    });
+
+    // Process section: scroll-driven card activation
+    (function() {
+      const stepCards = document.querySelectorAll('.process-step-card');
+
+      stepCards.forEach((card) => {
+        ScrollTrigger.create({
+          trigger: card,
+          start: 'top 65%',
+          end: 'bottom 35%',
+          onEnter: () => {
+            stepCards.forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+          },
+          onEnterBack: () => {
+            stepCards.forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+          }
+        });
+      });
+    })();
+
+    // Race comparison — auto-play animation triggered on scroll-enter
+    (function() {
+      const compare = document.getElementById('raceCompare');
+      if (!compare) return;
+
+      let hasPlayed = false;
+      const counterLane = compare.querySelector('.race-lane--counter');
+      const barriers = compare.querySelectorAll('.race-lane:not(.race-lane--counter) .race-barrier');
+
+      function playRace() {
+        if (hasPlayed) return;
+        hasPlayed = true;
+
+        const delay = 300; // ms between each checkoff
+
+        // Phase 1: Check off literacy rows 1–3 across ALL lanes
+        for (let row = 1; row <= 3; row++) {
+          const items = compare.querySelectorAll(`.race-item[data-row="${row}"]`);
+          setTimeout(() => {
+            items.forEach(el => el.classList.add('checked'));
+          }, row * delay);
+        }
+
+        // Phase 2: Barriers hit on the literacy lanes (after row 3)
+        const barrierTime = 3 * delay + 400;
+        setTimeout(() => {
+          barriers.forEach(b => {
+            b.classList.add('hit');
+          });
+        }, barrierTime);
+
+        // Phase 3: Counter keeps going — rows 4–7
+        for (let row = 4; row <= 7; row++) {
+          const item = counterLane.querySelector(`.race-item[data-row="${row}"]`);
+          if (!item) continue;
+          setTimeout(() => {
+            item.classList.add('checked');
+          }, barrierTime + (row - 3) * delay);
+        }
+      }
+
+      ScrollTrigger.create({
+        trigger: compare,
+        start: 'top 55%',
+        once: true,
+        onEnter: playRace,
+      });
+    })();
+
+    // Case study carousels
+    function setupCarousel(prefix, totalSlides) {
+      let current = 0;
+      const visuals = document.querySelectorAll(`#${prefix}-slides .cs-visual-slide`);
+      const texts = document.querySelectorAll(`#${prefix}-slides .cs-text-slide`);
+      const dots = document.querySelectorAll(`#${prefix}-dots .cs-dot-nav`);
+      const prevBtn = document.getElementById(`${prefix}-prev`);
+      const nextBtn = document.getElementById(`${prefix}-next`);
+      const counterEl = document.getElementById(`${prefix}-current`);
+
+      if (!prevBtn || !nextBtn) return;
+
+      function goTo(idx) {
+        if (idx < 0 || idx >= totalSlides) return;
+        current = idx;
+
+        visuals.forEach((el, i) => el.classList.toggle('active', i === current));
+        texts.forEach((el, i) => el.classList.toggle('active', i === current));
+        dots.forEach((el, i) => el.classList.toggle('active', i === current));
+
+        prevBtn.disabled = current === 0;
+        nextBtn.disabled = current === totalSlides - 1;
+        counterEl.textContent = current + 1;
+      }
+
+      prevBtn.addEventListener('click', () => goTo(current - 1));
+      nextBtn.addEventListener('click', () => goTo(current + 1));
+      dots.forEach(dot => {
+        dot.addEventListener('click', () => goTo(parseInt(dot.dataset.slide)));
+      });
+
+      goTo(0);
+    }
+
+    setupCarousel('cs1', 5);
+    setupCarousel('cs2', 5);
+    setupCarousel('cs3', 5);
+
+    // Case study tab switching
+    const tabs = document.querySelectorAll('.cs-tab');
+    const panels = [
+      document.getElementById('cs-panel-0'),
+      document.getElementById('cs-panel-1'),
+      document.getElementById('cs-panel-2')
+    ];
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const idx = parseInt(tab.dataset.cs);
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        panels.forEach((p, i) => {
+          if (p) p.style.display = i === idx ? '' : 'none';
+        });
+      });
+    });
+  </script>
+</body>
+</html>

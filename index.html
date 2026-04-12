@@ -1,0 +1,2774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rewire | People-First AI Transformation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ========== RESET & BASE ========== */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --black: #0a0a0a;
+  --white: #fafafa;
+  --gray-50: #f7f7f8;
+  --gray-100: #ececee;
+  --gray-200: #d4d4d8;
+  --gray-300: #a1a1aa;
+  --gray-400: #71717a;
+  --gray-500: #52525b;
+  --gray-600: #3f3f46;
+  --gray-700: #27272a;
+  --gray-800: #18181b;
+  --accent: #2563eb;
+  --accent-light: #3b82f6;
+  --accent-glow: rgba(37, 99, 235, 0.12);
+  --warm: #f59e0b;
+  --warm-glow: rgba(245, 158, 11, 0.10);
+  --cream: #fdf8f0;
+  --cream-deep: #f5ead6;
+  --warm-amber: #b45309;
+  --warm-light: #d97706;
+  --warm-bright: #f59e0b;
+  --warm-glow-amber: rgba(180, 83, 9, 0.08);
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--gray-700);
+  background: var(--white);
+  line-height: 1.7;
+  overflow-x: hidden;
+  transition: background 0.3s ease;
+}
+
+body.page-counter-active {
+  background: var(--cream);
+}
+
+/* ========== UTILITY ========== */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 clamp(24px, 5vw, 80px);
+}
+
+.container--narrow {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 clamp(24px, 5vw, 80px);
+}
+
+/* ========== SCROLL ANIMATIONS ========== */
+.reveal {
+  opacity: 0;
+  transform: translateY(48px);
+  transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1), transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-60px);
+  transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1), transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(60px);
+  transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1), transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 1s cubic-bezier(0.22, 1, 0.36, 1), transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal-scale.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.stagger-1 { transition-delay: 0.1s; }
+.stagger-2 { transition-delay: 0.2s; }
+.stagger-3 { transition-delay: 0.3s; }
+.stagger-4 { transition-delay: 0.4s; }
+.stagger-5 { transition-delay: 0.5s; }
+
+/* ========== PAGE SWITCHING ========== */
+.page-view {
+  display: none;
+}
+
+.page-view.active {
+  display: block;
+}
+
+/* ========== NAVIGATION ========== */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 20px 0;
+  transition: all 0.4s ease;
+  background: transparent;
+}
+
+nav.scrolled {
+  background: rgba(250, 250, 250, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 14px 0;
+}
+
+nav.hero-dark {
+  background: transparent;
+  border-bottom: none;
+}
+
+nav.hero-dark .nav-logo {
+  color: var(--white);
+}
+
+nav.hero-dark .nav-links a {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+nav.hero-dark .nav-links a:hover {
+  color: var(--white);
+}
+
+nav.hero-dark .nav-links .active {
+  color: var(--accent-light);
+}
+
+nav.hero-dark .nav-separator {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+nav.page-counter-active {
+  background: rgba(253, 248, 240, 0.88);
+  border-bottom: 1px solid rgba(180, 83, 9, 0.08);
+}
+
+nav.page-counter-active.scrolled {
+  background: rgba(253, 248, 240, 0.95);
+}
+
+nav .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-logo {
+  font-weight: 800;
+  font-size: 1.15rem;
+  letter-spacing: -0.03em;
+  color: var(--black);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.nav-logo span {
+  color: var(--accent);
+}
+
+nav.page-counter-active .nav-logo span {
+  color: var(--warm-amber);
+}
+
+.nav-logo:hover {
+  opacity: 0.8;
+}
+
+.nav-links {
+  display: flex;
+  gap: 36px;
+  align-items: center;
+  list-style: none;
+}
+
+.nav-links a {
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--gray-500);
+  transition: color 0.3s ease;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+}
+
+.nav-links a:hover {
+  color: var(--black);
+}
+
+nav.page-counter-active .nav-links a:hover {
+  color: var(--warm-amber);
+}
+
+.nav-links .active {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+nav.page-counter-active .nav-links .active {
+  color: var(--warm-amber) !important;
+}
+
+.nav-cta {
+  background: var(--black);
+  color: var(--white) !important;
+  padding: 10px 24px;
+  border-radius: 100px;
+  font-size: 0.85rem !important;
+  transition: all 0.3s ease !important;
+  border: none;
+  cursor: pointer;
+}
+
+.nav-cta:hover {
+  background: var(--gray-700);
+  transform: translateY(-1px);
+}
+
+nav.page-counter-active .nav-cta {
+  background: var(--warm-amber);
+}
+
+nav.page-counter-active .nav-cta:hover {
+  background: var(--warm-light);
+}
+
+.nav-separator {
+  width: 1px;
+  height: 24px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+nav.page-counter-active .nav-separator {
+  background: rgba(180, 83, 9, 0.2);
+}
+
+.nav-sublinks {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+}
+
+/* ========== ANIMATED HERO ========== */
+.hero-scroll-space {
+  height: 300vh;
+  position: relative;
+}
+
+.hero-sticky {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--black);
+}
+
+#heroNetwork {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.hero-headlines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 10;
+}
+
+.hero-hl {
+  position: absolute;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  padding: 0 clamp(24px, 6vw, 80px);
+  width: 100%;
+  pointer-events: none;
+}
+
+.hero-hl.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.hero-eyebrow-anim {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-light);
+  margin-bottom: 24px;
+}
+
+.hero-hl h1 {
+  font-family: var(--font-sans);
+  font-size: clamp(2.6rem, 6vw, 5rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.06;
+  color: var(--white);
+  max-width: 850px;
+  margin: 0 auto 20px;
+}
+
+.hero-hl h1 em {
+  font-style: normal;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  background: linear-gradient(135deg, var(--accent-light), #818cf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Finale brand mark */
+.hero-brand-mark {
+  font-family: var(--font-sans);
+  font-size: clamp(4rem, 10vw, 8rem);
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  color: var(--white);
+  line-height: 1;
+  margin-bottom: 20px;
+}
+
+.hero-brand-mark span {
+  color: var(--accent-light);
+}
+
+.hero-brand-sub {
+  font-size: clamp(1rem, 2vw, 1.35rem);
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--gray-300);
+  max-width: 520px;
+  margin: 0 auto 36px;
+}
+
+.hero-hl-cta {
+  margin-top: 8px;
+  pointer-events: auto;
+}
+
+.hero-anim-btn {
+  opacity: 0.9;
+}
+
+/* ========== COUNTER PAGE HERO (static) ========== */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  background: var(--black);
+  color: var(--white);
+}
+
+.hero .container {
+  position: relative;
+  z-index: 2;
+  padding-top: 140px;
+  padding-bottom: 100px;
+}
+
+.hero h1 {
+  font-family: var(--font-sans);
+  font-size: clamp(3rem, 6.5vw, 5.5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  max-width: 900px;
+  margin-bottom: 36px;
+}
+
+.hero h1 em {
+  font-style: normal;
+  background: linear-gradient(135deg, var(--accent-light), #818cf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-sub {
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--gray-300);
+  max-width: 620px;
+  margin-bottom: 48px;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent);
+  color: var(--white);
+  padding: 16px 36px;
+  border-radius: 100px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: var(--accent-light);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(37, 99, 235, 0.3);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--gray-300);
+  padding: 16px 24px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: 1px solid var(--gray-600);
+  border-radius: 100px;
+}
+
+.btn-secondary:hover {
+  color: var(--white);
+  border-color: var(--gray-400);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ========== TENSION SECTION ========== */
+.tension {
+  padding: 160px 0 140px;
+  background: var(--white);
+}
+
+.tension-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 24px;
+}
+
+.tension h2 {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+  color: var(--black);
+  max-width: 800px;
+  margin-bottom: 48px;
+}
+
+.tension-body {
+  font-size: 1.15rem;
+  line-height: 1.8;
+  color: var(--gray-500);
+  max-width: 680px;
+  margin-bottom: 64px;
+}
+
+.tension-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 48px;
+  padding-top: 64px;
+  border-top: 1px solid var(--gray-100);
+}
+
+.stat {
+  text-align: left;
+}
+
+.stat-number {
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: var(--black);
+  line-height: 1;
+  margin-bottom: 12px;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: var(--gray-400);
+  line-height: 1.5;
+}
+
+/* ========== TWO PATHS ========== */
+.paths {
+  padding: 140px 0;
+  background: var(--gray-50);
+}
+
+.paths-header {
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+.paths-header h2 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  color: var(--black);
+  margin-bottom: 20px;
+}
+
+.paths-header p {
+  font-size: 1.15rem;
+  color: var(--gray-400);
+  max-width: 580px;
+  margin: 0 auto;
+}
+
+.paths-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.path-card {
+  padding: 56px 48px;
+  border-radius: 24px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.4s ease;
+}
+
+.path-card:hover {
+  transform: translateY(-4px);
+}
+
+.path-card--old {
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+}
+
+.path-card--new {
+  background: var(--black);
+  color: var(--white);
+}
+
+.path-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 6px 16px;
+  border-radius: 100px;
+  margin-bottom: 32px;
+}
+
+.path-card--old .path-tag {
+  background: var(--gray-100);
+  color: var(--gray-500);
+}
+
+.path-card--new .path-tag {
+  background: rgba(37, 99, 235, 0.2);
+  color: var(--accent-light);
+}
+
+.path-card h3 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  margin-bottom: 20px;
+}
+
+.path-card--old h3 { color: var(--gray-700); }
+.path-card--new h3 { color: var(--white); }
+
+.path-card p {
+  font-size: 1rem;
+  line-height: 1.75;
+  margin-bottom: 32px;
+}
+
+.path-card--old p { color: var(--gray-400); }
+.path-card--new p { color: var(--gray-300); }
+
+.path-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.path-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.path-card--old .path-list li { color: var(--gray-500); }
+.path-card--new .path-list li { color: var(--gray-200); }
+
+.path-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  margin-top: 2px;
+}
+
+.path-card--old .path-icon {
+  background: var(--gray-100);
+  color: var(--gray-400);
+}
+
+.path-card--new .path-icon {
+  background: rgba(37, 99, 235, 0.25);
+  color: var(--accent-light);
+}
+
+/* ========== PHILOSOPHY (BIG QUOTE) ========== */
+.philosophy {
+  padding: 180px 0;
+  background: var(--white);
+  position: relative;
+}
+
+.philosophy-inner {
+  text-align: center;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.philosophy blockquote {
+  font-family: var(--font-serif);
+  font-size: clamp(1.8rem, 3.5vw, 3rem);
+  font-weight: 400;
+  line-height: 1.35;
+  color: var(--black);
+  letter-spacing: -0.02em;
+  position: relative;
+}
+
+.philosophy blockquote::before {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 3px;
+  background: var(--accent);
+  margin: 0 auto 48px;
+}
+
+.philosophy cite {
+  display: block;
+  margin-top: 40px;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-style: normal;
+  font-weight: 500;
+  color: var(--gray-400);
+  letter-spacing: 0;
+}
+
+/* ========== APPROACH / HOW WE WORK ========== */
+.approach {
+  padding: 140px 0;
+  background: var(--gray-50);
+}
+
+.approach-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 24px;
+}
+
+.approach h2 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  color: var(--black);
+  max-width: 700px;
+  margin-bottom: 24px;
+}
+
+.approach-intro {
+  font-size: 1.15rem;
+  color: var(--gray-400);
+  max-width: 620px;
+  line-height: 1.75;
+  margin-bottom: 80px;
+}
+
+.approach-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+}
+
+.step {
+  position: relative;
+}
+
+.step-number {
+  font-size: 4rem;
+  font-weight: 900;
+  color: var(--gray-100);
+  line-height: 1;
+  margin-bottom: 20px;
+  letter-spacing: -0.04em;
+}
+
+.step h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 14px;
+  letter-spacing: -0.02em;
+}
+
+.step p {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--gray-400);
+}
+
+/* ========== WHAT CHANGES ========== */
+.outcomes {
+  padding: 160px 0;
+  background: var(--black);
+  color: var(--white);
+  position: relative;
+  overflow: hidden;
+}
+
+.outcomes::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(37, 99, 235, 0.06) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 50%, rgba(245, 158, 11, 0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.outcomes .container { position: relative; z-index: 2; }
+
+.outcomes-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent-light);
+  margin-bottom: 24px;
+}
+
+.outcomes-header h2 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  color: var(--white);
+  max-width: 700px;
+  margin: 0 auto 20px;
+}
+
+.outcomes-header p {
+  font-size: 1.1rem;
+  color: var(--gray-300);
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.outcomes-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.outcome-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 44px 40px;
+  transition: all 0.4s ease;
+}
+
+.outcome-card:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-4px);
+}
+
+.outcome-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: rgba(37, 99, 235, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  margin-bottom: 24px;
+}
+
+.outcome-card h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+
+.outcome-card p {
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--gray-300);
+}
+
+/* ========== STORY / PROOF ========== */
+.story {
+  padding: 160px 0;
+  background: var(--white);
+}
+
+.story-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.story-visual {
+  position: relative;
+}
+
+.story-card {
+  background: var(--gray-50);
+  border-radius: 24px;
+  padding: 48px;
+  position: relative;
+  overflow: hidden;
+}
+
+.story-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent), var(--warm));
+}
+
+.story-metric {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.story-metric-number {
+  font-size: 4rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--black);
+}
+
+.story-metric-unit {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.story-metric-label {
+  font-size: 0.85rem;
+  color: var(--gray-400);
+  margin-bottom: 32px;
+}
+
+.story-detail {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--gray-500);
+  padding-top: 24px;
+  border-top: 1px solid var(--gray-200);
+}
+
+.story-content-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--warm);
+  margin-bottom: 24px;
+}
+
+.story-content h2 {
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  color: var(--black);
+  line-height: 1.2;
+  margin-bottom: 28px;
+}
+
+.story-content p {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--gray-500);
+  margin-bottom: 20px;
+}
+
+.story-content p strong {
+  color: var(--gray-700);
+  font-weight: 600;
+}
+
+.story-pullquote {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  font-style: italic;
+  color: var(--gray-600);
+  line-height: 1.6;
+  padding: 24px 0 24px 24px;
+  border-left: 3px solid var(--accent);
+  margin: 32px 0;
+}
+
+/* ========== WHO THIS IS FOR ========== */
+.audience {
+  padding: 140px 0;
+  background: var(--gray-50);
+}
+
+.audience-header {
+  margin-bottom: 64px;
+}
+
+.audience-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 24px;
+}
+
+.audience-header h2 {
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  color: var(--black);
+  max-width: 600px;
+}
+
+.audience-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.audience-card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 44px 36px;
+  border: 1px solid var(--gray-100);
+  transition: all 0.4s ease;
+}
+
+.audience-card:hover {
+  border-color: var(--gray-200);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+  transform: translateY(-4px);
+}
+
+.audience-card-icon {
+  font-size: 1.8rem;
+  margin-bottom: 24px;
+}
+
+.audience-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+
+.audience-card p {
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--gray-400);
+}
+
+/* ========== CTA ========== */
+.cta {
+  padding: 160px 0;
+  background: var(--black);
+  color: var(--white);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.1) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.cta .container {
+  position: relative;
+  z-index: 2;
+}
+
+.cta h2 {
+  font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  margin-bottom: 24px;
+}
+
+.cta p {
+  font-size: 1.15rem;
+  color: var(--gray-300);
+  max-width: 520px;
+  margin: 0 auto 48px;
+  line-height: 1.7;
+}
+
+.cta .btn-primary {
+  font-size: 1.05rem;
+  padding: 18px 44px;
+}
+
+/* ========== FOOTER ========== */
+footer {
+  padding: 48px 0;
+  background: var(--gray-800);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+footer .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+footer p {
+  font-size: 0.8rem;
+  color: var(--gray-400);
+}
+
+footer a {
+  color: var(--gray-300);
+  text-decoration: none;
+  font-size: 0.8rem;
+  transition: color 0.3s;
+}
+
+footer a:hover {
+  color: var(--white);
+}
+
+/* ========== COUNTER PAGE STYLES ========== */
+
+/* COUNTER HERO */
+.page-counter .hero {
+  background: var(--cream);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.page-counter .hero::before {
+  display: none;
+}
+
+.page-counter .hero::after {
+  display: none;
+}
+
+.hero-orb {
+  position: absolute;
+  right: -8%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 55vw;
+  height: 55vw;
+  max-width: 700px;
+  max-height: 700px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.10) 0%, rgba(180, 83, 9, 0.03) 50%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-orb-inner {
+  position: absolute;
+  right: 5%;
+  top: 50%;
+  transform: translateY(-45%);
+  width: 30vw;
+  height: 30vw;
+  max-width: 380px;
+  max-height: 380px;
+  border-radius: 50%;
+  border: 1px solid rgba(180, 83, 9, 0.08);
+  pointer-events: none;
+}
+
+.page-counter .hero .container {
+  position: relative;
+  z-index: 2;
+  padding-top: 160px;
+  padding-bottom: 120px;
+  max-width: 720px;
+  margin-left: clamp(24px, 8vw, 120px);
+}
+
+.hero-tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--warm-amber);
+  margin-bottom: 32px;
+  position: relative;
+  padding-left: 20px;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.2s forwards;
+}
+
+.hero-tag::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--warm-bright);
+  animation: gentlePulse 3s infinite;
+}
+
+@keyframes gentlePulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+.page-counter .hero h1 {
+  font-size: clamp(2.8rem, 5.5vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.06;
+  letter-spacing: -0.04em;
+  color: var(--black);
+  margin-bottom: 28px;
+}
+
+.page-counter .hero h1 em {
+  font-style: normal;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  color: var(--warm-amber);
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: unset;
+  background-clip: unset;
+}
+
+.hero-sub {
+  font-size: 1.15rem;
+  line-height: 1.75;
+  color: var(--gray-500);
+  margin-bottom: 44px;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.6s forwards;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.8s forwards;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 36px;
+  border-radius: 100px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
+}
+
+.btn--warm {
+  background: var(--warm-amber);
+  color: var(--white);
+}
+
+.btn--warm:hover {
+  background: var(--warm-light);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(180, 83, 9, 0.25);
+}
+
+.btn--outline {
+  background: transparent;
+  color: var(--gray-500);
+  border: 1px solid var(--gray-300);
+}
+
+.btn--outline:hover {
+  color: var(--black);
+  border-color: var(--gray-500);
+}
+
+/* COUNTER WHY ========== */
+.why {
+  padding: 140px 0;
+  background: var(--white);
+}
+
+.why-split {
+  display: grid;
+  grid-template-columns: 0.45fr 0.55fr;
+  gap: 80px;
+  align-items: start;
+}
+
+.why-left {
+  position: sticky;
+  top: 140px;
+}
+
+.why-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--warm-amber);
+  margin-bottom: 20px;
+}
+
+.why-left h2 {
+  font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  color: var(--black);
+  line-height: 1.15;
+}
+
+.why-right {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+.why-body {
+  font-size: 1.1rem;
+  line-height: 1.85;
+  color: var(--gray-500);
+}
+
+.why-versus {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.versus-card {
+  padding: 32px 36px;
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.versus-card--old {
+  background: var(--gray-50);
+  border-left: 3px solid var(--gray-200);
+}
+
+.versus-card--new {
+  background: var(--black);
+  color: var(--white);
+  border-left: 3px solid var(--warm-bright);
+}
+
+.versus-tag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.versus-card--old .versus-tag { color: var(--gray-400); }
+.versus-card--new .versus-tag { color: var(--warm-bright); }
+
+.versus-card h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.4;
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+
+.versus-card--old h3 { color: var(--gray-600); }
+.versus-card--new h3 { color: var(--white); }
+
+.versus-card p {
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.versus-card--old p { color: var(--gray-400); }
+.versus-card--new p { color: var(--gray-300); }
+
+/* COUNTER HOW ========== */
+.how {
+  padding: 140px 0;
+  background: var(--cream);
+}
+
+.how-header {
+  margin-bottom: 80px;
+}
+
+.how-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--warm-amber);
+  margin-bottom: 20px;
+}
+
+.how-header h2 {
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  color: var(--black);
+  max-width: 580px;
+}
+
+.how-header p {
+  margin-top: 16px;
+  font-size: 1.1rem;
+  color: var(--gray-400);
+  max-width: 520px;
+}
+
+.how-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.how-step {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 0;
+  border-top: 1px solid rgba(180, 83, 9, 0.12);
+  padding: 48px 0;
+  align-items: start;
+}
+
+.how-step:last-child {
+  border-bottom: 1px solid rgba(180, 83, 9, 0.12);
+}
+
+.how-step-num {
+  font-size: 3.5rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: var(--cream-deep);
+  line-height: 1;
+  padding-top: 4px;
+}
+
+.how-step-body h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--black);
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+}
+
+.how-step-body p {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--gray-500);
+  max-width: 640px;
+}
+
+.how-step-detail {
+  margin-top: 14px;
+  font-size: 0.88rem;
+  color: var(--warm-amber);
+  font-weight: 500;
+  font-style: italic;
+}
+
+/* COUNTER QUOTE ========== */
+.quote-band {
+  padding: 120px 0;
+  background: var(--warm-amber);
+  color: var(--white);
+  position: relative;
+  overflow: hidden;
+}
+
+.quote-band::before {
+  content: '';
+  position: absolute;
+  top: -30%;
+  right: -10%;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.quote-inner {
+  max-width: 820px;
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.quote-inner blockquote {
+  font-family: var(--font-serif);
+  font-size: clamp(1.5rem, 3vw, 2.3rem);
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--white);
+  letter-spacing: -0.01em;
+}
+
+.quote-inner cite {
+  display: block;
+  margin-top: 32px;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-style: normal;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* COUNTER RESULTS ========== */
+.results {
+  padding: 140px 0;
+  background: var(--white);
+}
+
+.results-header {
+  margin-bottom: 72px;
+}
+
+.results-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--warm-amber);
+  margin-bottom: 20px;
+}
+
+.results-header h2 {
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  color: var(--black);
+  max-width: 650px;
+}
+
+.results-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 48px;
+}
+
+.result-item {
+  position: relative;
+  padding-top: 24px;
+}
+
+.result-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  background: var(--warm-amber);
+  border-radius: 2px;
+}
+
+.result-item h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 10px;
+  letter-spacing: -0.02em;
+}
+
+.result-item p {
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: var(--gray-500);
+}
+
+/* COUNTER SPEED ========== */
+.speed {
+  padding: 140px 0;
+  background: var(--cream);
+}
+
+.speed-split {
+  display: grid;
+  grid-template-columns: 0.45fr 0.55fr;
+  gap: 80px;
+  align-items: start;
+}
+
+.speed-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--warm-amber);
+  margin-bottom: 20px;
+}
+
+.speed-left h2 {
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  color: var(--black);
+  line-height: 1.2;
+  margin-bottom: 20px;
+}
+
+.speed-left p {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--gray-500);
+}
+
+.speed-right {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.speed-week {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 28px;
+  padding: 32px 0;
+  border-bottom: 1px solid rgba(180, 83, 9, 0.1);
+  align-items: start;
+}
+
+.speed-week:first-child {
+  padding-top: 0;
+}
+
+.speed-week:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.speed-week-label {
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--warm-amber);
+  padding-top: 3px;
+}
+
+.speed-week-content h4 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 6px;
+}
+
+.speed-week-content p {
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--gray-400);
+}
+
+/* COUNTER BRIDGE ========== */
+.bridge {
+  padding: 120px 0;
+  background: var(--black);
+  color: var(--white);
+  position: relative;
+  overflow: hidden;
+}
+
+.bridge::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 70% 50%, rgba(180, 83, 9, 0.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.bridge-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 72px;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+.bridge-content h2 {
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--white);
+  line-height: 1.2;
+  margin-bottom: 24px;
+}
+
+.bridge-content p {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--gray-300);
+  margin-bottom: 32px;
+}
+
+.bridge-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--warm-bright);
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: gap 0.3s;
+  cursor: pointer;
+}
+
+.bridge-link:hover { gap: 16px; }
+
+.bridge-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.bridge-step {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.92rem;
+  color: var(--gray-300);
+  font-weight: 400;
+}
+
+.bridge-step:last-child { border-bottom: none; }
+
+.bridge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.bridge-dot--warm { background: var(--warm-bright); }
+.bridge-dot--blue { background: var(--accent); }
+
+.bridge-step-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.bridge-step-label--counter {
+  background: rgba(180, 83, 9, 0.2);
+  color: var(--warm-bright);
+}
+
+.bridge-step-label--rewire {
+  background: rgba(37, 99, 235, 0.2);
+  color: #60a5fa;
+}
+
+/* COUNTER PAGE CTA */
+.page-counter .cta {
+  background: var(--cream);
+  color: var(--black);
+}
+
+.page-counter .cta::before {
+  background: radial-gradient(circle, rgba(180, 83, 9, 0.06) 0%, transparent 70%);
+}
+
+.page-counter .cta h2 {
+  color: var(--black);
+}
+
+.page-counter .cta p {
+  color: var(--gray-500);
+}
+
+/* PARALLAX LINES (subtle bg texture) */
+.bg-lines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0.3;
+}
+
+.bg-lines span {
+  position: absolute;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.04), transparent);
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 900px) {
+  .paths-grid,
+  .approach-steps,
+  .outcomes-grid,
+  .story-layout,
+  .audience-cards,
+  .why-split,
+  .speed-split,
+  .bridge-split,
+  .results-row {
+    grid-template-columns: 1fr;
+  }
+
+  .tension-stats {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+
+  .philosophy blockquote {
+    font-size: 1.5rem;
+  }
+
+  .why-left {
+    position: static;
+  }
+
+  .page-counter .hero .container {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .page-counter .hero h1 {
+    font-size: 2.4rem;
+  }
+
+  .hero-orb, .hero-orb-inner {
+    display: none;
+  }
+
+  .hero-hl h1 {
+    font-size: 2rem;
+  }
+
+  .hero-brand-mark {
+    font-size: 3.5rem;
+  }
+
+  .how-step {
+    grid-template-columns: 60px 1fr;
+  }
+
+  .how-step-num {
+    font-size: 2.2rem;
+  }
+
+  .speed-week {
+    grid-template-columns: 90px 1fr;
+    gap: 16px;
+  }
+}
+
+/* ========== COUNTER ANIMATION ========== */
+.count-up {
+  display: inline-block;
+}
+</style>
+</head>
+<body>
+
+<!-- ===== NAVIGATION ===== -->
+<nav id="navbar">
+  <div class="container">
+    <a id="nav-logo" class="nav-logo" style="cursor: pointer;">rewire<span>.</span></a>
+    <ul class="nav-links">
+      <li><a id="nav-perspective" class="nav-tab active">Perspective</a></li>
+      <li><a id="nav-counter" class="nav-tab">The Counter</a></li>
+      <div class="nav-separator"></div>
+      <div class="nav-sublinks" id="nav-sublinks">
+        <a id="nav-sub-main" href="#perspective">Approach</a>
+        <a id="nav-sub-main-2" href="#story">In Practice</a>
+      </div>
+      <li><a id="nav-cta" class="nav-cta">Start a Conversation</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ===== PAGE MAIN (PERSPECTIVE) ===== -->
+<div id="page-main" class="page-view active">
+
+<!-- ===== ANIMATED HERO ===== -->
+<div class="hero-scroll-space" id="heroScrollSpace">
+  <div class="hero-sticky">
+    <canvas id="heroNetwork"></canvas>
+    <div class="hero-headlines">
+      <div class="hero-hl active" id="hl0">
+        <p class="hero-eyebrow-anim">People-First AI Transformation</p>
+        <h1>The innovation is here.<br><em>The transformation isn't.</em></h1>
+      </div>
+      <div class="hero-hl" id="hl1">
+        <h1>Everyone's deploying.<br><em>Almost no one is transforming.</em></h1>
+      </div>
+      <div class="hero-hl hero-hl--finale" id="hl2">
+        <div class="hero-brand-mark">rewire<span>.</span></div>
+        <p class="hero-brand-sub">Where people transform — not just adopt.</p>
+        <div class="hero-hl-cta">
+          <a href="#perspective" class="btn-primary hero-anim-btn">Our Perspective <span>&darr;</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== THE TENSION ===== -->
+<section class="tension" id="perspective">
+  <div class="container">
+    <div class="reveal">
+      <p class="tension-label">The Real Problem</p>
+      <h2>Every person in your organization is being asked to use AI. Almost none of them have been set up to succeed.</h2>
+    </div>
+    <div class="reveal stagger-2">
+      <p class="tension-body">From the C-suite to the ground floor, the pressure is the same: figure out AI, use it in your work, get faster. But the way most companies are approaching this — buying tools, running boot camps, tracking adoption metrics — solves the surface problem and ignores what's underneath. You can't force adoption. You have to earn it. And earning it means treating people as the point of the exercise, not the obstacle between the company and its ROI.</p>
+    </div>
+    <div class="tension-stats">
+      <div class="stat reveal stagger-1">
+        <div class="stat-number count-up" data-target="85">0%</div>
+        <div class="stat-label">of organizations stop at tool deployment and never reach actual transformation</div>
+      </div>
+      <div class="stat reveal stagger-2">
+        <div class="stat-number">2–3x</div>
+        <div class="stat-label">the value unlocked when people are equipped to reimagine their work — not just accelerate it</div>
+      </div>
+      <div class="stat reveal stagger-3">
+        <div class="stat-number count-up" data-target="91">0%</div>
+        <div class="stat-label">of executives say they lack the internal capability to realize AI's full potential</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TWO PATHS ===== -->
+<section class="paths" id="paths">
+  <div class="container">
+    <div class="paths-header reveal">
+      <h2>Two directions. One choice.</h2>
+      <p>Most companies are making people work for the technology. We think that's backwards.</p>
+    </div>
+    <div class="paths-grid">
+      <div class="path-card path-card--old reveal-left">
+        <span class="path-tag">Where most companies are</span>
+        <h3>Buy the tool. Train the team. Track adoption. Repeat.</h3>
+        <p>Map your workflows, find the inefficiencies, insert AI to compress time and cut costs. It works — to a point. But you end up with people serving the technology instead of the other way around.</p>
+        <ul class="path-list">
+          <li><span class="path-icon">→</span> Technology-first, people-second</li>
+          <li><span class="path-icon">→</span> Optimizes what already exists</li>
+          <li><span class="path-icon">→</span> Two-day boot camps and prompt training</li>
+          <li><span class="path-icon">→</span> Measures adoption rates and cost savings</li>
+          <li><span class="path-icon">→</span> Consultants deliver the answer and leave</li>
+        </ul>
+      </div>
+      <div class="path-card path-card--new reveal-right">
+        <span class="path-tag">The rewire approach</span>
+        <h3>Invest in the people. The technology follows.</h3>
+        <p>Forget the current process. Start from what you need to achieve and what's now possible. When people are actually equipped to make AI work for them, that's when the exponential value shows up.</p>
+        <ul class="path-list">
+          <li><span class="path-icon">✦</span> People first — not instead of technology, but before it</li>
+          <li><span class="path-icon">✦</span> Reimagines how work gets done from the ground up</li>
+          <li><span class="path-icon">✦</span> Real proficiency through doing, not training decks</li>
+          <li><span class="path-icon">✦</span> Measures new value created, not just time saved</li>
+          <li><span class="path-icon">✦</span> Your teams discover the answer — we walk alongside them</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PHILOSOPHY ===== -->
+<section class="philosophy">
+  <div class="container">
+    <div class="philosophy-inner reveal-scale">
+      <blockquote>Excel didn't transform finance because companies bought spreadsheet software. It transformed finance because people learned to think differently about data. AI is that same moment. And the companies that get it right won't be the ones with the best tools — they'll be the ones whose people can adapt faster than the world changes around them.</blockquote>
+      <cite>Our founding perspective</cite>
+    </div>
+  </div>
+</section>
+
+<!-- ===== APPROACH ===== -->
+<section class="approach" id="approach">
+  <div class="container">
+    <div class="reveal">
+      <p class="approach-label">How We Work</p>
+      <h2>We don't advise from the outside. We work alongside your people from the inside.</h2>
+      <p class="approach-intro">This isn't a two-week engagement that ends with a slide deck. We embed with your teams for the long term — typically a year — solving a real business problem while building the capacity your organization needs to keep evolving without us. Think of it less like hiring a consultant and more like gaining a partner who's in it with you.</p>
+    </div>
+    <div class="approach-steps">
+      <div class="step reveal stagger-1">
+        <div class="step-number">01</div>
+        <h3>Pick a Real Problem</h3>
+        <p>Work with your leadership team to choose a strategic challenge that actually matters — not a proof of concept, but something with real stakes. That's the proving ground.</p>
+      </div>
+      <div class="step reveal stagger-2">
+        <div class="step-number">02</div>
+        <h3>Bring the People In</h3>
+        <p>Assemble a team of 10–15 people — the ones with deep domain expertise. We don't teach them how to prompt. We help them see their work through an entirely different lens, with AI as the tool that makes that new perspective actionable.</p>
+      </div>
+      <div class="step reveal stagger-3">
+        <div class="step-number">03</div>
+        <h3>Build Proficiency by Doing the Work</h3>
+        <p>No boot camps. No training decks. The team solves the problem using AI — experimenting, iterating, discovering what works. In the process, they develop the judgment, confidence, and fluency to keep going after we step back.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== OUTCOMES ===== -->
+<section class="outcomes" id="outcomes">
+  <div class="container">
+    <div class="outcomes-header reveal">
+      <p class="outcomes-label">What Changes</p>
+      <h2>You're not buying efficiency. You're building adaptive capacity.</h2>
+      <p>The barrier that used to take three months becomes a barrier for a week. That recovery speed — not any single tool — is your real competitive advantage.</p>
+    </div>
+    <div class="outcomes-grid">
+      <div class="outcome-card reveal stagger-1">
+        <div class="outcome-icon">◆</div>
+        <h3>Real Business Outcomes</h3>
+        <p>A strategic problem gets solved — not as a proof of concept, but as actual progress your leadership can build on. The work pays for itself while it's happening.</p>
+      </div>
+      <div class="outcome-card reveal stagger-2">
+        <div class="outcome-icon">◇</div>
+        <h3>People Who Can Keep Up</h3>
+        <p>Your teams don't just learn AI tools. They develop the ability to adapt and evolve as their work adapts and evolves — which, in this environment, it will. Continuously and rapidly.</p>
+      </div>
+      <div class="outcome-card reveal stagger-3">
+        <div class="outcome-icon">○</div>
+        <h3>A Working Relationship With AI</h3>
+        <p>Not everything running perfectly. Something closer to synchrony — where your people have enough fluency with these tools that when something breaks or falls short, they don't get derailed. They adapt.</p>
+      </div>
+      <div class="outcome-card reveal stagger-4">
+        <div class="outcome-icon">△</div>
+        <h3>Clarity You Can't Get From a Deck</h3>
+        <p>Through the work itself, your leadership sees what AI actually changes, what it doesn't, and how roles and operating models need to evolve — grounded in reality, not theory.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STORY / PROOF ===== -->
+<section class="story" id="story">
+  <div class="container">
+    <div class="story-layout">
+      <div class="story-visual reveal-left">
+        <div class="story-card">
+          <div class="story-metric">
+            <span class="story-metric-number">4x</span>
+          </div>
+          <div class="story-metric-label">Faster formulation speed per scientist</div>
+          <div class="story-detail">What used to take a full week was accomplished in a single day — freeing six days for work the team had always wanted to do but never had time for.</div>
+        </div>
+      </div>
+      <div class="story-content reveal-right">
+        <p class="story-content-label">In Practice</p>
+        <h2>She didn't get faster. She got back to the work she actually loves.</h2>
+        <p>A food formulation scientist at a global ingredients company — decades of expertise, all stored in her head. Every project started from scratch, every week spent getting to a result she already knew was coming.</p>
+        <p>We introduced AI tools that let her simulate ingredient interactions digitally before going to the lab. <strong>A week's work was 90% done in a day.</strong> But what happened next is the whole point.</p>
+        <div class="story-pullquote">"I got to spend six days tinkering with things I'd love to do in school but never could here — carbonation, mouthfeel, flavor profiles. Things I never had time for."</div>
+        <p>That tinkering unlocked an entirely new service line — texture elevation — that the company had never been able to offer. The AI didn't replace the scientist. It gave her back the craft she went to school for. And in doing so, it created value the company didn't even know was possible.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== WHO THIS IS FOR ===== -->
+<section class="audience" id="audience">
+  <div class="container">
+    <div class="audience-header reveal">
+      <p class="audience-label">Who This Is For</p>
+      <h2>For anyone who feels the pressure — and the leaders responsible for what comes next.</h2>
+    </div>
+    <div class="audience-cards">
+      <div class="audience-card reveal stagger-1">
+        <div class="audience-card-icon">◈</div>
+        <h3>The Leader With the Mandate</h3>
+        <p>You've been told to transform your organization with AI. You're also still expected to do your actual job. You can't model the behavior and execute the strategy simultaneously — you need someone alongside you who can.</p>
+      </div>
+      <div class="audience-card reveal stagger-2">
+        <div class="audience-card-icon">◈</div>
+        <h3>The Team Under Pressure</h3>
+        <p>Your people have been handed tools and told to figure it out. The problem isn't that they don't understand AI. It's that no one has created the conditions for them to actually use it — with support, with purpose, with permission to experiment.</p>
+      </div>
+      <div class="audience-card reveal stagger-3">
+        <div class="audience-card-icon">◈</div>
+        <h3>The Organization at a Crossroads</h3>
+        <p>You know tool deployment alone isn't going to get you where you need to go. But the alternative — fundamentally rethinking how your people work — feels enormous and uncertain. It is. That's why you don't do it alone.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="cta" id="contact">
+  <div class="container">
+    <div class="reveal-scale">
+      <h2>The tools are here.<br>The question is what you do with them.</h2>
+      <p>We start with a conversation — about where your people are today, what's not working, and what it would look like if they could actually make this technology their own.</p>
+      <a href="mailto:drew@rewire.co" class="btn-primary">Start a Conversation <span>→</span></a>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<!-- ===== PAGE COUNTER ===== -->
+<div id="page-counter" class="page-view">
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-orb"></div>
+  <div class="hero-orb-inner"></div>
+  <div class="container">
+    <p class="hero-tag">An experience, not a presentation</p>
+    <h1>Your people know<br>the problems.<br><em>Let's show them<br>what's possible.</em></h1>
+    <p class="hero-sub">We set up inside your organization for a day. Your teams bring us the real problems in their workflows — the features they wish they had, the bottlenecks they live with, the things they've given up on. We listen, we build, and we show them what AI can actually do with their expertise.</p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn btn--warm">Set Up a Counter <span>&rarr;</span></a>
+      <a href="#counter-how" class="btn btn--outline">See How It Works</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== WHY THIS EXISTS ===== -->
+<section class="why">
+  <div class="container">
+    <div class="why-split">
+      <div class="why-left reveal">
+        <p class="why-label">Why This Exists</p>
+        <h2>Hackathons and boot camps don't change how anyone works. They never have.</h2>
+      </div>
+      <div class="why-right">
+        <p class="why-body reveal">You can teach a room full of people how to prompt. You can run a two-day innovation sprint. You can hand out tool licenses. And at the end of it, almost everyone goes back to doing their job the exact same way. It's not because they don't get it. It's because none of it was ever about <em>their</em> work.</p>
+        <div class="why-versus">
+          <div class="versus-card versus-card--old reveal stagger-1">
+            <p class="versus-tag">The usual approach</p>
+            <h3>"Here's what AI can do. Now figure out how it applies to you."</h3>
+            <p>Generic demos. Prompt engineering workshops. Tool rollouts with adoption dashboards. Impressive for a day, forgotten by the next sprint.</p>
+          </div>
+          <div class="versus-card versus-card--new reveal stagger-2">
+            <p class="versus-tag">The counter</p>
+            <h3>"Tell us what's broken in your work. We'll show you what's possible."</h3>
+            <p>Start from their expertise. Their problems. Their workflows. Build something real with their context — and let them see it with their own eyes.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== HOW IT WORKS ===== -->
+<section class="how" id="counter-how">
+  <div class="container">
+    <div class="how-header reveal">
+      <p class="how-label">How It Works</p>
+      <h2>We show up. We listen. We build. We show.</h2>
+      <p>Think of it like office hours — except instead of advice, you walk away with working proof of what's possible.</p>
+    </div>
+    <div class="how-steps">
+      <div class="how-step reveal stagger-1">
+        <div class="how-step-num">01</div>
+        <div class="how-step-body">
+          <h3>We Set Up Inside Your Organization</h3>
+          <p>A physical space — could be a conference room, a lounge, a literal coffee bar. The point is it feels approachable, not like a corporate training event. We announce it internally with a simple ask: think about the problems in your workflow, the features you wish you had, the things that slow you down. Then come talk to us.</p>
+        </div>
+      </div>
+      <div class="how-step reveal stagger-2">
+        <div class="how-step-num">02</div>
+        <div class="how-step-body">
+          <h3>Your People Bring Us the Real Problems</h3>
+          <p>One by one, individuals and small teams sit down and tell us what's actually hard about their work. Not what their manager thinks is hard. Not what showed up on a survey. The real thing — the workaround they've been living with for years, the report that takes a week, the data that never connects.</p>
+          <p class="how-step-detail">This is the expertise you've been sitting on. We're just creating the space to surface it.</p>
+        </div>
+      </div>
+      <div class="how-step reveal stagger-3">
+        <div class="how-step-num">03</div>
+        <div class="how-step-body">
+          <h3>We Take It Away and Build — Fast</h3>
+          <p>Using tools like Claude, Claude Code, and rapid prototyping, we take the problems we've heard and start building. Not slide decks. Working examples. Functional prototypes. Things people can see and touch that directly address what they told us.</p>
+          <p class="how-step-detail">Some of these come together in hours. That speed is part of the point.</p>
+        </div>
+      </div>
+      <div class="how-step reveal stagger-4">
+        <div class="how-step-num">04</div>
+        <div class="how-step-body">
+          <h3>We Come Back and Show Them</h3>
+          <p>Same day or within the week, we reconnect with the people who brought us their problems — in person or over a call. We walk through what we built, get their honest reaction, and capture what it would mean for the business if this capability existed at scale.</p>
+          <p class="how-step-detail">This is where the real conversation starts. Not "what can AI do?" but "what could we do with this?"</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== QUOTE ===== -->
+<section class="quote-band">
+  <div class="container">
+    <div class="quote-inner reveal-scale">
+      <blockquote>People don't learn to use AI by sitting in a workshop. They learn when it's applied to the thing they've been trying to solve for the last six months — and suddenly, it takes an afternoon.</blockquote>
+      <cite>The premise behind everything we do</cite>
+    </div>
+  </div>
+</section>
+
+<!-- ===== WHAT YOU GET ===== -->
+<section class="results" id="counter-results">
+  <div class="container">
+    <div class="results-header reveal">
+      <p class="results-label">What You Walk Away With</p>
+      <h2>More than a demo. An actual picture of what's possible.</h2>
+    </div>
+    <div class="results-row">
+      <div class="result-item reveal stagger-1">
+        <h3>Working Prototypes</h3>
+        <p>Functional examples built from your team's actual problems. Not generic demos — real tools that address real gaps in your workflows, built in hours.</p>
+      </div>
+      <div class="result-item reveal stagger-2">
+        <h3>Voices From Your Own People</h3>
+        <p>Direct verbatims and reactions from the people closest to the work — what they'd do differently, what would change for them, how impactful it would be. The kind of insight no survey captures.</p>
+      </div>
+      <div class="result-item reveal stagger-3">
+        <h3>A Map of Where to Start</h3>
+        <p>A clear picture of the highest-impact opportunities across your teams — grounded in their expertise, not our assumptions. The beginning of a roadmap that actually makes sense for your organization.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== HOW FAST ===== -->
+<section class="speed" id="speed">
+  <div class="container">
+    <div class="speed-split">
+      <div class="speed-left reveal-left">
+        <p class="speed-label">How Fast</p>
+        <h2>From zero to running in weeks, not months.</h2>
+        <p>This isn't a six-month planning exercise. We can have a Counter set up and running inside your organization in a matter of weeks. The format is designed to be lightweight, low-commitment, and immediately valuable.</p>
+        <p style="margin-top: 16px;">It works as a standalone experience. It also works as the first chapter of something bigger.</p>
+      </div>
+      <div class="speed-right reveal-right">
+        <div class="speed-week">
+          <span class="speed-week-label">Week 1</span>
+          <div class="speed-week-content">
+            <h4>Scope and Plan</h4>
+            <p>We align on which teams, which floor, what problems to target. We help you craft the internal announcement.</p>
+          </div>
+        </div>
+        <div class="speed-week">
+          <span class="speed-week-label">Week 2–3</span>
+          <div class="speed-week-content">
+            <h4>Set Up and Run</h4>
+            <p>The Counter goes live. We're on-site listening, capturing, and building in real time alongside your people.</p>
+          </div>
+        </div>
+        <div class="speed-week">
+          <span class="speed-week-label">Week 4</span>
+          <div class="speed-week-content">
+            <h4>Show and Debrief</h4>
+            <p>We deliver prototypes back to the individuals who brought us problems, and present findings and opportunities to leadership.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== BRIDGE ===== -->
+<section class="bridge">
+  <div class="container">
+    <div class="bridge-split">
+      <div class="bridge-content reveal-left">
+        <h2>This is where the bigger engagement starts — if you want it to.</h2>
+        <p>The Counter gives you something most organizations never get: a grounded, evidence-based starting point. Not a strategy deck built on assumptions, but real problems, real prototypes, and real reactions from the people who do the work.</p>
+        <p>From here, we can help you set a strategic direction and embed with your teams long-term — building proficiency, reshaping how work gets done, and creating the adaptive capacity to keep evolving.</p>
+        <a class="bridge-link" onclick="showPage('main'); document.getElementById('approach').scrollIntoView({behavior: 'smooth', block: 'start'});">Read our full perspective <span>&rarr;</span></a>
+      </div>
+      <div class="bridge-flow reveal-right">
+        <div class="bridge-step">
+          <span class="bridge-dot bridge-dot--warm"></span>
+          The Counter surfaces real problems and potential
+          <span class="bridge-step-label bridge-step-label--counter">Counter</span>
+        </div>
+        <div class="bridge-step">
+          <span class="bridge-dot bridge-dot--warm"></span>
+          Leadership sees evidence, not theory
+          <span class="bridge-step-label bridge-step-label--counter">Counter</span>
+        </div>
+        <div class="bridge-step">
+          <span class="bridge-dot bridge-dot--blue"></span>
+          A strategic challenge is selected
+          <span class="bridge-step-label bridge-step-label--rewire">Rewire</span>
+        </div>
+        <div class="bridge-step">
+          <span class="bridge-dot bridge-dot--blue"></span>
+          We embed with your teams to solve it with AI
+          <span class="bridge-step-label bridge-step-label--rewire">Rewire</span>
+        </div>
+        <div class="bridge-step">
+          <span class="bridge-dot bridge-dot--blue"></span>
+          Proficiency and adaptive capacity — built from within
+          <span class="bridge-step-label bridge-step-label--rewire">Rewire</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="cta" id="contact">
+  <div class="container">
+    <div class="reveal-scale">
+      <h2>Your teams have the expertise.<br>Let's put it to work.</h2>
+      <p>Tell us about your organization and we'll have a Counter planned and ready in weeks — no long-term commitment required.</p>
+      <a href="mailto:drew@rewire.co" class="btn btn--warm">Set Up a Counter <span>→</span></a>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="container">
+    <p>© 2026 Rewire</p>
+    <a href="#">New York, NY</a>
+  </div>
+</footer>
+
+<!-- ===== SCRIPTS ===== -->
+<script>
+// ===== Page Switching Logic =====
+window.showPage = showPage;
+function showPage(pageName) {
+  const mainPage = document.getElementById('page-main');
+  const counterPage = document.getElementById('page-counter');
+  const body = document.body;
+  const navbar = document.getElementById('navbar');
+  const navPerspective = document.getElementById('nav-perspective');
+  const navCounter = document.getElementById('nav-counter');
+  const navSublinks = document.getElementById('nav-sublinks');
+  const navCta = document.getElementById('nav-cta');
+
+  // Clear all reveals for fresh animation
+  document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => {
+    el.classList.remove('visible');
+  });
+
+  if (pageName === 'main') {
+    mainPage.classList.add('active');
+    counterPage.classList.remove('active');
+    body.classList.remove('page-counter-active');
+    navbar.classList.remove('page-counter-active');
+    navPerspective.classList.add('active');
+    navCounter.classList.remove('active');
+    navCta.textContent = 'Start a Conversation';
+    navCta.href = '#contact';
+
+    // Show main nav sublinks
+    navSublinks.innerHTML = '<a id="nav-sub-main" href="#perspective">Approach</a><a id="nav-sub-main-2" href="#story">In Practice</a>';
+    setupSmoothScroll();
+  } else if (pageName === 'counter') {
+    mainPage.classList.remove('active');
+    counterPage.classList.add('active');
+    body.classList.add('page-counter-active');
+    navbar.classList.add('page-counter-active');
+    navPerspective.classList.remove('active');
+    navCounter.classList.add('active');
+    navCta.textContent = 'Set One Up';
+    navCta.href = '#contact';
+
+    // Show counter nav sublinks
+    navSublinks.innerHTML = '<a id="nav-sub-counter" href="#counter-how">How It Works</a><a id="nav-sub-counter-2" href="#counter-results">What You Get</a>';
+    setupSmoothScroll();
+  }
+
+  // Scroll to top
+  window.scrollTo(0, 0);
+
+  // Re-run reveal observer on the active page
+  setupRevealObserver();
+}
+
+// ===== Scroll Reveal =====
+function setupRevealObserver() {
+  const revealElements = document.querySelectorAll('.page-view.active .reveal, .page-view.active .reveal-left, .page-view.active .reveal-right, .page-view.active .reveal-scale');
+
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, {
+    threshold: 0.15,
+    rootMargin: '0px 0px -60px 0px'
+  });
+
+  revealElements.forEach(el => revealObserver.observe(el));
+}
+
+// ===== Nav Scroll Effect =====
+const navbar = document.getElementById('navbar');
+let lastScroll = 0;
+
+window.addEventListener('scroll', () => {
+  const currentScroll = window.scrollY;
+  const mainPage = document.getElementById('page-main');
+  const heroSpace = document.getElementById('heroScrollSpace');
+
+  // On main page, keep nav transparent while inside the animated hero
+  if (mainPage && mainPage.classList.contains('active') && heroSpace) {
+    const heroBottom = heroSpace.offsetTop + heroSpace.offsetHeight;
+    if (currentScroll < heroBottom - 100) {
+      // Inside hero: dark bg nav
+      navbar.classList.add('hero-dark');
+      navbar.classList.remove('scrolled');
+    } else {
+      navbar.classList.remove('hero-dark');
+      navbar.classList.add('scrolled');
+    }
+  } else {
+    navbar.classList.remove('hero-dark');
+    if (currentScroll > 80) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+  }
+
+  lastScroll = currentScroll;
+});
+
+// ===== Counter Animation =====
+const counters = document.querySelectorAll('.count-up');
+
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const target = parseInt(entry.target.getAttribute('data-target'));
+      if (!target) return;
+
+      let current = 0;
+      const increment = target / 60;
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+          current = target;
+          clearInterval(timer);
+        }
+        entry.target.textContent = Math.floor(current) + '%';
+      }, 20);
+
+      counterObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.5 });
+
+counters.forEach(counter => counterObserver.observe(counter));
+
+// ===== Smooth Scroll for Anchor Links =====
+function setupSmoothScroll() {
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      const href = this.getAttribute('href');
+      if (href === '#contact') {
+        e.preventDefault();
+        const target = document.querySelector('#contact');
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      } else if (href.startsWith('#')) {
+        e.preventDefault();
+        const target = document.querySelector(href);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    });
+  });
+}
+
+// ===== Navigation Tab Click Handlers =====
+document.getElementById('nav-logo').addEventListener('click', () => {
+  window.showPage('main');
+});
+
+document.getElementById('nav-perspective').addEventListener('click', (e) => {
+  e.preventDefault();
+  window.showPage('main');
+});
+
+document.getElementById('nav-counter').addEventListener('click', (e) => {
+  e.preventDefault();
+  window.showPage('counter');
+});
+
+document.getElementById('nav-cta').addEventListener('click', (e) => {
+  e.preventDefault();
+  const contactSection = document.querySelector('.page-view.active #contact');
+  if (contactSection) {
+    contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+});
+
+// ===== NETWORK CANVAS ANIMATION =====
+(function() {
+  const canvas = document.getElementById('heroNetwork');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  let W, H;
+  const nodes = [];
+  const NODE_COUNT = 160;
+  const MAX_DIST = 200;
+
+  // Brand colors
+  const blueR = 59, blueG = 130, blueB = 246;
+  const accentR = 99, accentG = 102, accentB = 241; // indigo to match the gradient
+
+  function resize() {
+    const dpr = window.devicePixelRatio || 1;
+    W = canvas.clientWidth;
+    H = canvas.clientHeight;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function initNodes() {
+    nodes.length = 0;
+    for (let i = 0; i < NODE_COUNT; i++) {
+      // Scattered position (stage 0)
+      const sx = Math.random() * W;
+      const sy = Math.random() * H;
+
+      // Structured position (connected state) — fill full viewport, ring around center
+      const angle = Math.random() * Math.PI * 2;
+      const centerBias = Math.random();
+      // Some nodes close to edges, some mid-range, fewer dead center (text lives there)
+      let radius;
+      if (centerBias < 0.3) {
+        // Outer ring — edges and corners
+        radius = 0.35 + Math.random() * 0.25;
+      } else if (centerBias < 0.7) {
+        // Mid ring
+        radius = 0.15 + Math.random() * 0.25;
+      } else {
+        // Near center but offset enough to not overlap text
+        radius = 0.08 + Math.random() * 0.12;
+      }
+      const cx = W * 0.5 + Math.cos(angle) * radius * W * 0.95 + (Math.random() - 0.5) * 60;
+      const cy = H * 0.5 + Math.sin(angle) * radius * H * 0.95 + (Math.random() - 0.5) * 60;
+
+      nodes.push({
+        sx, sy,
+        cx, cy,
+        x: sx, y: sy,
+        size: 1.8 + Math.random() * 2.5,
+        pulse: Math.random() * Math.PI * 2,
+        speed: 0.3 + Math.random() * 0.7,
+        drift: { x: (Math.random() - 0.5) * 0.3, y: (Math.random() - 0.5) * 0.3 }
+      });
+    }
+  }
+
+  function getHeroScrollProgress() {
+    const scrollSpace = document.getElementById('heroScrollSpace');
+    if (!scrollSpace) return 0;
+    const rect = scrollSpace.getBoundingClientRect();
+    const scrollTop = -rect.top;
+    const maxScroll = scrollSpace.offsetHeight - window.innerHeight;
+    return Math.min(1, Math.max(0, scrollTop / maxScroll));
+  }
+
+  function easeInOutCubic(t) {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
+
+  let animRunning = false;
+
+  function draw() {
+    // Only animate when main page is active
+    const mainPage = document.getElementById('page-main');
+    if (!mainPage || !mainPage.classList.contains('active')) {
+      animRunning = false;
+      return;
+    }
+
+    const progress = getHeroScrollProgress();
+    const time = performance.now() * 0.001;
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Connection progress: 0 = scattered, 1 = connected
+    let connectProgress;
+    if (progress < 0.15) {
+      connectProgress = 0;
+    } else if (progress < 0.7) {
+      connectProgress = easeInOutCubic((progress - 0.15) / 0.55);
+    } else {
+      connectProgress = 1;
+    }
+
+    // Energy flow ramps up in later stages
+    const energyProgress = Math.max(0, (progress - 0.5) / 0.5);
+
+    // Update node positions
+    for (const node of nodes) {
+      const drift = Math.sin(time * node.speed + node.pulse) * 3 * (1 - connectProgress * 0.7);
+      node.x = node.sx + (node.cx - node.sx) * connectProgress + drift + node.drift.x * Math.sin(time * 0.5);
+      node.y = node.sy + (node.cy - node.sy) * connectProgress + drift * 0.6 + node.drift.y * Math.cos(time * 0.4);
+    }
+
+    // Draw connections
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const dx = nodes[i].x - nodes[j].x;
+        const dy = nodes[i].y - nodes[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const threshold = MAX_DIST * (0.3 + connectProgress * 0.7);
+
+        if (dist < threshold) {
+          const alpha = (1 - dist / threshold) * (0.04 + connectProgress * 0.22);
+          const warmMix = connectProgress * energyProgress;
+          const r = Math.round(blueR + (accentR - blueR) * warmMix);
+          const g = Math.round(blueG + (accentG - blueG) * warmMix);
+          const b = Math.round(blueB + (accentB - blueB) * warmMix);
+
+          let lineAlpha = alpha;
+          if (energyProgress > 0) {
+            const pulse = Math.sin(time * 2 - dist * 0.02 + i * 0.1) * 0.5 + 0.5;
+            lineAlpha += pulse * energyProgress * 0.15;
+          }
+
+          ctx.beginPath();
+          ctx.moveTo(nodes[i].x, nodes[i].y);
+          ctx.lineTo(nodes[j].x, nodes[j].y);
+          ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${lineAlpha})`;
+          ctx.lineWidth = 0.6 + connectProgress * 1;
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Draw nodes
+    for (const node of nodes) {
+      const pulse = Math.sin(time * 1.5 + node.pulse) * 0.5 + 0.5;
+      const baseBright = 0.15 + connectProgress * 0.6;
+      const alpha = baseBright + pulse * 0.15 * (0.5 + energyProgress * 0.5);
+
+      const warmMix = connectProgress * 0.7;
+      const r = Math.round(100 + (blueR - 100) * warmMix);
+      const g = Math.round(100 + (blueG - 100) * warmMix);
+      const b = Math.round(140 + (blueB - 140) * warmMix);
+
+      const size = node.size * (0.6 + connectProgress * 0.6 + pulse * 0.2 * energyProgress);
+
+      // Glow in later stages
+      if (energyProgress > 0.3) {
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, size * 3, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${blueR}, ${blueG}, ${blueB}, ${energyProgress * 0.04 * pulse})`;
+        ctx.fill();
+      }
+
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, size, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+      ctx.fill();
+    }
+
+    // Update headlines
+    const headlines = [
+      document.getElementById('hl0'),
+      document.getElementById('hl1'),
+      document.getElementById('hl2')
+    ];
+
+    let activeStage;
+    if (progress < 0.3) activeStage = 0;
+    else if (progress < 0.55) activeStage = 1;
+    else activeStage = 2;
+
+    headlines.forEach((h, i) => {
+      if (h) h.classList.toggle('active', i === activeStage);
+    });
+
+
+    animRunning = true;
+    requestAnimationFrame(draw);
+  }
+
+  function startAnimation() {
+    resize();
+    initNodes();
+    if (!animRunning) {
+      animRunning = true;
+      requestAnimationFrame(draw);
+    }
+  }
+
+  window.addEventListener('resize', () => { resize(); initNodes(); });
+
+  // Start on load
+  startAnimation();
+
+  // Re-start when switching back to main page
+  const origShowPage = window.showPage;
+  if (origShowPage) {
+    window.showPage = function(pageName) {
+      origShowPage(pageName);
+      if (pageName === 'main') {
+        setTimeout(startAnimation, 50);
+      }
+    };
+  }
+})();
+
+// Initial setup
+setupRevealObserver();
+setupSmoothScroll();
+</script>
+
+</body>
+</html>

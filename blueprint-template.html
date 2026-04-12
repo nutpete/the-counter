@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Problem Blueprint</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: #e8e2d8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  margin: 0;
+  padding: 40px;
+}
+
+.page {
+  background: #ffffff;
+  width: 460px;
+  padding: 0;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* Header bar */
+.page-header {
+  background: #0a0a0a;
+  padding: 28px 36px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.page-header-left h1 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+
+.page-header-logo {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #71717a;
+}
+
+.page-header-logo span {
+  color: #b45309;
+}
+
+/* Form body */
+.page-body {
+  padding: 32px 36px 36px;
+}
+
+.field {
+  margin-bottom: 28px;
+}
+
+.field:last-child {
+  margin-bottom: 0;
+}
+
+.field-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #b45309;
+  margin-bottom: 10px;
+}
+
+.field-question {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #18181b;
+  margin-bottom: 14px;
+  line-height: 1.35;
+}
+
+/* Blank lines to write on */
+.write-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.write-line {
+  border-bottom: 1px solid #d4d4d8;
+  height: 1px;
+}
+
+/* Two-column row for role + impact */
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 28px;
+}
+
+.field-row .field {
+  margin-bottom: 0;
+}
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: #ececee;
+  margin-bottom: 28px;
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page-header">
+    <div class="page-header-left">
+      <h1>Problem Blueprint</h1>
+    </div>
+    <p class="page-header-logo">The <span>Counter</span></p>
+  </div>
+
+  <div class="page-body">
+
+    <!-- Row 1: Role + Impact side by side -->
+    <div class="field-row">
+      <div class="field">
+        <p class="field-label">Your Role</p>
+        <p class="field-question">What do you do? What team are you on?</p>
+        <div class="write-lines">
+          <div class="write-line"></div>
+          <div class="write-line"></div>
+        </div>
+      </div>
+      <div class="field">
+        <p class="field-label">Impact</p>
+        <p class="field-question">How much time does this cost you? How often?</p>
+        <div class="write-lines">
+          <div class="write-line"></div>
+          <div class="write-line"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- The Problem -->
+    <div class="field">
+      <p class="field-label">The Problem</p>
+      <p class="field-question">What's the part of your job that wastes the most time?</p>
+      <div class="write-lines">
+        <div class="write-line"></div>
+        <div class="write-line"></div>
+        <div class="write-line"></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- The Workaround -->
+    <div class="field">
+      <p class="field-label">The Workaround</p>
+      <p class="field-question">How are you dealing with it today?</p>
+      <div class="write-lines">
+        <div class="write-line"></div>
+        <div class="write-line"></div>
+        <div class="write-line"></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- The Wish List -->
+    <div class="field">
+      <p class="field-label">The Wish List</p>
+      <p class="field-question">If you could wave a wand, what would this look like instead?</p>
+      <div class="write-lines">
+        <div class="write-line"></div>
+        <div class="write-line"></div>
+        <div class="write-line"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
