@@ -1,2774 +1,3216 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rewire | People-First AI Transformation</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-<style>
-/* ========== RESET & BASE ========== */
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-:root {
-  --black: #0a0a0a;
-  --white: #fafafa;
-  --gray-50: #f7f7f8;
-  --gray-100: #ececee;
-  --gray-200: #d4d4d8;
-  --gray-300: #a1a1aa;
-  --gray-400: #71717a;
-  --gray-500: #52525b;
-  --gray-600: #3f3f46;
-  --gray-700: #27272a;
-  --gray-800: #18181b;
-  --accent: #2563eb;
-  --accent-light: #3b82f6;
-  --accent-glow: rgba(37, 99, 235, 0.12);
-  --warm: #f59e0b;
-  --warm-glow: rgba(245, 158, 11, 0.10);
-  --cream: #fdf8f0;
-  --cream-deep: #f5ead6;
-  --warm-amber: #b45309;
-  --warm-light: #d97706;
-  --warm-bright: #f59e0b;
-  --warm-glow-amber: rgba(180, 83, 9, 0.08);
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-serif: 'Playfair Display', Georgia, serif;
-}
-
-html {
-  font-size: 16px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-body {
-  font-family: var(--font-sans);
-  color: var(--gray-700);
-  background: var(--white);
-  line-height: 1.7;
-  overflow-x: hidden;
-  transition: background 0.3s ease;
-}
-
-body.page-counter-active {
-  background: var(--cream);
-}
-
-/* ========== UTILITY ========== */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 clamp(24px, 5vw, 80px);
-}
-
-.container--narrow {
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 0 clamp(24px, 5vw, 80px);
-}
-
-/* ========== SCROLL ANIMATIONS ========== */
-.reveal {
-  opacity: 0;
-  transform: translateY(48px);
-  transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1), transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.reveal-left {
-  opacity: 0;
-  transform: translateX(-60px);
-  transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1), transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.reveal-left.visible {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.reveal-right {
-  opacity: 0;
-  transform: translateX(60px);
-  transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1), transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.reveal-right.visible {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.reveal-scale {
-  opacity: 0;
-  transform: scale(0.92);
-  transition: opacity 1s cubic-bezier(0.22, 1, 0.36, 1), transform 1s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.reveal-scale.visible {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.stagger-1 { transition-delay: 0.1s; }
-.stagger-2 { transition-delay: 0.2s; }
-.stagger-3 { transition-delay: 0.3s; }
-.stagger-4 { transition-delay: 0.4s; }
-.stagger-5 { transition-delay: 0.5s; }
-
-/* ========== PAGE SWITCHING ========== */
-.page-view {
-  display: none;
-}
-
-.page-view.active {
-  display: block;
-}
-
-/* ========== NAVIGATION ========== */
-nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  padding: 20px 0;
-  transition: all 0.4s ease;
-  background: transparent;
-}
-
-nav.scrolled {
-  background: rgba(250, 250, 250, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  padding: 14px 0;
-}
-
-nav.hero-dark {
-  background: transparent;
-  border-bottom: none;
-}
-
-nav.hero-dark .nav-logo {
-  color: var(--white);
-}
-
-nav.hero-dark .nav-links a {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-nav.hero-dark .nav-links a:hover {
-  color: var(--white);
-}
-
-nav.hero-dark .nav-links .active {
-  color: var(--accent-light);
-}
-
-nav.hero-dark .nav-separator {
-  background: rgba(255, 255, 255, 0.15);
-}
-
-nav.page-counter-active {
-  background: rgba(253, 248, 240, 0.88);
-  border-bottom: 1px solid rgba(180, 83, 9, 0.08);
-}
-
-nav.page-counter-active.scrolled {
-  background: rgba(253, 248, 240, 0.95);
-}
-
-nav .container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.nav-logo {
-  font-weight: 800;
-  font-size: 1.15rem;
-  letter-spacing: -0.03em;
-  color: var(--black);
-  text-decoration: none;
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
-
-.nav-logo span {
-  color: var(--accent);
-}
-
-nav.page-counter-active .nav-logo span {
-  color: var(--warm-amber);
-}
-
-.nav-logo:hover {
-  opacity: 0.8;
-}
-
-.nav-links {
-  display: flex;
-  gap: 36px;
-  align-items: center;
-  list-style: none;
-}
-
-.nav-links a {
-  text-decoration: none;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--gray-500);
-  transition: color 0.3s ease;
-  letter-spacing: -0.01em;
-  cursor: pointer;
-}
-
-.nav-links a:hover {
-  color: var(--black);
-}
-
-nav.page-counter-active .nav-links a:hover {
-  color: var(--warm-amber);
-}
-
-.nav-links .active {
-  color: var(--accent);
-  font-weight: 600;
-}
-
-nav.page-counter-active .nav-links .active {
-  color: var(--warm-amber) !important;
-}
-
-.nav-cta {
-  background: var(--black);
-  color: var(--white) !important;
-  padding: 10px 24px;
-  border-radius: 100px;
-  font-size: 0.85rem !important;
-  transition: all 0.3s ease !important;
-  border: none;
-  cursor: pointer;
-}
-
-.nav-cta:hover {
-  background: var(--gray-700);
-  transform: translateY(-1px);
-}
-
-nav.page-counter-active .nav-cta {
-  background: var(--warm-amber);
-}
-
-nav.page-counter-active .nav-cta:hover {
-  background: var(--warm-light);
-}
-
-.nav-separator {
-  width: 1px;
-  height: 24px;
-  background: rgba(0, 0, 0, 0.1);
-}
-
-nav.page-counter-active .nav-separator {
-  background: rgba(180, 83, 9, 0.2);
-}
-
-.nav-sublinks {
-  display: flex;
-  gap: 28px;
-  align-items: center;
-}
-
-/* ========== ANIMATED HERO ========== */
-.hero-scroll-space {
-  height: 300vh;
-  position: relative;
-}
-
-.hero-sticky {
-  position: sticky;
-  top: 0;
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
-  background: var(--black);
-}
-
-#heroNetwork {
-  display: block;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.hero-headlines {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  z-index: 10;
-}
-
-.hero-hl {
-  position: absolute;
-  text-align: center;
-  opacity: 0;
-  transition: opacity 0.6s ease;
-  padding: 0 clamp(24px, 6vw, 80px);
-  width: 100%;
-  pointer-events: none;
-}
-
-.hero-hl.active {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.hero-eyebrow-anim {
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--accent-light);
-  margin-bottom: 24px;
-}
-
-.hero-hl h1 {
-  font-family: var(--font-sans);
-  font-size: clamp(2.6rem, 6vw, 5rem);
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  line-height: 1.06;
-  color: var(--white);
-  max-width: 850px;
-  margin: 0 auto 20px;
-}
-
-.hero-hl h1 em {
-  font-style: normal;
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-weight: 400;
-  background: linear-gradient(135deg, var(--accent-light), #818cf8);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Finale brand mark */
-.hero-brand-mark {
-  font-family: var(--font-sans);
-  font-size: clamp(4rem, 10vw, 8rem);
-  font-weight: 900;
-  letter-spacing: -0.05em;
-  color: var(--white);
-  line-height: 1;
-  margin-bottom: 20px;
-}
-
-.hero-brand-mark span {
-  color: var(--accent-light);
-}
-
-.hero-brand-sub {
-  font-size: clamp(1rem, 2vw, 1.35rem);
-  font-weight: 400;
-  line-height: 1.6;
-  color: var(--gray-300);
-  max-width: 520px;
-  margin: 0 auto 36px;
-}
-
-.hero-hl-cta {
-  margin-top: 8px;
-  pointer-events: auto;
-}
-
-.hero-anim-btn {
-  opacity: 0.9;
-}
-
-/* ========== COUNTER PAGE HERO (static) ========== */
-.hero {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  position: relative;
-  overflow: hidden;
-  background: var(--black);
-  color: var(--white);
-}
-
-.hero .container {
-  position: relative;
-  z-index: 2;
-  padding-top: 140px;
-  padding-bottom: 100px;
-}
-
-.hero h1 {
-  font-family: var(--font-sans);
-  font-size: clamp(3rem, 6.5vw, 5.5rem);
-  font-weight: 800;
-  line-height: 1.05;
-  letter-spacing: -0.04em;
-  max-width: 900px;
-  margin-bottom: 36px;
-}
-
-.hero h1 em {
-  font-style: normal;
-  background: linear-gradient(135deg, var(--accent-light), #818cf8);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.hero-sub {
-  font-size: clamp(1.1rem, 2vw, 1.35rem);
-  font-weight: 400;
-  line-height: 1.65;
-  color: var(--gray-300);
-  max-width: 620px;
-  margin-bottom: 48px;
-}
-
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--accent);
-  color: var(--white);
-  padding: 16px 36px;
-  border-radius: 100px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  border: none;
-  cursor: pointer;
-}
-
-.btn-primary:hover {
-  background: var(--accent-light);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(37, 99, 235, 0.3);
-}
-
-.btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--gray-300);
-  padding: 16px 24px;
-  font-size: 0.95rem;
-  font-weight: 500;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  border: 1px solid var(--gray-600);
-  border-radius: 100px;
-}
-
-.btn-secondary:hover {
-  color: var(--white);
-  border-color: var(--gray-400);
-}
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* ========== TENSION SECTION ========== */
-.tension {
-  padding: 160px 0 140px;
-  background: var(--white);
-}
-
-.tension-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 24px;
-}
-
-.tension h2 {
-  font-size: clamp(2rem, 4vw, 3.2rem);
-  font-weight: 800;
-  line-height: 1.15;
-  letter-spacing: -0.035em;
-  color: var(--black);
-  max-width: 800px;
-  margin-bottom: 48px;
-}
-
-.tension-body {
-  font-size: 1.15rem;
-  line-height: 1.8;
-  color: var(--gray-500);
-  max-width: 680px;
-  margin-bottom: 64px;
-}
-
-.tension-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 48px;
-  padding-top: 64px;
-  border-top: 1px solid var(--gray-100);
-}
-
-.stat {
-  text-align: left;
-}
-
-.stat-number {
-  font-size: clamp(2.5rem, 4vw, 3.5rem);
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  color: var(--black);
-  line-height: 1;
-  margin-bottom: 12px;
-}
-
-.stat-label {
-  font-size: 0.9rem;
-  color: var(--gray-400);
-  line-height: 1.5;
-}
-
-/* ========== TWO PATHS ========== */
-.paths {
-  padding: 140px 0;
-  background: var(--gray-50);
-}
-
-.paths-header {
-  text-align: center;
-  margin-bottom: 80px;
-}
-
-.paths-header h2 {
-  font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 800;
-  letter-spacing: -0.035em;
-  color: var(--black);
-  margin-bottom: 20px;
-}
-
-.paths-header p {
-  font-size: 1.15rem;
-  color: var(--gray-400);
-  max-width: 580px;
-  margin: 0 auto;
-}
-
-.paths-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
-  max-width: 1100px;
-  margin: 0 auto;
-}
-
-.path-card {
-  padding: 56px 48px;
-  border-radius: 24px;
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.4s ease;
-}
-
-.path-card:hover {
-  transform: translateY(-4px);
-}
-
-.path-card--old {
-  background: var(--white);
-  border: 1px solid var(--gray-100);
-}
-
-.path-card--new {
-  background: var(--black);
-  color: var(--white);
-}
-
-.path-tag {
-  display: inline-block;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  padding: 6px 16px;
-  border-radius: 100px;
-  margin-bottom: 32px;
-}
-
-.path-card--old .path-tag {
-  background: var(--gray-100);
-  color: var(--gray-500);
-}
-
-.path-card--new .path-tag {
-  background: rgba(37, 99, 235, 0.2);
-  color: var(--accent-light);
-}
-
-.path-card h3 {
-  font-size: 1.6rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.25;
-  margin-bottom: 20px;
-}
-
-.path-card--old h3 { color: var(--gray-700); }
-.path-card--new h3 { color: var(--white); }
-
-.path-card p {
-  font-size: 1rem;
-  line-height: 1.75;
-  margin-bottom: 32px;
-}
-
-.path-card--old p { color: var(--gray-400); }
-.path-card--new p { color: var(--gray-300); }
-
-.path-list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.path-list li {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  font-size: 0.92rem;
-  line-height: 1.5;
-}
-
-.path-card--old .path-list li { color: var(--gray-500); }
-.path-card--new .path-list li { color: var(--gray-200); }
-
-.path-icon {
-  flex-shrink: 0;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.7rem;
-  margin-top: 2px;
-}
-
-.path-card--old .path-icon {
-  background: var(--gray-100);
-  color: var(--gray-400);
-}
-
-.path-card--new .path-icon {
-  background: rgba(37, 99, 235, 0.25);
-  color: var(--accent-light);
-}
-
-/* ========== PHILOSOPHY (BIG QUOTE) ========== */
-.philosophy {
-  padding: 180px 0;
-  background: var(--white);
-  position: relative;
-}
-
-.philosophy-inner {
-  text-align: center;
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.philosophy blockquote {
-  font-family: var(--font-serif);
-  font-size: clamp(1.8rem, 3.5vw, 3rem);
-  font-weight: 400;
-  line-height: 1.35;
-  color: var(--black);
-  letter-spacing: -0.02em;
-  position: relative;
-}
-
-.philosophy blockquote::before {
-  content: '';
-  display: block;
-  width: 60px;
-  height: 3px;
-  background: var(--accent);
-  margin: 0 auto 48px;
-}
-
-.philosophy cite {
-  display: block;
-  margin-top: 40px;
-  font-family: var(--font-sans);
-  font-size: 0.9rem;
-  font-style: normal;
-  font-weight: 500;
-  color: var(--gray-400);
-  letter-spacing: 0;
-}
-
-/* ========== APPROACH / HOW WE WORK ========== */
-.approach {
-  padding: 140px 0;
-  background: var(--gray-50);
-}
-
-.approach-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 24px;
-}
-
-.approach h2 {
-  font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 800;
-  letter-spacing: -0.035em;
-  color: var(--black);
-  max-width: 700px;
-  margin-bottom: 24px;
-}
-
-.approach-intro {
-  font-size: 1.15rem;
-  color: var(--gray-400);
-  max-width: 620px;
-  line-height: 1.75;
-  margin-bottom: 80px;
-}
-
-.approach-steps {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 40px;
-}
-
-.step {
-  position: relative;
-}
-
-.step-number {
-  font-size: 4rem;
-  font-weight: 900;
-  color: var(--gray-100);
-  line-height: 1;
-  margin-bottom: 20px;
-  letter-spacing: -0.04em;
-}
-
-.step h3 {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--black);
-  margin-bottom: 14px;
-  letter-spacing: -0.02em;
-}
-
-.step p {
-  font-size: 0.95rem;
-  line-height: 1.7;
-  color: var(--gray-400);
-}
-
-/* ========== WHAT CHANGES ========== */
-.outcomes {
-  padding: 160px 0;
-  background: var(--black);
-  color: var(--white);
-  position: relative;
-  overflow: hidden;
-}
-
-.outcomes::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background:
-    radial-gradient(ellipse at 20% 50%, rgba(37, 99, 235, 0.06) 0%, transparent 60%),
-    radial-gradient(ellipse at 80% 50%, rgba(245, 158, 11, 0.04) 0%, transparent 60%);
-  pointer-events: none;
-}
-
-.outcomes .container { position: relative; z-index: 2; }
-
-.outcomes-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--accent-light);
-  margin-bottom: 24px;
-}
-
-.outcomes-header h2 {
-  font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: 800;
-  letter-spacing: -0.035em;
-  color: var(--white);
-  max-width: 700px;
-  margin: 0 auto 20px;
-}
-
-.outcomes-header p {
-  font-size: 1.1rem;
-  color: var(--gray-300);
-  max-width: 560px;
-  margin: 0 auto;
-}
-
-.outcomes-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
-  max-width: 960px;
-  margin: 0 auto;
-}
-
-.outcome-card {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-  padding: 44px 40px;
-  transition: all 0.4s ease;
-}
-
-.outcome-card:hover {
-  background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(255, 255, 255, 0.12);
-  transform: translateY(-4px);
-}
-
-.outcome-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-  background: rgba(37, 99, 235, 0.15);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.3rem;
-  margin-bottom: 24px;
-}
-
-.outcome-card h3 {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--white);
-  margin-bottom: 12px;
-  letter-spacing: -0.02em;
-}
-
-.outcome-card p {
-  font-size: 0.92rem;
-  line-height: 1.7;
-  color: var(--gray-300);
-}
-
-/* ========== STORY / PROOF ========== */
-.story {
-  padding: 160px 0;
-  background: var(--white);
-}
-
-.story-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 80px;
-  align-items: center;
-}
-
-.story-visual {
-  position: relative;
-}
-
-.story-card {
-  background: var(--gray-50);
-  border-radius: 24px;
-  padding: 48px;
-  position: relative;
-  overflow: hidden;
-}
-
-.story-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--accent), var(--warm));
-}
-
-.story-metric {
-  display: flex;
-  align-items: baseline;
-  gap: 4px;
-  margin-bottom: 8px;
-}
-
-.story-metric-number {
-  font-size: 4rem;
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  line-height: 1;
-  color: var(--black);
-}
-
-.story-metric-unit {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--accent);
-}
-
-.story-metric-label {
-  font-size: 0.85rem;
-  color: var(--gray-400);
-  margin-bottom: 32px;
-}
-
-.story-detail {
-  font-size: 0.95rem;
-  line-height: 1.7;
-  color: var(--gray-500);
-  padding-top: 24px;
-  border-top: 1px solid var(--gray-200);
-}
-
-.story-content-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--warm);
-  margin-bottom: 24px;
-}
-
-.story-content h2 {
-  font-size: clamp(1.8rem, 3vw, 2.5rem);
-  font-weight: 800;
-  letter-spacing: -0.035em;
-  color: var(--black);
-  line-height: 1.2;
-  margin-bottom: 28px;
-}
-
-.story-content p {
-  font-size: 1.05rem;
-  line-height: 1.8;
-  color: var(--gray-500);
-  margin-bottom: 20px;
-}
-
-.story-content p strong {
-  color: var(--gray-700);
-  font-weight: 600;
-}
-
-.story-pullquote {
-  font-family: var(--font-serif);
-  font-size: 1.2rem;
-  font-style: italic;
-  color: var(--gray-600);
-  line-height: 1.6;
-  padding: 24px 0 24px 24px;
-  border-left: 3px solid var(--accent);
-  margin: 32px 0;
-}
-
-/* ========== WHO THIS IS FOR ========== */
-.audience {
-  padding: 140px 0;
-  background: var(--gray-50);
-}
-
-.audience-header {
-  margin-bottom: 64px;
-}
-
-.audience-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 24px;
-}
-
-.audience-header h2 {
-  font-size: clamp(2rem, 3.5vw, 2.8rem);
-  font-weight: 800;
-  letter-spacing: -0.035em;
-  color: var(--black);
-  max-width: 600px;
-}
-
-.audience-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-}
-
-.audience-card {
-  background: var(--white);
-  border-radius: 20px;
-  padding: 44px 36px;
-  border: 1px solid var(--gray-100);
-  transition: all 0.4s ease;
-}
-
-.audience-card:hover {
-  border-color: var(--gray-200);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
-  transform: translateY(-4px);
-}
-
-.audience-card-icon {
-  font-size: 1.8rem;
-  margin-bottom: 24px;
-}
-
-.audience-card h3 {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--black);
-  margin-bottom: 12px;
-  letter-spacing: -0.02em;
-}
-
-.audience-card p {
-  font-size: 0.92rem;
-  line-height: 1.7;
-  color: var(--gray-400);
-}
-
-/* ========== CTA ========== */
-.cta {
-  padding: 160px 0;
-  background: var(--black);
-  color: var(--white);
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.cta::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.1) 0%, transparent 60%);
-  pointer-events: none;
-}
-
-.cta .container {
-  position: relative;
-  z-index: 2;
-}
-
-.cta h2 {
-  font-size: clamp(2.2rem, 4.5vw, 3.8rem);
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  line-height: 1.1;
-  margin-bottom: 24px;
-}
-
-.cta p {
-  font-size: 1.15rem;
-  color: var(--gray-300);
-  max-width: 520px;
-  margin: 0 auto 48px;
-  line-height: 1.7;
-}
-
-.cta .btn-primary {
-  font-size: 1.05rem;
-  padding: 18px 44px;
-}
-
-/* ========== FOOTER ========== */
-footer {
-  padding: 48px 0;
-  background: var(--gray-800);
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-footer .container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-footer p {
-  font-size: 0.8rem;
-  color: var(--gray-400);
-}
-
-footer a {
-  color: var(--gray-300);
-  text-decoration: none;
-  font-size: 0.8rem;
-  transition: color 0.3s;
-}
-
-footer a:hover {
-  color: var(--white);
-}
-
-/* ========== COUNTER PAGE STYLES ========== */
-
-/* COUNTER HERO */
-.page-counter .hero {
-  background: var(--cream);
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.page-counter .hero::before {
-  display: none;
-}
-
-.page-counter .hero::after {
-  display: none;
-}
-
-.hero-orb {
-  position: absolute;
-  right: -8%;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 55vw;
-  height: 55vw;
-  max-width: 700px;
-  max-height: 700px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(245, 158, 11, 0.10) 0%, rgba(180, 83, 9, 0.03) 50%, transparent 70%);
-  pointer-events: none;
-}
-
-.hero-orb-inner {
-  position: absolute;
-  right: 5%;
-  top: 50%;
-  transform: translateY(-45%);
-  width: 30vw;
-  height: 30vw;
-  max-width: 380px;
-  max-height: 380px;
-  border-radius: 50%;
-  border: 1px solid rgba(180, 83, 9, 0.08);
-  pointer-events: none;
-}
-
-.page-counter .hero .container {
-  position: relative;
-  z-index: 2;
-  padding-top: 160px;
-  padding-bottom: 120px;
-  max-width: 720px;
-  margin-left: clamp(24px, 8vw, 120px);
-}
-
-.hero-tag {
-  display: inline-block;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--warm-amber);
-  margin-bottom: 32px;
-  position: relative;
-  padding-left: 20px;
-  opacity: 0;
-  animation: fadeUp 0.8s 0.2s forwards;
-}
-
-.hero-tag::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--warm-bright);
-  animation: gentlePulse 3s infinite;
-}
-
-@keyframes gentlePulse {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.8; }
-}
-
-.page-counter .hero h1 {
-  font-size: clamp(2.8rem, 5.5vw, 4.5rem);
-  font-weight: 800;
-  line-height: 1.06;
-  letter-spacing: -0.04em;
-  color: var(--black);
-  margin-bottom: 28px;
-}
-
-.page-counter .hero h1 em {
-  font-style: normal;
-  font-family: var(--font-serif);
-  font-weight: 400;
-  color: var(--warm-amber);
-  background: none;
-  -webkit-background-clip: unset;
-  -webkit-text-fill-color: unset;
-  background-clip: unset;
-}
-
-.hero-sub {
-  font-size: 1.15rem;
-  line-height: 1.75;
-  color: var(--gray-500);
-  margin-bottom: 44px;
-  opacity: 0;
-  animation: fadeUp 0.8s 0.6s forwards;
-}
-
-.hero-actions {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-  opacity: 0;
-  animation: fadeUp 0.8s 0.8s forwards;
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 16px 36px;
-  border-radius: 100px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  border: none;
-}
-
-.btn--warm {
-  background: var(--warm-amber);
-  color: var(--white);
-}
-
-.btn--warm:hover {
-  background: var(--warm-light);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 28px rgba(180, 83, 9, 0.25);
-}
-
-.btn--outline {
-  background: transparent;
-  color: var(--gray-500);
-  border: 1px solid var(--gray-300);
-}
-
-.btn--outline:hover {
-  color: var(--black);
-  border-color: var(--gray-500);
-}
-
-/* COUNTER WHY ========== */
-.why {
-  padding: 140px 0;
-  background: var(--white);
-}
-
-.why-split {
-  display: grid;
-  grid-template-columns: 0.45fr 0.55fr;
-  gap: 80px;
-  align-items: start;
-}
-
-.why-left {
-  position: sticky;
-  top: 140px;
-}
-
-.why-label {
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--warm-amber);
-  margin-bottom: 20px;
-}
-
-.why-left h2 {
-  font-size: clamp(1.8rem, 3.2vw, 2.6rem);
-  font-weight: 800;
-  letter-spacing: -0.035em;
-  color: var(--black);
-  line-height: 1.15;
-}
-
-.why-right {
-  display: flex;
-  flex-direction: column;
-  gap: 48px;
-}
-
-.why-body {
-  font-size: 1.1rem;
-  line-height: 1.85;
-  color: var(--gray-500);
-}
-
-.why-versus {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.versus-card {
-  padding: 32px 36px;
-  border-radius: 16px;
-  position: relative;
-  overflow: hidden;
-}
-
-.versus-card--old {
-  background: var(--gray-50);
-  border-left: 3px solid var(--gray-200);
-}
-
-.versus-card--new {
-  background: var(--black);
-  color: var(--white);
-  border-left: 3px solid var(--warm-bright);
-}
-
-.versus-tag {
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  margin-bottom: 12px;
-}
-
-.versus-card--old .versus-tag { color: var(--gray-400); }
-.versus-card--new .versus-tag { color: var(--warm-bright); }
-
-.versus-card h3 {
-  font-size: 1.05rem;
-  font-weight: 700;
-  line-height: 1.4;
-  margin-bottom: 8px;
-  letter-spacing: -0.01em;
-}
-
-.versus-card--old h3 { color: var(--gray-600); }
-.versus-card--new h3 { color: var(--white); }
-
-.versus-card p {
-  font-size: 0.9rem;
-  line-height: 1.7;
-}
-
-.versus-card--old p { color: var(--gray-400); }
-.versus-card--new p { color: var(--gray-300); }
-
-/* COUNTER HOW ========== */
-.how {
-  padding: 140px 0;
-  background: var(--cream);
-}
-
-.how-header {
-  margin-bottom: 80px;
-}
-
-.how-label {
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--warm-amber);
-  margin-bottom: 20px;
-}
-
-.how-header h2 {
-  font-size: clamp(2rem, 3.5vw, 2.8rem);
-  font-weight: 800;
-  letter-spacing: -0.035em;
-  color: var(--black);
-  max-width: 580px;
-}
-
-.how-header p {
-  margin-top: 16px;
-  font-size: 1.1rem;
-  color: var(--gray-400);
-  max-width: 520px;
-}
-
-.how-steps {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.how-step {
-  display: grid;
-  grid-template-columns: 100px 1fr;
-  gap: 0;
-  border-top: 1px solid rgba(180, 83, 9, 0.12);
-  padding: 48px 0;
-  align-items: start;
-}
-
-.how-step:last-child {
-  border-bottom: 1px solid rgba(180, 83, 9, 0.12);
-}
-
-.how-step-num {
-  font-size: 3.5rem;
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  color: var(--cream-deep);
-  line-height: 1;
-  padding-top: 4px;
-}
-
-.how-step-body h3 {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--black);
-  letter-spacing: -0.02em;
-  margin-bottom: 12px;
-}
-
-.how-step-body p {
-  font-size: 1rem;
-  line-height: 1.8;
-  color: var(--gray-500);
-  max-width: 640px;
-}
-
-.how-step-detail {
-  margin-top: 14px;
-  font-size: 0.88rem;
-  color: var(--warm-amber);
-  font-weight: 500;
-  font-style: italic;
-}
-
-/* COUNTER QUOTE ========== */
-.quote-band {
-  padding: 120px 0;
-  background: var(--warm-amber);
-  color: var(--white);
-  position: relative;
-  overflow: hidden;
-}
-
-.quote-band::before {
-  content: '';
-  position: absolute;
-  top: -30%;
-  right: -10%;
-  width: 500px;
-  height: 500px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
-  pointer-events: none;
-}
-
-.quote-inner {
-  max-width: 820px;
-  margin: 0 auto;
-  text-align: center;
-  position: relative;
-  z-index: 2;
-}
-
-.quote-inner blockquote {
-  font-family: var(--font-serif);
-  font-size: clamp(1.5rem, 3vw, 2.3rem);
-  font-weight: 400;
-  line-height: 1.4;
-  color: var(--white);
-  letter-spacing: -0.01em;
-}
-
-.quote-inner cite {
-  display: block;
-  margin-top: 32px;
-  font-family: var(--font-sans);
-  font-size: 0.85rem;
-  font-style: normal;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.6);
-}
-
-/* COUNTER RESULTS ========== */
-.results {
-  padding: 140px 0;
-  background: var(--white);
-}
-
-.results-header {
-  margin-bottom: 72px;
-}
-
-.results-label {
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--warm-amber);
-  margin-bottom: 20px;
-}
-
-.results-header h2 {
-  font-size: clamp(2rem, 3.5vw, 2.8rem);
-  font-weight: 800;
-  letter-spacing: -0.035em;
-  color: var(--black);
-  max-width: 650px;
-}
-
-.results-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 48px;
-}
-
-.result-item {
-  position: relative;
-  padding-top: 24px;
-}
-
-.result-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 40px;
-  height: 3px;
-  background: var(--warm-amber);
-  border-radius: 2px;
-}
-
-.result-item h3 {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--black);
-  margin-bottom: 10px;
-  letter-spacing: -0.02em;
-}
-
-.result-item p {
-  font-size: 0.95rem;
-  line-height: 1.75;
-  color: var(--gray-500);
-}
-
-/* COUNTER SPEED ========== */
-.speed {
-  padding: 140px 0;
-  background: var(--cream);
-}
-
-.speed-split {
-  display: grid;
-  grid-template-columns: 0.45fr 0.55fr;
-  gap: 80px;
-  align-items: start;
-}
-
-.speed-label {
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--warm-amber);
-  margin-bottom: 20px;
-}
-
-.speed-left h2 {
-  font-size: clamp(1.8rem, 3vw, 2.5rem);
-  font-weight: 800;
-  letter-spacing: -0.035em;
-  color: var(--black);
-  line-height: 1.2;
-  margin-bottom: 20px;
-}
-
-.speed-left p {
-  font-size: 1.05rem;
-  line-height: 1.8;
-  color: var(--gray-500);
-}
-
-.speed-right {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.speed-week {
-  display: grid;
-  grid-template-columns: 110px 1fr;
-  gap: 28px;
-  padding: 32px 0;
-  border-bottom: 1px solid rgba(180, 83, 9, 0.1);
-  align-items: start;
-}
-
-.speed-week:first-child {
-  padding-top: 0;
-}
-
-.speed-week:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
-}
-
-.speed-week-label {
-  font-size: 0.8rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--warm-amber);
-  padding-top: 3px;
-}
-
-.speed-week-content h4 {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--black);
-  margin-bottom: 6px;
-}
-
-.speed-week-content p {
-  font-size: 0.92rem;
-  line-height: 1.7;
-  color: var(--gray-400);
-}
-
-/* COUNTER BRIDGE ========== */
-.bridge {
-  padding: 120px 0;
-  background: var(--black);
-  color: var(--white);
-  position: relative;
-  overflow: hidden;
-}
-
-.bridge::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at 70% 50%, rgba(180, 83, 9, 0.08) 0%, transparent 60%);
-  pointer-events: none;
-}
-
-.bridge-split {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 72px;
-  align-items: center;
-  position: relative;
-  z-index: 2;
-}
-
-.bridge-content h2 {
-  font-size: clamp(1.8rem, 3vw, 2.4rem);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  color: var(--white);
-  line-height: 1.2;
-  margin-bottom: 24px;
-}
-
-.bridge-content p {
-  font-size: 1.05rem;
-  line-height: 1.8;
-  color: var(--gray-300);
-  margin-bottom: 32px;
-}
-
-.bridge-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--warm-bright);
-  font-weight: 600;
-  font-size: 0.95rem;
-  text-decoration: none;
-  transition: gap 0.3s;
-  cursor: pointer;
-}
-
-.bridge-link:hover { gap: 16px; }
-
-.bridge-flow {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.bridge-step {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 18px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  font-size: 0.92rem;
-  color: var(--gray-300);
-  font-weight: 400;
-}
-
-.bridge-step:last-child { border-bottom: none; }
-
-.bridge-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.bridge-dot--warm { background: var(--warm-bright); }
-.bridge-dot--blue { background: var(--accent); }
-
-.bridge-step-label {
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 3px 10px;
-  border-radius: 4px;
-  margin-left: auto;
-  flex-shrink: 0;
-}
-
-.bridge-step-label--counter {
-  background: rgba(180, 83, 9, 0.2);
-  color: var(--warm-bright);
-}
-
-.bridge-step-label--rewire {
-  background: rgba(37, 99, 235, 0.2);
-  color: #60a5fa;
-}
-
-/* COUNTER PAGE CTA */
-.page-counter .cta {
-  background: var(--cream);
-  color: var(--black);
-}
-
-.page-counter .cta::before {
-  background: radial-gradient(circle, rgba(180, 83, 9, 0.06) 0%, transparent 70%);
-}
-
-.page-counter .cta h2 {
-  color: var(--black);
-}
-
-.page-counter .cta p {
-  color: var(--gray-500);
-}
-
-/* PARALLAX LINES (subtle bg texture) */
-.bg-lines {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-  opacity: 0.3;
-}
-
-.bg-lines span {
-  position: absolute;
-  width: 1px;
-  height: 100%;
-  background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.04), transparent);
-}
-
-/* ========== RESPONSIVE ========== */
-@media (max-width: 900px) {
-  .paths-grid,
-  .approach-steps,
-  .outcomes-grid,
-  .story-layout,
-  .audience-cards,
-  .why-split,
-  .speed-split,
-  .bridge-split,
-  .results-row {
-    grid-template-columns: 1fr;
-  }
-
-  .tension-stats {
-    grid-template-columns: 1fr;
-    gap: 32px;
-  }
-
-  .nav-links {
-    display: none;
-  }
-
-  .hero h1 {
-    font-size: 2.5rem;
-  }
-
-  .philosophy blockquote {
-    font-size: 1.5rem;
-  }
-
-  .why-left {
-    position: static;
-  }
-
-  .page-counter .hero .container {
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .page-counter .hero h1 {
-    font-size: 2.4rem;
-  }
-
-  .hero-orb, .hero-orb-inner {
-    display: none;
-  }
-
-  .hero-hl h1 {
-    font-size: 2rem;
-  }
-
-  .hero-brand-mark {
-    font-size: 3.5rem;
-  }
-
-  .how-step {
-    grid-template-columns: 60px 1fr;
-  }
-
-  .how-step-num {
-    font-size: 2.2rem;
-  }
-
-  .speed-week {
-    grid-template-columns: 90px 1fr;
-    gap: 16px;
-  }
-}
-
-/* ========== COUNTER ANIMATION ========== */
-.count-up {
-  display: inline-block;
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Counter | Rewire</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.82/build/spline-viewer.js"></script>
+  <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.js"></script>
+
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --charcoal-blue: #454851;
+      --sage-green: #73956F;
+      --muted-teal: #7BAE7F;
+      --celadon: #95D7AE;
+      --lavender-blush: #FCEFF9;
+      --white: #fafafa;
+      --dark-gray: #1a1a1e;
+      --medium-gray: #64748b;
+      --light-gray: #e2e8f0;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    html {
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--dark-gray);
+      background: var(--charcoal-blue);
+      line-height: 1.7;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' seed='2' /%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noiseFilter)' /%3E%3C/svg%3E");
+      z-index: 1;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 clamp(24px, 5vw, 80px);
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Scroll Progress Bar */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      background: var(--celadon);
+      width: 0%;
+      z-index: 1000;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 99;
+      padding: 20px 0;
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      background: transparent;
+      transition: background 0.3s ease;
+    }
+
+    nav.scrolled {
+      background: rgba(252, 239, 249, 0.9);
+      border-bottom: 1px solid rgba(115, 149, 111, 0.1);
+    }
+
+    nav .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: -0.03em;
+      color: var(--charcoal-blue);
+      text-decoration: none;
+      position: relative;
+      z-index: 3;
+    }
+
+    nav.scrolled .nav-logo {
+      color: var(--charcoal-blue);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      align-items: center;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.6);
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: var(--sage-green);
+    }
+
+    .nav-cta {
+      background: var(--sage-green);
+      color: var(--white) !important;
+      padding: 10px 24px;
+      border-radius: 100px;
+      font-size: 0.85rem !important;
+      transition: all 0.3s ease !important;
+      border: none;
+      cursor: pointer;
+    }
+
+    .nav-cta:hover {
+      background: var(--muted-teal);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(115, 149, 111, 0.25);
+    }
+
+    /* Section Waypoint Dots */
+    .waypoint-dots {
+      position: fixed;
+      right: 24px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .waypoint-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(115, 149, 111, 0.3);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .waypoint-dot.active {
+      background: var(--sage-green);
+      width: 12px;
+      height: 12px;
+      border-color: var(--muted-teal);
+    }
+
+    .waypoint-dot:hover {
+      background: var(--muted-teal);
+    }
+
+    @media (max-width: 768px) {
+      .waypoint-dots {
+        display: none;
+      }
+    }
+
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      padding-top: 80px;
+      padding-bottom: 80px;
+      background: var(--charcoal-blue);
+    }
+
+    .hero-spline {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .hero-spline spline-viewer {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Soft vignette overlay on the Spline scene to ensure text readability */
+    .hero-spline::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(ellipse at center, rgba(69, 72, 81, 0.2) 0%, rgba(69, 72, 81, 0.55) 60%, rgba(69, 72, 81, 0.8) 100%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+
+    /* Fallback gradient while Spline loads */
+    .hero-spline-fallback {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(ellipse at 30% 50%, rgba(115, 149, 111, 0.2) 0%, transparent 60%),
+                  radial-gradient(ellipse at 70% 70%, rgba(123, 174, 127, 0.12) 0%, transparent 50%),
+                  var(--charcoal-blue);
+      z-index: 0;
+      transition: opacity 1.5s ease;
+    }
+
+    .hero-content {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+      align-items: center;
+      width: 100%;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-counters {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 40px;
+      max-width: 680px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-counter-block {
+      padding: 40px;
+      border-radius: 16px;
+      position: relative;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(149, 215, 174, 0.2);
+    }
+
+    .hero-counter-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--celadon);
+      margin-bottom: 16px;
+    }
+
+    .hero-counter-number {
+      font-family: var(--font-mono);
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      color: var(--celadon);
+      margin-bottom: 8px;
+    }
+
+    .hero-counter-sub {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .hero-counter-source {
+      font-size: 0.68rem;
+      color: rgba(255, 255, 255, 0.5);
+      margin-top: 12px;
+      letter-spacing: 0.02em;
+      font-style: italic;
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 3.5vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.04em;
+      color: var(--white);
+      margin-bottom: 24px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--celadon);
+    }
+
+    .hero-sub {
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: rgba(255, 255, 255, 0.8);
+      max-width: 600px;
+      margin: 0 auto 36px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 36px;
+      border-radius: 100px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: none;
+      font-family: var(--font-body);
+    }
+
+    .btn-primary {
+      background: var(--celadon);
+      color: var(--charcoal-blue);
+    }
+
+    .btn-primary:hover {
+      background: var(--muted-teal);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(149, 215, 174, 0.3);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--celadon);
+      border: 2px solid var(--celadon);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(149, 215, 174, 0.1);
+      border-color: var(--muted-teal);
+      color: var(--muted-teal);
+    }
+
+    .btn-secondary-light {
+      background: transparent;
+      color: var(--sage-green);
+      border: 2px solid var(--sage-green);
+    }
+
+    .btn-secondary-light:hover {
+      background: rgba(115, 149, 111, 0.1);
+      border-color: var(--muted-teal);
+      color: var(--muted-teal);
+    }
+
+    /* Section Label */
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--sage-green);
+      margin-bottom: 20px;
+    }
+
+    /* Light Sections */
+    .light-section {
+      background: var(--lavender-blush);
+      color: var(--dark-gray);
+      padding: 80px 0;
+    }
+
+    .light-section h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--dark-gray);
+      line-height: 1.15;
+      margin-bottom: 28px;
+    }
+
+    .light-section em {
+      color: var(--sage-green);
+      font-style: normal;
+    }
+
+    .light-section p {
+      color: var(--medium-gray);
+    }
+
+    /* Dark Sections */
+    .dark-section {
+      background: var(--charcoal-blue);
+      color: var(--white);
+      padding: 80px 0;
+      position: relative;
+    }
+
+    .dark-section h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--white);
+      line-height: 1.15;
+      margin-bottom: 28px;
+    }
+
+    .dark-section em {
+      color: var(--celadon);
+      font-style: normal;
+    }
+
+    .dark-section p {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    /* Gap Section — Scroll-Shrink Effect */
+    .gap-shrink-wrapper {
+      position: relative;
+      height: 180vh; /* hold → shrink → box-in-corner + faded content → full reveal → move on */
+      background: var(--lavender-blush);
+    }
+
+    .gap-shrink-pin {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 100px; /* clear the fixed nav + breathe */
+    }
+
+    /* The box that shrinks — contains the real v4 gap layout */
+    .gap-content-box {
+      position: relative;
+      transform: scale(1);
+      transform-origin: bottom right;
+      width: 92vw;
+      max-width: 1100px;
+      border-radius: 20px;
+      overflow: hidden;
+      background: var(--white);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.06);
+      z-index: 5;
+      will-change: transform, opacity;
+    }
+
+    .gap-content-box .gap-box-inner {
+      position: relative;
+      width: 100%;
+      padding: 0;
+    }
+
+    /* Mini logo ticker inside the shrink box */
+    .gap-box-logos {
+      overflow: hidden;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(115, 149, 111, 0.1);
+      position: relative;
+    }
+
+    .gap-box-logos-label {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 160px;
+      background: linear-gradient(90deg, var(--white) 60%, transparent);
+      display: flex;
+      align-items: center;
+      padding-left: clamp(20px, 3vw, 40px);
+      z-index: 2;
+      font-family: var(--font-mono);
+      font-size: 0.5rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--medium-gray);
+      white-space: nowrap;
+    }
+
+    .logo-ticker-mini .logo-ticker-track {
+      padding-left: 170px;
+    }
+
+    /* Text + Video grid inside the shrink box */
+    .gap-box-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: center;
+      padding: 40px clamp(32px, 4vw, 56px);
+    }
+
+    .gap-box-text .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--sage-green);
+      margin-bottom: 16px;
+    }
+
+    .gap-box-text h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 2.4vw, 2rem);
+      font-weight: 800;
+      color: var(--charcoal-blue);
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+
+    .gap-box-text h2 em {
+      color: var(--sage-green);
+      font-style: normal;
+    }
+
+    .gap-box-text p {
+      font-size: 0.92rem;
+      color: var(--medium-gray);
+      line-height: 1.7;
+    }
+
+    .gap-box-video {
+      border-radius: 12px;
+      overflow: hidden;
+      aspect-ratio: 4 / 3;
+      background: rgba(0, 0, 0, 0.06);
+    }
+
+    /* Fluency overlay — text + table side-by-side inside the pinned section */
+    .fluency-overlay {
+      position: absolute;
+      top: 100px; /* match pin padding — clear fixed nav */
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 60px; /* push content down from top edge into visual center */
+      z-index: 3;
+      pointer-events: none;
+      opacity: 0;
+      will-change: opacity;
+    }
+
+    .fluency-overlay-inner {
+      max-width: 1200px;
+      width: 100%;
+      padding: 0 clamp(24px, 5vw, 80px);
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 40px;
+      align-items: start;
+      pointer-events: auto;
+    }
+
+    .fluency-reveal-left {
+      opacity: 1;
+      padding-top: 60px;
+    }
+
+    .fluency-reveal-left .reveal-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--sage-green);
+      margin-bottom: 20px;
+    }
+
+    .fluency-reveal-left h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3vw, 2.6rem);
+      font-weight: 800;
+      color: var(--charcoal-blue);
+      line-height: 1.2;
+    }
+
+    .fluency-reveal-left h2 em {
+      color: var(--sage-green);
+      font-style: normal;
+    }
+
+    /* Table container — sits to the right of the text, fades in with overlay */
+    .fluency-reveal-right {
+      opacity: 1;
+    }
+
+    /* Gap section — legacy (unused in v5) */
+    .gap { display: none; }
+
+    /* Logo Ticker */
+    .logo-ticker {
+      background: var(--lavender-blush);
+      padding: 24px 0;
+      overflow: hidden;
+      position: relative;
+      margin-bottom: 40px;
+    }
+
+    .logo-ticker-label {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 180px;
+      background: linear-gradient(90deg, var(--lavender-blush) 55%, transparent);
+      display: flex;
+      align-items: center;
+      padding-left: clamp(24px, 5vw, 80px);
+      z-index: 2;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--medium-gray);
+      white-space: nowrap;
+    }
+
+    .logo-ticker-fade-right {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 100px;
+      background: linear-gradient(270deg, var(--lavender-blush) 20%, transparent);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .logo-ticker-track {
+      display: flex;
+      align-items: center;
+      gap: 60px;
+      width: max-content;
+      animation: scroll-continuous 35s linear infinite;
+      padding-left: 200px;
+    }
+
+    @keyframes scroll-continuous {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .logo-ticker-track img {
+      height: 26px;
+      width: auto;
+      object-fit: contain;
+      filter: grayscale(100%);
+      opacity: 0.5;
+      transition: opacity 0.3s ease, filter 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .logo-ticker-track img:hover {
+      filter: grayscale(0%);
+      opacity: 0.85;
+    }
+
+    .logo-ticker-track img.logo-lg { height: 36px; }
+    .logo-ticker-track img.logo-xl { height: 46px; }
+
+    .logo-ticker-track img.logo-invert {
+      filter: grayscale(100%) invert(1);
+      opacity: 0.4;
+    }
+    .logo-ticker-track img.logo-invert:hover {
+      filter: invert(1);
+      opacity: 0.7;
+    }
+
+    @media (max-width: 768px) {
+      .gap-shrink-wrapper { height: 200vh; }
+      .gap-content-box { width: 96vw; }
+      .gap-box-grid { grid-template-columns: 1fr; gap: 16px; }
+      .fluency-overlay-inner {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+    }
+
+    /* Fluency Section — redesigned with text-left layout */
+    .fluency-section {
+      background: var(--lavender-blush);
+      padding: 80px 0 100px;
+    }
+
+    .fluency-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+
+    /* Hide old fluency header (legacy) */
+    .fluency-header { display: none; }
+
+    .fluency-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin-top: 32px;
+      text-align: left;
+    }
+
+    .fluency-phrase {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: var(--medium-gray);
+    }
+
+    .fluency-phrase .underline {
+      text-decoration: underline;
+      color: var(--sage-green);
+      font-weight: 600;
+    }
+
+    /* ========== Unified 3-Column Race Table ========== */
+
+    .race-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: var(--white);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(115, 149, 111, 0.1);
+    }
+
+    .rt-head {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-align: center;
+      padding: 18px 16px 14px;
+      border-bottom: 1px solid rgba(115, 149, 111, 0.12);
+    }
+
+    .rt-head--lit {
+      color: var(--medium-gray);
+      background: var(--white);
+    }
+
+    .rt-head--counter {
+      color: var(--sage-green);
+      background: rgba(149, 215, 174, 0.05);
+      border-left: 1.5px solid rgba(115, 149, 111, 0.15);
+    }
+
+    /* Table cells */
+    .rt-cell {
+      padding: 16px 20px;
+      font-size: 0.88rem;
+      color: var(--medium-gray);
+      line-height: 1.4;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+      opacity: 0.25;
+      transition: opacity 0.4s ease, color 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .rt-cell--counter {
+      border-left: 1.5px solid rgba(115, 149, 111, 0.15);
+      background: rgba(149, 215, 174, 0.025);
+    }
+
+    .rt-cell--empty {
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+      background: rgba(0,0,0,0.008);
+    }
+
+    .rt-cell--counter-continues {
+      border-left: 1.5px solid rgba(115, 149, 111, 0.15);
+      background: rgba(149, 215, 174, 0.025);
+      padding: 12px 20px;
+    }
+
+    /* Check icon */
+    .rt-check {
+      display: inline-flex;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-right: 10px;
+      vertical-align: middle;
+      background: rgba(115, 149, 111, 0.06);
+      border: 1.5px solid rgba(115, 149, 111, 0.12);
+      transition: all 0.35s ease;
+    }
+
+    .rt-check svg {
+      width: 11px;
+      height: 11px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    /* Checked state */
+    .race-row.checked .rt-cell {
+      opacity: 1;
+      color: var(--charcoal-blue);
+    }
+
+    .race-row.checked .rt-cell--counter {
+      color: var(--charcoal-blue);
+      font-weight: 500;
+    }
+
+    .race-row.checked .rt-cell--lit .rt-check {
+      background: rgba(115, 149, 111, 0.12);
+      border-color: rgba(115, 149, 111, 0.25);
+      transform: scale(1.05);
+    }
+
+    .race-row.checked .rt-cell--counter .rt-check {
+      background: var(--sage-green);
+      border-color: var(--sage-green);
+      transform: scale(1.08);
+    }
+
+    .race-row.checked .rt-check svg {
+      opacity: 1;
+    }
+
+    .race-row.checked .rt-cell--lit .rt-check svg {
+      color: var(--sage-green);
+    }
+
+    .race-row.checked .rt-cell--counter .rt-check svg {
+      color: white;
+    }
+
+    /* Barrier row */
+    /* Barrier row — visual divider showing where literacy stops */
+    .race-barrier-row td {
+      padding: 0;
+      border-bottom: none;
+    }
+
+    .rt-barrier {
+      padding: 6px 20px;
+      position: relative;
+      background: rgba(200, 60, 60, 0.03);
+    }
+
+    .rt-barrier-line {
+      width: 100%;
+      height: 2px;
+      background: rgba(200, 60, 60, 0.22);
+      border-radius: 1px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .rt-barrier-x {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(200, 60, 60, 0.08);
+      border: 1.5px solid rgba(200, 60, 60, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+    }
+
+    .rt-barrier-x svg {
+      width: 12px;
+      height: 12px;
+      color: rgba(200, 60, 60, 0.6);
+    }
+
+    .rt-barrier-label {
+      font-family: var(--font-mono);
+      font-size: 0.5rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(200, 60, 60, 0.5);
+      text-align: center;
+      padding: 18px 0 4px;
+    }
+
+    .rt-barrier-continues {
+      padding: 6px 20px;
+      border-left: 1.5px solid rgba(115, 149, 111, 0.15);
+      background: rgba(149, 215, 174, 0.025);
+    }
+
+    .rt-barrier-continues-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--sage-green);
+      opacity: 1;
+      text-align: center;
+      padding: 18px 0 4px;
+    }
+
+    @keyframes barrierShake {
+      0%, 100% { transform: translateX(0); }
+      15% { transform: translateX(-6px) rotate(-6deg); }
+      30% { transform: translateX(5px) rotate(5deg); }
+      45% { transform: translateX(-4px) rotate(-3deg); }
+      60% { transform: translateX(3px) rotate(2deg); }
+      75% { transform: translateX(-1px); }
+    }
+
+    .race-barrier-row.hit .rt-barrier-x {
+      animation: barrierShake 0.6s ease;
+    }
+
+    @media (max-width: 768px) {
+      .race-table {
+        font-size: 0.78rem;
+      }
+      .rt-cell, .rt-head {
+        padding: 10px 10px;
+      }
+    }
+
+    /* What Section */
+    .what-section {
+      background: var(--charcoal-blue);
+      padding: 80px 0;
+    }
+
+    .what-inner {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .what-description {
+      font-size: 1.1rem;
+      line-height: 1.85;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    /* Process Section — Full-width cards with corner Lottie */
+    .process {
+      background: var(--lavender-blush);
+      padding: 100px 0 80px;
+    }
+
+    .process-header {
+      text-align: center;
+      margin-bottom: 80px;
+    }
+
+    .process-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .process-step-card {
+      background: var(--white);
+      border-radius: 28px;
+      padding: 56px 60px;
+      border: 1px solid rgba(115, 149, 111, 0.08);
+      position: relative;
+      overflow: hidden;
+      min-height: 260px;
+      opacity: 0.4;
+      transform: translateY(16px);
+      transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.5s ease, border-color 0.5s ease;
+    }
+
+    .process-step-card.active {
+      opacity: 1;
+      transform: translateY(0);
+      box-shadow: 0 16px 48px rgba(69, 72, 81, 0.07);
+      border-color: rgba(115, 149, 111, 0.18);
+    }
+
+    /* Lottie animation — positioned in the top-right corner of each card */
+    .process-step-card .step-lottie {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 180px;
+      height: 180px;
+      opacity: 0.25;
+      transition: opacity 0.6s ease;
+      pointer-events: none;
+      border: none;
+    }
+
+    .process-step-card.active .step-lottie {
+      opacity: 0.45;
+    }
+
+    /* Content area — kept away from the Lottie corner */
+    .step-card-content {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+    }
+
+    .step-card-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .step-card-number {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--sage-green), var(--muted-teal));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .step-card-phase-tag {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--sage-green);
+      background: rgba(115, 149, 111, 0.1);
+      padding: 5px 14px;
+      border-radius: 100px;
+    }
+
+    .step-card-title {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--charcoal-blue);
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+
+    .step-card-text {
+      color: var(--medium-gray);
+      line-height: 1.85;
+      font-size: 1rem;
+    }
+
+    /* Left accent bar on active card */
+    .process-step-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(180deg, var(--sage-green), var(--celadon));
+      border-radius: 0 2px 2px 0;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .process-step-card.active::before {
+      opacity: 1;
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 768px) {
+      .process-step-card {
+        padding: 40px 32px;
+        min-height: auto;
+        opacity: 1;
+        transform: none;
+      }
+
+      .process-step-card .step-lottie {
+        width: 120px;
+        height: 120px;
+        top: -5px;
+        right: -5px;
+      }
+
+      .step-card-title {
+        font-size: 1.3rem;
+      }
+
+      .process-step-card.active {
+        box-shadow: none;
+      }
+    }
+
+    /* Outcomes Section */
+    .outcomes {
+      background: var(--charcoal-blue);
+      padding: 80px 0;
+    }
+
+    .outcomes-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .outcomes-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 28px;
+    }
+
+    @media (max-width: 900px) {
+      .outcomes-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 520px) {
+      .outcomes-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .outcome-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(149, 215, 174, 0.2);
+      border-radius: 16px;
+      padding: 40px;
+      transition: all 0.3s ease;
+    }
+
+    .outcome-card:hover {
+      transform: translateY(-4px);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(149, 215, 174, 0.4);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    .outcome-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(149, 215, 174, 0.12);
+      border: 1px solid rgba(149, 215, 174, 0.2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Static PNG overlay — only used on tools card */
+    .outcome-icon img.icon-static {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 2;
+      transition: opacity 0.25s ease;
+    }
+
+    .outcome-icon img.icon-static.hidden {
+      opacity: 0;
+    }
+
+    .outcome-icon dotlottie-player {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Book and star animations render small — scale them up */
+    .outcome-card:nth-child(2) .outcome-icon dotlottie-player {
+      transform: scale(1.6);
+    }
+    .outcome-card:nth-child(3) .outcome-icon dotlottie-player {
+      transform: scale(1.8);
+    }
+
+    .outcome-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+
+    .outcome-card p {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    /* Case Studies Section */
+    .case-studies {
+      background: var(--lavender-blush);
+      padding: 80px 0;
+    }
+
+    .case-studies-header {
+      margin-bottom: 60px;
+    }
+
+    .cs-header-left h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--charcoal-blue);
+      margin-bottom: 16px;
+    }
+
+    .cs-tabs {
+      display: flex;
+      gap: 16px;
+      margin-top: 32px;
+    }
+
+    .cs-tab {
+      padding: 12px 24px;
+      border: 2px solid var(--sage-green);
+      background: transparent;
+      color: var(--sage-green);
+      border-radius: 100px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: var(--font-body);
+    }
+
+    .cs-tab.active {
+      background: var(--sage-green);
+      color: var(--white);
+    }
+
+    .cs-tab:hover {
+      border-color: var(--muted-teal);
+      color: var(--muted-teal);
+    }
+
+    .cs-carousel {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 60px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .cs-intro {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 60px;
+      margin-bottom: 60px;
+      align-items: start;
+    }
+
+    .cs-intro-tag {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--sage-green);
+      margin-bottom: 12px;
+    }
+
+    .cs-intro h3 {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--charcoal-blue);
+      line-height: 1.3;
+    }
+
+    .cs-intro-meta {
+      display: flex;
+      gap: 24px;
+    }
+
+    .cs-meta-item {
+      text-align: center;
+    }
+
+    .cs-meta-item .val {
+      font-family: var(--font-mono);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--sage-green);
+      margin-bottom: 4px;
+    }
+
+    .cs-meta-item .lbl {
+      font-size: 0.75rem;
+      color: var(--medium-gray);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .cs-slide-area {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 60px;
+      align-items: start;
+    }
+
+    .cs-visual {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      min-height: 400px;
+      background: var(--lavender-blush);
+    }
+
+    .cs-visual-slide {
+      display: none;
+    }
+
+    .cs-visual-slide.active {
+      display: block;
+    }
+
+    .cs-screen {
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--white);
+      border: 1px solid var(--light-gray);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    .cs-screen-bar {
+      background: var(--light-gray);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--light-gray);
+    }
+
+    .cs-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .cs-dot.r { background: #ef4444; }
+    .cs-dot.y { background: #f59e0b; }
+    .cs-dot.g { background: #10b981; }
+
+    .cs-screen-title {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--medium-gray);
+      margin-left: auto;
+    }
+
+    .cs-screen-body {
+      padding: 20px;
+      font-size: 0.875rem;
+      color: var(--dark-gray);
+    }
+
+    .d-screen {
+      border-radius: 8px;
+      overflow: hidden;
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #e2e8f0;
+    }
+
+    .d-screen-bar {
+      background: #1e293b;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .d-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .d-dot.r { background: #ef4444; }
+    .d-dot.y { background: #f59e0b; }
+    .d-dot.g { background: #10b981; }
+
+    .d-screen-title {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #94a3b8;
+      margin-left: auto;
+    }
+
+    .d-screen-body {
+      padding: 20px;
+      font-size: 0.875rem;
+    }
+
+    .d-tabs {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 12px;
+    }
+
+    .d-tab {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #64748b;
+      padding: 4px 8px;
+      cursor: pointer;
+    }
+
+    .d-tab.active {
+      color: #3b82f6;
+      border-bottom: 2px solid #3b82f6;
+      margin-bottom: -14px;
+      padding-bottom: 10px;
+    }
+
+    .d-kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .d-kpi {
+      background: rgba(59, 130, 246, 0.1);
+      padding: 12px;
+      border-radius: 6px;
+    }
+
+    .d-kpi-label {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+
+    .d-kpi-value {
+      font-family: var(--font-mono);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #e2e8f0;
+    }
+
+    .d-heatmap {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.75rem;
+    }
+
+    .d-heatmap th {
+      color: #94a3b8;
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .d-heatmap td {
+      padding: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .d-heat-cell {
+      color: #e2e8f0;
+      font-weight: 600;
+    }
+
+    .d-heat-intensity-1 { background: rgba(59, 130, 246, 0.1); }
+    .d-heat-intensity-2 { background: rgba(59, 130, 246, 0.25); }
+    .d-heat-intensity-3 { background: rgba(59, 130, 246, 0.4); }
+    .d-heat-intensity-4 { background: rgba(59, 130, 246, 0.6); }
+
+    .pj-screen {
+      border-radius: 8px;
+      overflow: hidden;
+      background: #1a1828;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #e4e2f0;
+    }
+
+    .pj-screen-bar {
+      background: #2a2640;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .pj-bar-icon {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #a78bfa;
+    }
+
+    .pj-bar-title {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #a78bfa;
+      margin-left: auto;
+    }
+
+    .pj-win-controls {
+      display: flex;
+      gap: 4px;
+      margin-left: auto;
+    }
+
+    .pj-win-btn {
+      font-size: 0.75rem;
+      color: #706c8a;
+      cursor: pointer;
+    }
+
+    .pj-screen-body {
+      padding: 16px;
+      font-size: 0.8rem;
+    }
+
+    .pj-tabs {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .pj-tab {
+      font-size: 0.75rem;
+      color: #706c8a;
+    }
+
+    .pj-tab.active {
+      color: #a78bfa;
+      border-bottom: 1px solid #a78bfa;
+    }
+
+    .pj-filter {
+      font-size: 0.75rem;
+      color: #706c8a;
+      margin-bottom: 12px;
+    }
+
+    .pj-filter span {
+      background: #3d3958;
+      color: #a78bfa;
+      padding: 2px 6px;
+      border-radius: 3px;
+      border: 1px solid #7c3aed;
+      margin: 0 4px;
+    }
+
+    .pj-filter .count {
+      float: right;
+      color: #706c8a;
+    }
+
+    .cs-text {
+      position: relative;
+      min-height: 400px;
+    }
+
+    .cs-text-slide {
+      display: none;
+      opacity: 0;
+    }
+
+    .cs-text-slide.active {
+      display: block;
+      opacity: 1;
+    }
+
+    .cs-text-slide p:first-child {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--sage-green);
+      margin-bottom: 16px;
+    }
+
+    .cs-text-slide h4 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--charcoal-blue);
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+
+    .cs-text-slide p {
+      color: var(--medium-gray);
+      line-height: 1.8;
+    }
+
+    .cs-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 40px;
+      padding-top: 40px;
+      border-top: 1px solid var(--light-gray);
+    }
+
+    .cs-nav-arrows {
+      display: flex;
+      gap: 16px;
+    }
+
+    .cs-arrow {
+      width: 44px;
+      height: 44px;
+      border: 2px solid var(--sage-green);
+      background: transparent;
+      color: var(--sage-green);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+      font-family: var(--font-body);
+      font-weight: 700;
+    }
+
+    .cs-arrow:hover:not(:disabled) {
+      background: var(--sage-green);
+      color: var(--white);
+    }
+
+    .cs-arrow:disabled {
+      border-color: var(--light-gray);
+      color: var(--light-gray);
+      cursor: not-allowed;
+    }
+
+    .cs-dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .cs-dot-nav {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--light-gray);
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .cs-dot-nav.active {
+      background: var(--sage-green);
+      width: 28px;
+      border-radius: 5px;
+    }
+
+    .cs-dot-nav:hover {
+      background: var(--muted-teal);
+    }
+
+    .cs-counter {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--medium-gray);
+    }
+
+    .cs-shift {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      height: 100%;
+      padding: 32px;
+    }
+
+    .cs-shift-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 32px;
+      border-radius: 12px;
+    }
+
+    .cs-shift-card.before {
+      background: rgba(100, 116, 139, 0.1);
+      border: 1px solid rgba(100, 116, 139, 0.2);
+      color: var(--medium-gray);
+    }
+
+    .cs-shift-card.after {
+      background: rgba(115, 149, 111, 0.1);
+      border: 1px solid rgba(115, 149, 111, 0.2);
+      color: var(--charcoal-blue);
+    }
+
+    .cs-shift-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 12px;
+    }
+
+    .cs-shift-pct {
+      font-family: var(--font-display);
+      font-size: 2.4rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .cs-shift-desc {
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    /* About Section */
+    .about {
+      background: var(--lavender-blush);
+      padding: 80px 0;
+    }
+
+    .about-inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .about-inner h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--charcoal-blue);
+      margin-bottom: 28px;
+    }
+
+    .about-inner > div:first-child p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--medium-gray);
+      margin-bottom: 24px;
+    }
+
+    .about-people {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      margin-top: 60px;
+    }
+
+    .about-person {
+      display: flex;
+      gap: 24px;
+    }
+
+    .about-person-photo {
+      width: 120px;
+      height: 120px;
+      min-width: 120px;
+      border-radius: 12px;
+      background: rgba(115, 149, 111, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--sage-green);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .about-person-info h4 {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--charcoal-blue);
+      margin-bottom: 8px;
+    }
+
+    .about-person-info p {
+      font-size: 0.95rem;
+      color: var(--medium-gray);
+      line-height: 1.7;
+    }
+
+    @media (max-width: 768px) {
+      .about-people {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* CTA Section */
+    .cta {
+      background: var(--charcoal-blue);
+      padding: 120px 0;
+      text-align: center;
+    }
+
+    .cta h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 3.5vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--white);
+      margin-bottom: 24px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta > div:first-child p:first-of-type {
+      font-size: 1.05rem;
+      color: rgba(255, 255, 255, 0.8);
+      max-width: 600px;
+      margin: 0 auto 40px;
+    }
+
+    .cta a {
+      display: inline-block;
+    }
+
+    .cta-footer {
+      margin-top: 80px;
+      padding-top: 32px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.8rem;
+    }
+
+    .cta-footer a {
+      color: rgba(255, 255, 255, 0.6);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .cta-footer a:hover {
+      color: var(--celadon);
+    }
+
+    /* Reveal Animation */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero-counters {
+        grid-template-columns: 1fr;
+      }
+
+      .fluency-split {
+        grid-template-columns: 1fr;
+      }
+
+      .cs-intro {
+        grid-template-columns: 1fr;
+      }
+
+      .cs-slide-area {
+        grid-template-columns: 1fr;
+      }
+
+      .cs-carousel {
+        padding: 40px;
+      }
+
+    }
+  </style>
 </head>
+
 <body>
+  <!-- Scroll Progress Bar -->
+  <div class="scroll-progress"></div>
 
-<!-- ===== NAVIGATION ===== -->
-<nav id="navbar">
-  <div class="container">
-    <a id="nav-logo" class="nav-logo" style="cursor: pointer;">rewire<span>.</span></a>
-    <ul class="nav-links">
-      <li><a id="nav-perspective" class="nav-tab active">Perspective</a></li>
-      <li><a id="nav-counter" class="nav-tab">The Counter</a></li>
-      <div class="nav-separator"></div>
-      <div class="nav-sublinks" id="nav-sublinks">
-        <a id="nav-sub-main" href="#perspective">Approach</a>
-        <a id="nav-sub-main-2" href="#story">In Practice</a>
-      </div>
-      <li><a id="nav-cta" class="nav-cta">Start a Conversation</a></li>
-    </ul>
+  <!-- Navigation -->
+  <nav>
+    <div class="container">
+      <a href="#hero" class="nav-logo">The Counter</a>
+      <ul class="nav-links">
+        <li><a href="#case-studies">Case Studies</a></li>
+        <li><a href="#contact" class="nav-cta">Start a Conversation</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Waypoint Dots -->
+  <div class="waypoint-dots">
+    <div class="waypoint-dot active" data-section="hero"></div>
+    <div class="waypoint-dot" data-section="gap"></div>
+    <div class="waypoint-dot" data-section="what"></div>
+    <div class="waypoint-dot" data-section="process"></div>
+    <div class="waypoint-dot" data-section="outcomes"></div>
+    <div class="waypoint-dot" data-section="case-studies"></div>
+    <div class="waypoint-dot" data-section="about"></div>
+    <div class="waypoint-dot" data-section="contact"></div>
   </div>
-</nav>
 
-<!-- ===== PAGE MAIN (PERSPECTIVE) ===== -->
-<div id="page-main" class="page-view active">
+  <!-- HERO SECTION -->
+  <section class="hero" id="hero">
+    <div class="hero-spline">
+      <div class="hero-spline-fallback"></div>
+      <spline-viewer url="https://prod.spline.design/CL3GuOJE86k-IgGj/scene.splinecode" loading-anim-type="none" events-target="none"></spline-viewer>
+    </div>
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-counters">
+          <div class="hero-counter-block">
+            <p class="hero-counter-label">Global AI Investment in 2026</p>
+            <p class="hero-counter-number" id="spending-counter">$0</p>
+            <p class="hero-counter-sub">and climbing</p>
+            <p class="hero-counter-source">Gartner, 2026</p>
+          </div>
+          <div class="hero-counter-block">
+            <p class="hero-counter-label">Companies seeing real ROI</p>
+            <p class="hero-counter-number" id="usage-counter">0%</p>
+            <p class="hero-counter-sub">barely moving</p>
+            <p class="hero-counter-source">MIT / Ignitec Research, 2025</p>
+          </div>
+        </div>
 
-<!-- ===== ANIMATED HERO ===== -->
-<div class="hero-scroll-space" id="heroScrollSpace">
-  <div class="hero-sticky">
-    <canvas id="heroNetwork"></canvas>
-    <div class="hero-headlines">
-      <div class="hero-hl active" id="hl0">
-        <p class="hero-eyebrow-anim">People-First AI Transformation</p>
-        <h1>The innovation is here.<br><em>The transformation isn't.</em></h1>
-      </div>
-      <div class="hero-hl" id="hl1">
-        <h1>Everyone's deploying.<br><em>Almost no one is transforming.</em></h1>
-      </div>
-      <div class="hero-hl hero-hl--finale" id="hl2">
-        <div class="hero-brand-mark">rewire<span>.</span></div>
-        <p class="hero-brand-sub">Where people transform — not just adopt.</p>
-        <div class="hero-hl-cta">
-          <a href="#perspective" class="btn-primary hero-anim-btn">Our Perspective <span>&darr;</span></a>
+        <h1>The investment is there. Now it's time to make it <em>pay off.</em></h1>
+        <p class="hero-sub">Your teams have learned what AI can do. But knowing what's possible and knowing how to apply it to your work are two very different things. That's the gap we close.</p>
+        <div class="hero-actions">
+          <a href="#gap" class="btn btn-primary">See How It Works ↓</a>
+          <a href="#case-studies" class="btn btn-secondary">Case Studies</a>
         </div>
       </div>
     </div>
-  </div>
-</div>
+  </section>
 
-<!-- ===== THE TENSION ===== -->
-<section class="tension" id="perspective">
-  <div class="container">
-    <div class="reveal">
-      <p class="tension-label">The Real Problem</p>
-      <h2>Every person in your organization is being asked to use AI. Almost none of them have been set up to succeed.</h2>
-    </div>
-    <div class="reveal stagger-2">
-      <p class="tension-body">From the C-suite to the ground floor, the pressure is the same: figure out AI, use it in your work, get faster. But the way most companies are approaching this — buying tools, running boot camps, tracking adoption metrics — solves the surface problem and ignores what's underneath. You can't force adoption. You have to earn it. And earning it means treating people as the point of the exercise, not the obstacle between the company and its ROI.</p>
-    </div>
-    <div class="tension-stats">
-      <div class="stat reveal stagger-1">
-        <div class="stat-number count-up" data-target="85">0%</div>
-        <div class="stat-label">of organizations stop at tool deployment and never reach actual transformation</div>
-      </div>
-      <div class="stat reveal stagger-2">
-        <div class="stat-number">2–3x</div>
-        <div class="stat-label">the value unlocked when people are equipped to reimagine their work — not just accelerate it</div>
-      </div>
-      <div class="stat reveal stagger-3">
-        <div class="stat-number count-up" data-target="91">0%</div>
-        <div class="stat-label">of executives say they lack the internal capability to realize AI's full potential</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== TWO PATHS ===== -->
-<section class="paths" id="paths">
-  <div class="container">
-    <div class="paths-header reveal">
-      <h2>Two directions. One choice.</h2>
-      <p>Most companies are making people work for the technology. We think that's backwards.</p>
-    </div>
-    <div class="paths-grid">
-      <div class="path-card path-card--old reveal-left">
-        <span class="path-tag">Where most companies are</span>
-        <h3>Buy the tool. Train the team. Track adoption. Repeat.</h3>
-        <p>Map your workflows, find the inefficiencies, insert AI to compress time and cut costs. It works — to a point. But you end up with people serving the technology instead of the other way around.</p>
-        <ul class="path-list">
-          <li><span class="path-icon">→</span> Technology-first, people-second</li>
-          <li><span class="path-icon">→</span> Optimizes what already exists</li>
-          <li><span class="path-icon">→</span> Two-day boot camps and prompt training</li>
-          <li><span class="path-icon">→</span> Measures adoption rates and cost savings</li>
-          <li><span class="path-icon">→</span> Consultants deliver the answer and leave</li>
-        </ul>
-      </div>
-      <div class="path-card path-card--new reveal-right">
-        <span class="path-tag">The rewire approach</span>
-        <h3>Invest in the people. The technology follows.</h3>
-        <p>Forget the current process. Start from what you need to achieve and what's now possible. When people are actually equipped to make AI work for them, that's when the exponential value shows up.</p>
-        <ul class="path-list">
-          <li><span class="path-icon">✦</span> People first — not instead of technology, but before it</li>
-          <li><span class="path-icon">✦</span> Reimagines how work gets done from the ground up</li>
-          <li><span class="path-icon">✦</span> Real proficiency through doing, not training decks</li>
-          <li><span class="path-icon">✦</span> Measures new value created, not just time saved</li>
-          <li><span class="path-icon">✦</span> Your teams discover the answer — we walk alongside them</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== PHILOSOPHY ===== -->
-<section class="philosophy">
-  <div class="container">
-    <div class="philosophy-inner reveal-scale">
-      <blockquote>Excel didn't transform finance because companies bought spreadsheet software. It transformed finance because people learned to think differently about data. AI is that same moment. And the companies that get it right won't be the ones with the best tools — they'll be the ones whose people can adapt faster than the world changes around them.</blockquote>
-      <cite>Our founding perspective</cite>
-    </div>
-  </div>
-</section>
-
-<!-- ===== APPROACH ===== -->
-<section class="approach" id="approach">
-  <div class="container">
-    <div class="reveal">
-      <p class="approach-label">How We Work</p>
-      <h2>We don't advise from the outside. We work alongside your people from the inside.</h2>
-      <p class="approach-intro">This isn't a two-week engagement that ends with a slide deck. We embed with your teams for the long term — typically a year — solving a real business problem while building the capacity your organization needs to keep evolving without us. Think of it less like hiring a consultant and more like gaining a partner who's in it with you.</p>
-    </div>
-    <div class="approach-steps">
-      <div class="step reveal stagger-1">
-        <div class="step-number">01</div>
-        <h3>Pick a Real Problem</h3>
-        <p>Work with your leadership team to choose a strategic challenge that actually matters — not a proof of concept, but something with real stakes. That's the proving ground.</p>
-      </div>
-      <div class="step reveal stagger-2">
-        <div class="step-number">02</div>
-        <h3>Bring the People In</h3>
-        <p>Assemble a team of 10–15 people — the ones with deep domain expertise. We don't teach them how to prompt. We help them see their work through an entirely different lens, with AI as the tool that makes that new perspective actionable.</p>
-      </div>
-      <div class="step reveal stagger-3">
-        <div class="step-number">03</div>
-        <h3>Build Proficiency by Doing the Work</h3>
-        <p>No boot camps. No training decks. The team solves the problem using AI — experimenting, iterating, discovering what works. In the process, they develop the judgment, confidence, and fluency to keep going after we step back.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== OUTCOMES ===== -->
-<section class="outcomes" id="outcomes">
-  <div class="container">
-    <div class="outcomes-header reveal">
-      <p class="outcomes-label">What Changes</p>
-      <h2>You're not buying efficiency. You're building adaptive capacity.</h2>
-      <p>The barrier that used to take three months becomes a barrier for a week. That recovery speed — not any single tool — is your real competitive advantage.</p>
-    </div>
-    <div class="outcomes-grid">
-      <div class="outcome-card reveal stagger-1">
-        <div class="outcome-icon">◆</div>
-        <h3>Real Business Outcomes</h3>
-        <p>A strategic problem gets solved — not as a proof of concept, but as actual progress your leadership can build on. The work pays for itself while it's happening.</p>
-      </div>
-      <div class="outcome-card reveal stagger-2">
-        <div class="outcome-icon">◇</div>
-        <h3>People Who Can Keep Up</h3>
-        <p>Your teams don't just learn AI tools. They develop the ability to adapt and evolve as their work adapts and evolves — which, in this environment, it will. Continuously and rapidly.</p>
-      </div>
-      <div class="outcome-card reveal stagger-3">
-        <div class="outcome-icon">○</div>
-        <h3>A Working Relationship With AI</h3>
-        <p>Not everything running perfectly. Something closer to synchrony — where your people have enough fluency with these tools that when something breaks or falls short, they don't get derailed. They adapt.</p>
-      </div>
-      <div class="outcome-card reveal stagger-4">
-        <div class="outcome-icon">△</div>
-        <h3>Clarity You Can't Get From a Deck</h3>
-        <p>Through the work itself, your leadership sees what AI actually changes, what it doesn't, and how roles and operating models need to evolve — grounded in reality, not theory.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== STORY / PROOF ===== -->
-<section class="story" id="story">
-  <div class="container">
-    <div class="story-layout">
-      <div class="story-visual reveal-left">
-        <div class="story-card">
-          <div class="story-metric">
-            <span class="story-metric-number">4x</span>
+  <!-- GAP SECTION — Scroll-Shrink Effect -->
+  <section class="gap-shrink-wrapper light-section" id="gap">
+    <div class="gap-shrink-pin" id="gapPin">
+      <!-- The shrinking content box — contains the REAL v4 gap layout -->
+      <div class="gap-content-box" id="gapBox">
+        <div class="gap-box-inner">
+          <!-- Logo ticker inside the box -->
+          <div class="gap-box-logos">
+            <span class="gap-box-logos-label">Our work includes</span>
+            <div class="logo-ticker-mini">
+              <div class="logo-ticker-track">
+                <img src="Logos/AbbVie_logo.svg.png" alt="AbbVie">
+                <img src="Logos/Alexion_Logo.svg.png" alt="Alexion">
+                <img src="Logos/Beam_Suntory_logo.svg.png" alt="Beam Suntory">
+                <img src="Logos/BNY_logo_2024.svg.png" alt="BNY">
+                <img src="Logos/Chase-Logo.png" alt="Chase" class="logo-xl">
+                <img src="Logos/Comcast_(2013-2024)_logo.svg.png" alt="Comcast">
+                <img src="Logos/GSK_logo_2014.svg.png" alt="GSK">
+                <img src="Logos/Inova_Health_System_logo.png" alt="Inova Health System">
+                <img src="Logos/Kaiser-Permanente-Logo.png" alt="Kaiser Permanente" class="logo-xl">
+                <img src="Logos/Kimberly-Clark_Logo.png" alt="Kimberly-Clark">
+                <img src="Logos/Nike-Logo-1978.png" alt="Nike" class="logo-lg">
+                <img src="Logos/NTT_2025.svg.png" alt="NTT">
+                <img src="Logos/tyson-1-logo-png-transparent.png" alt="Tyson" class="logo-xl logo-invert">
+                <img src="Logos/Washington-Post-Symbol.png" alt="The Washington Post" class="logo-xl">
+                <img src="Logos/AbbVie_logo.svg.png" alt="AbbVie">
+                <img src="Logos/Alexion_Logo.svg.png" alt="Alexion">
+                <img src="Logos/Beam_Suntory_logo.svg.png" alt="Beam Suntory">
+                <img src="Logos/BNY_logo_2024.svg.png" alt="BNY">
+                <img src="Logos/Chase-Logo.png" alt="Chase" class="logo-xl">
+                <img src="Logos/Comcast_(2013-2024)_logo.svg.png" alt="Comcast">
+                <img src="Logos/GSK_logo_2014.svg.png" alt="GSK">
+                <img src="Logos/Inova_Health_System_logo.png" alt="Inova Health System">
+                <img src="Logos/Kaiser-Permanente-Logo.png" alt="Kaiser Permanente" class="logo-xl">
+                <img src="Logos/Kimberly-Clark_Logo.png" alt="Kimberly-Clark">
+                <img src="Logos/Nike-Logo-1978.png" alt="Nike" class="logo-lg">
+                <img src="Logos/NTT_2025.svg.png" alt="NTT">
+                <img src="Logos/tyson-1-logo-png-transparent.png" alt="Tyson" class="logo-xl logo-invert">
+                <img src="Logos/Washington-Post-Symbol.png" alt="The Washington Post" class="logo-xl">
+              </div>
+            </div>
           </div>
-          <div class="story-metric-label">Faster formulation speed per scientist</div>
-          <div class="story-detail">What used to take a full week was accomplished in a single day — freeing six days for work the team had always wanted to do but never had time for.</div>
+          <!-- Text + Video grid -->
+          <div class="gap-box-grid">
+            <div class="gap-box-text">
+              <p class="section-label">The gap</p>
+              <h2>A billion-dollar company was just built by <em>one person</em> using AI.</h2>
+              <p>Yet most teams inside large organizations are still using AI to summarize meetings. The Counter helps you close that gap.</p>
+            </div>
+            <div class="gap-box-video">
+              <video controls playsinline preload="metadata" poster="founder-video-poster.jpg" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">
+                <source src="founder-video-headlines.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="story-content reveal-right">
-        <p class="story-content-label">In Practice</p>
-        <h2>She didn't get faster. She got back to the work she actually loves.</h2>
-        <p>A food formulation scientist at a global ingredients company — decades of expertise, all stored in her head. Every project started from scratch, every week spent getting to a result she already knew was coming.</p>
-        <p>We introduced AI tools that let her simulate ingredient interactions digitally before going to the lab. <strong>A week's work was 90% done in a day.</strong> But what happened next is the whole point.</p>
-        <div class="story-pullquote">"I got to spend six days tinkering with things I'd love to do in school but never could here — carbonation, mouthfeel, flavor profiles. Things I never had time for."</div>
-        <p>That tinkering unlocked an entirely new service line — texture elevation — that the company had never been able to offer. The AI didn't replace the scientist. It gave her back the craft she went to school for. And in doing so, it created value the company didn't even know was possible.</p>
-      </div>
-    </div>
-  </div>
-</section>
 
-<!-- ===== WHO THIS IS FOR ===== -->
-<section class="audience" id="audience">
-  <div class="container">
-    <div class="audience-header reveal">
-      <p class="audience-label">Who This Is For</p>
-      <h2>For anyone who feels the pressure — and the leaders responsible for what comes next.</h2>
-    </div>
-    <div class="audience-cards">
-      <div class="audience-card reveal stagger-1">
-        <div class="audience-card-icon">◈</div>
-        <h3>The Leader With the Mandate</h3>
-        <p>You've been told to transform your organization with AI. You're also still expected to do your actual job. You can't model the behavior and execute the strategy simultaneously — you need someone alongside you who can.</p>
-      </div>
-      <div class="audience-card reveal stagger-2">
-        <div class="audience-card-icon">◈</div>
-        <h3>The Team Under Pressure</h3>
-        <p>Your people have been handed tools and told to figure it out. The problem isn't that they don't understand AI. It's that no one has created the conditions for them to actually use it — with support, with purpose, with permission to experiment.</p>
-      </div>
-      <div class="audience-card reveal stagger-3">
-        <div class="audience-card-icon">◈</div>
-        <h3>The Organization at a Crossroads</h3>
-        <p>You know tool deployment alone isn't going to get you where you need to go. But the alternative — fundamentally rethinking how your people work — feels enormous and uncertain. It is. That's why you don't do it alone.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== CTA ===== -->
-<section class="cta" id="contact">
-  <div class="container">
-    <div class="reveal-scale">
-      <h2>The tools are here.<br>The question is what you do with them.</h2>
-      <p>We start with a conversation — about where your people are today, what's not working, and what it would look like if they could actually make this technology their own.</p>
-      <a href="mailto:drew@rewire.co" class="btn-primary">Start a Conversation <span>→</span></a>
-    </div>
-  </div>
-</section>
-
-</div>
-
-<!-- ===== PAGE COUNTER ===== -->
-<div id="page-counter" class="page-view">
-
-<!-- ===== HERO ===== -->
-<section class="hero">
-  <div class="hero-orb"></div>
-  <div class="hero-orb-inner"></div>
-  <div class="container">
-    <p class="hero-tag">An experience, not a presentation</p>
-    <h1>Your people know<br>the problems.<br><em>Let's show them<br>what's possible.</em></h1>
-    <p class="hero-sub">We set up inside your organization for a day. Your teams bring us the real problems in their workflows — the features they wish they had, the bottlenecks they live with, the things they've given up on. We listen, we build, and we show them what AI can actually do with their expertise.</p>
-    <div class="hero-actions">
-      <a href="#contact" class="btn btn--warm">Set Up a Counter <span>&rarr;</span></a>
-      <a href="#counter-how" class="btn btn--outline">See How It Works</a>
-    </div>
-  </div>
-</section>
-
-<!-- ===== WHY THIS EXISTS ===== -->
-<section class="why">
-  <div class="container">
-    <div class="why-split">
-      <div class="why-left reveal">
-        <p class="why-label">Why This Exists</p>
-        <h2>Hackathons and boot camps don't change how anyone works. They never have.</h2>
-      </div>
-      <div class="why-right">
-        <p class="why-body reveal">You can teach a room full of people how to prompt. You can run a two-day innovation sprint. You can hand out tool licenses. And at the end of it, almost everyone goes back to doing their job the exact same way. It's not because they don't get it. It's because none of it was ever about <em>their</em> work.</p>
-        <div class="why-versus">
-          <div class="versus-card versus-card--old reveal stagger-1">
-            <p class="versus-tag">The usual approach</p>
-            <h3>"Here's what AI can do. Now figure out how it applies to you."</h3>
-            <p>Generic demos. Prompt engineering workshops. Tool rollouts with adoption dashboards. Impressive for a day, forgotten by the next sprint.</p>
+      <!-- Fluency overlay — text left, table right, all inside the pinned viewport -->
+      <div class="fluency-overlay" id="fluencyOverlay">
+        <div class="fluency-overlay-inner">
+          <!-- Left: the statement -->
+          <div class="fluency-reveal-left">
+            <p class="reveal-label">The difference</p>
+            <h2>Literacy teaches tools.<br><br><em>Fluency</em> transforms work.</h2>
           </div>
-          <div class="versus-card versus-card--new reveal stagger-2">
-            <p class="versus-tag">The counter</p>
-            <h3>"Tell us what's broken in your work. We'll show you what's possible."</h3>
-            <p>Start from their expertise. Their problems. Their workflows. Build something real with their context — and let them see it with their own eyes.</p>
+          <!-- Right: comparison table — slides in via CSS transition -->
+          <div class="fluency-reveal-right" id="raceCompare">
+            <table class="race-table">
+              <thead>
+                <tr>
+                  <th class="rt-head rt-head--lit">Online Courses</th>
+                  <th class="rt-head rt-head--lit">Workshops</th>
+                  <th class="rt-head rt-head--counter">The Counter</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="race-row" data-row="1">
+                  <td class="rt-cell rt-cell--lit"><span class="rt-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Knowledge of AI tools</td>
+                  <td class="rt-cell rt-cell--lit"><span class="rt-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Knowledge of AI tools</td>
+                  <td class="rt-cell rt-cell--counter"><span class="rt-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Knowledge of AI tools</td>
+                </tr>
+                <tr class="race-row" data-row="2">
+                  <td class="rt-cell rt-cell--lit"><span class="rt-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Ability to prompt and use AI</td>
+                  <td class="rt-cell rt-cell--lit"><span class="rt-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Ability to prompt and use AI</td>
+                  <td class="rt-cell rt-cell--counter"><span class="rt-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Ability to prompt and use AI</td>
+                </tr>
+                <tr class="race-row" data-row="3">
+                  <td class="rt-cell rt-cell--lit"><span class="rt-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Faster on existing tasks</td>
+                  <td class="rt-cell rt-cell--lit"><span class="rt-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Faster on existing tasks</td>
+                  <td class="rt-cell rt-cell--counter"><span class="rt-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Faster on existing tasks</td>
+                </tr>
+                <tr class="race-barrier-row">
+                  <td class="rt-barrier" colspan="2">
+                    <div class="rt-barrier-line">
+                      <span class="rt-barrier-x"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
+                    </div>
+                    <div class="rt-barrier-label">Most programs stop here</div>
+                  </td>
+                  <td class="rt-barrier-continues">
+                    <div class="rt-barrier-continues-label">We Do Much More ↓</div>
+                  </td>
+                </tr>
+                <tr class="race-row race-row--counter-only" data-row="4">
+                  <td class="rt-cell rt-cell--empty"></td>
+                  <td class="rt-cell rt-cell--empty"></td>
+                  <td class="rt-cell rt-cell--counter"><span class="rt-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Applied to their actual role</td>
+                </tr>
+                <tr class="race-row race-row--counter-only" data-row="5">
+                  <td class="rt-cell rt-cell--empty"></td>
+                  <td class="rt-cell rt-cell--empty"></td>
+                  <td class="rt-cell rt-cell--counter"><span class="rt-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> New ways of thinking and working</td>
+                </tr>
+                <tr class="race-row race-row--counter-only" data-row="6">
+                  <td class="rt-cell rt-cell--empty"></td>
+                  <td class="rt-cell rt-cell--empty"></td>
+                  <td class="rt-cell rt-cell--counter"><span class="rt-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Solutions that didn't exist before</td>
+                </tr>
+                <tr class="race-row race-row--counter-only" data-row="7">
+                  <td class="rt-cell rt-cell--empty"></td>
+                  <td class="rt-cell rt-cell--empty"></td>
+                  <td class="rt-cell rt-cell--counter"><span class="rt-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span> Capability that sticks and compounds</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div> <!-- closes gap-shrink-pin -->
+  </section> <!-- closes gap-shrink-wrapper -->
+
+  <!-- WHAT SECTION -->
+  <section class="what-section dark-section" id="what">
+    <div class="container">
+      <div class="reveal">
+        <p class="section-label">What is the Counter?</p>
+        <div class="what-inner">
+          <h2>A pop-up workspace inside <em>your</em> office.</h2>
+          <p class="what-description">We set up in your office for a few days. Individuals show up with a real problem they face in their work. Through the process, they learn to think and work with AI to diagnose their problem, build a working solution in hours, and leave not just with something they made themselves — but with the fluency and belief to keep working this way.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS SECTION -->
+  <section class="process light-section" id="process">
+    <div class="container">
+      <div class="process-header reveal">
+        <p class="section-label">The process</p>
+        <h2>How a Counter engagement works.</h2>
+        <p>From finding the right starting point to building capability that sticks.</p>
+      </div>
+
+      <div class="process-steps">
+        <div class="process-step-card active" data-step="1">
+          <iframe class="step-lottie" src="https://lottie.host/embed/ef9e36b1-d272-4da0-bf10-2f39cfcc86c7/jmFBjeCuYa.lottie" loading="lazy"></iframe>
+          <div class="step-card-content">
+            <div class="step-card-header">
+              <div class="step-card-number">01</div>
+              <span class="step-card-phase-tag">Discover</span>
+            </div>
+            <h3 class="step-card-title">We find the right starting point.</h3>
+            <p class="step-card-text">Before we arrive, we help you identify the people and problems that are the best fit for this experience. Specifically, those who have something they're working on right now that they wish was faster, better, or simply possible. It could be something for their team, their customers, or just themselves.</p>
+          </div>
+        </div>
+
+        <div class="process-step-card" data-step="2">
+          <iframe class="step-lottie" src="https://lottie.host/embed/4382fae2-809f-4745-ad1b-f84802c0bae2/B4XLBiDpIr.lottie" loading="lazy"></iframe>
+          <div class="step-card-content">
+            <div class="step-card-header">
+              <div class="step-card-number">02</div>
+              <span class="step-card-phase-tag">Build</span>
+            </div>
+            <h3 class="step-card-title">Your people come to The Counter and build.</h3>
+            <p class="step-card-text">In pre-scheduled sessions, individuals sit down with us and their problem. Working side by side, we help them develop AI fluency in real time — learning how to think with AI to diagnose what's really going on, explore a wide range of potential solutions, and build a working minimum viable product that they can take back and test immediately.</p>
+          </div>
+        </div>
+
+        <div class="process-step-card" data-step="3">
+          <iframe class="step-lottie" src="https://lottie.host/embed/b9f516be-efb9-479c-8800-824ea84d9540/zh8J4X3pqu.lottie" loading="lazy"></iframe>
+          <div class="step-card-content">
+            <div class="step-card-header">
+              <div class="step-card-number">03</div>
+              <span class="step-card-phase-tag">Real Work</span>
+            </div>
+            <h3 class="step-card-title">They take it back into the real work.</h3>
+            <p class="step-card-text">Between sessions, each person puts what they built to work — testing it against real data, real deadlines, and real colleagues. This is where the gap between a demo and a tool becomes obvious, and where the most valuable feedback comes from.</p>
+          </div>
+        </div>
+
+        <div class="process-step-card" data-step="4">
+          <iframe class="step-lottie" src="https://lottie.host/embed/de69013f-3c44-4962-a02d-2092ac0671e8/PZFM5tc4SJ.lottie" loading="lazy"></iframe>
+          <div class="step-card-content">
+            <div class="step-card-header">
+              <div class="step-card-number">04</div>
+              <span class="step-card-phase-tag">Iterate</span>
+            </div>
+            <h3 class="step-card-title">We iterate and sharpen together.</h3>
+            <p class="step-card-text">They come back with what worked, what didn't, and what they wish it could do next. We rebuild, extend, and refine — not just the tool, but how they think about solving problems with AI. Each cycle compounds their fluency.</p>
+          </div>
+        </div>
+
+        <div class="process-step-card" data-step="5">
+          <iframe class="step-lottie" src="https://lottie.host/embed/699ab7ac-1740-4d1b-9eda-778cac295022/BvnRC2YmR6.lottie" loading="lazy"></iframe>
+          <div class="step-card-content">
+            <div class="step-card-header">
+              <div class="step-card-number">05</div>
+              <span class="step-card-phase-tag">Evidence</span>
+            </div>
+            <h3 class="step-card-title">You leave with evidence, not a pitch deck.</h3>
+            <p class="step-card-text">Working tools your people built themselves. Increased fluency they can apply again tomorrow. And the proof — visible to leadership, peers, and the builders themselves — that this way of working is real and worth investing in further.</p>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ===== HOW IT WORKS ===== -->
-<section class="how" id="counter-how">
-  <div class="container">
-    <div class="how-header reveal">
-      <p class="how-label">How It Works</p>
-      <h2>We show up. We listen. We build. We show.</h2>
-      <p>Think of it like office hours — except instead of advice, you walk away with working proof of what's possible.</p>
-    </div>
-    <div class="how-steps">
-      <div class="how-step reveal stagger-1">
-        <div class="how-step-num">01</div>
-        <div class="how-step-body">
-          <h3>We Set Up Inside Your Organization</h3>
-          <p>A physical space — could be a conference room, a lounge, a literal coffee bar. The point is it feels approachable, not like a corporate training event. We announce it internally with a simple ask: think about the problems in your workflow, the features you wish you had, the things that slow you down. Then come talk to us.</p>
+  <!-- OUTCOMES SECTION -->
+  <section class="outcomes dark-section" id="outcomes">
+    <div class="container">
+      <div class="outcomes-header reveal">
+        <p class="section-label">This is what capability looks like</p>
+        <h2>What you leave with.</h2>
+        <p>Evidence to build this capability further — not a slide deck about what could be.</p>
+      </div>
+
+      <div class="outcomes-grid reveal">
+        <div class="outcome-card">
+          <div class="outcome-icon">
+            <img class="icon-static" src="Tool image.png" alt="">
+            <dotlottie-player src="https://lottie.host/7297000c-4e6e-4584-980a-d6f29e5b3156/yyBMuoOWWr.lottie" background="transparent" speed="1"></dotlottie-player>
+          </div>
+          <h3>Functional Tools</h3>
+          <p>Working solutions they built themselves, designed for the problems they actually face.</p>
+        </div>
+
+        <div class="outcome-card">
+          <div class="outcome-icon">
+            <dotlottie-player src="https://lottie.host/eda13099-406e-40ad-aa62-d417f5ff9816/DX6b9XcEMk.lottie" background="transparent" speed="1"></dotlottie-player>
+          </div>
+          <h3>Increased AI Capability</h3>
+          <p>The ability to keep working with AI to solve problems and prototype solutions in hours.</p>
+        </div>
+
+        <div class="outcome-card">
+          <div class="outcome-icon">
+            <dotlottie-player src="https://lottie.host/15370f09-883c-4377-87d5-d94769b6f995/f1MexLSjY8.lottie" background="transparent" speed="1" data-autoplay-once="true"></dotlottie-player>
+          </div>
+          <h3>Belief & Inspiration</h3>
+          <p>The conviction that this way of working is real — and the motivation to continue it day-to-day.</p>
+        </div>
+
+        <div class="outcome-card">
+          <div class="outcome-icon">
+            <dotlottie-player src="https://lottie.host/10a64c2a-add9-4f7e-8967-c13826f38cce/yfwlKEsM4U.lottie" background="transparent" speed="1"></dotlottie-player>
+          </div>
+          <h3>Evidence to Scale</h3>
+          <p>Documented feedback, reported results, and proof points to make the case for continued investment.</p>
         </div>
       </div>
-      <div class="how-step reveal stagger-2">
-        <div class="how-step-num">02</div>
-        <div class="how-step-body">
-          <h3>Your People Bring Us the Real Problems</h3>
-          <p>One by one, individuals and small teams sit down and tell us what's actually hard about their work. Not what their manager thinks is hard. Not what showed up on a survey. The real thing — the workaround they've been living with for years, the report that takes a week, the data that never connects.</p>
-          <p class="how-step-detail">This is the expertise you've been sitting on. We're just creating the space to surface it.</p>
+    </div>
+  </section>
+
+  <!-- CASE STUDIES SECTION -->
+  <section class="case-studies light-section" id="case-studies">
+    <div class="container">
+      <div class="case-studies-header reveal">
+        <div class="cs-header-left">
+          <p class="section-label">Case studies</p>
+          <h2>What this looks like in practice.</h2>
+          <p>Real problems, real builds, real results.</p>
+        </div>
+        <div class="cs-tabs">
+          <button class="cs-tab active" data-cs="0">Materials R&D</button>
+          <button class="cs-tab" data-cs="1">Financial Services</button>
+          <button class="cs-tab" data-cs="2">Healthcare</button>
         </div>
       </div>
-      <div class="how-step reveal stagger-3">
-        <div class="how-step-num">03</div>
-        <div class="how-step-body">
-          <h3>We Take It Away and Build — Fast</h3>
-          <p>Using tools like Claude, Claude Code, and rapid prototyping, we take the problems we've heard and start building. Not slide decks. Working examples. Functional prototypes. Things people can see and touch that directly address what they told us.</p>
-          <p class="how-step-detail">Some of these come together in hours. That speed is part of the point.</p>
-        </div>
-      </div>
-      <div class="how-step reveal stagger-4">
-        <div class="how-step-num">04</div>
-        <div class="how-step-body">
-          <h3>We Come Back and Show Them</h3>
-          <p>Same day or within the week, we reconnect with the people who brought us their problems — in person or over a call. We walk through what we built, get their honest reaction, and capture what it would mean for the business if this capability existed at scale.</p>
-          <p class="how-step-detail">This is where the real conversation starts. Not "what can AI do?" but "what could we do with this?"</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 
-<!-- ===== QUOTE ===== -->
-<section class="quote-band">
-  <div class="container">
-    <div class="quote-inner reveal-scale">
-      <blockquote>People don't learn to use AI by sitting in a workshop. They learn when it's applied to the thing they've been trying to solve for the last six months — and suddenly, it takes an afternoon.</blockquote>
-      <cite>The premise behind everything we do</cite>
-    </div>
-  </div>
-</section>
+      <!-- CASE STUDY 1: Materials R&D -->
+      <div class="reveal" id="cs-panel-0">
+        <div class="cs-carousel">
+          <div class="cs-intro">
+            <div class="cs-intro-text">
+              <p class="cs-intro-tag">Consumer Goods — R&D</p>
+              <h3>A senior materials scientist had ten years of data. She was only using a fraction of it.</h3>
+            </div>
+            <div class="cs-intro-meta">
+              <div class="cs-meta-item">
+                <div class="val">60%</div>
+                <div class="lbl">Time on analysis</div>
+              </div>
+              <div class="cs-meta-item">
+                <div class="val">Days</div>
+                <div class="lbl">Build time</div>
+              </div>
+            </div>
+          </div>
 
-<!-- ===== WHAT YOU GET ===== -->
-<section class="results" id="counter-results">
-  <div class="container">
-    <div class="results-header reveal">
-      <p class="results-label">What You Walk Away With</p>
-      <h2>More than a demo. An actual picture of what's possible.</h2>
-    </div>
-    <div class="results-row">
-      <div class="result-item reveal stagger-1">
-        <h3>Working Prototypes</h3>
-        <p>Functional examples built from your team's actual problems. Not generic demos — real tools that address real gaps in your workflows, built in hours.</p>
-      </div>
-      <div class="result-item reveal stagger-2">
-        <h3>Voices From Your Own People</h3>
-        <p>Direct verbatims and reactions from the people closest to the work — what they'd do differently, what would change for them, how impactful it would be. The kind of insight no survey captures.</p>
-      </div>
-      <div class="result-item reveal stagger-3">
-        <h3>A Map of Where to Start</h3>
-        <p>A clear picture of the highest-impact opportunities across your teams — grounded in their expertise, not our assumptions. The beginning of a roadmap that actually makes sense for your organization.</p>
-      </div>
-    </div>
-  </div>
-</section>
+          <div class="cs-slide-area" id="cs1-slides">
+            <div class="cs-visual">
+              <div class="cs-visual-slide active" data-slide="0">
+                <div class="cs-screen">
+                  <div class="cs-screen-bar">
+                    <div class="cs-dot r"></div><div class="cs-dot y"></div><div class="cs-dot g"></div>
+                    <div class="cs-screen-title">Absorb — Materials R&D Analysis Platform</div>
+                  </div>
+                  <div class="cs-screen-body">
+                    <div style="font-weight:700; margin-bottom:12px; color:#1a1a2e;">Absorb</div>
+                    <div style="font-size:0.75rem; color:#6b7280; margin-bottom:16px;">580 records loaded</div>
+                    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:16px;">
+                      <div style="background:#f5f5f5; padding:8px; border-radius:6px;"><div style="font-size:0.7rem; color:#6b7280;">Total Tests</div><div style="font-weight:700; color:#1a1a2e;">580</div></div>
+                      <div style="background:#f5f5f5; padding:8px; border-radius:6px;"><div style="font-size:0.7rem; color:#6b7280;">Test Cycles</div><div style="font-weight:700; color:#1a1a2e;">29</div></div>
+                      <div style="background:#f5f5f5; padding:8px; border-radius:6px;"><div style="font-size:0.7rem; color:#6b7280;">Date Range</div><div style="font-weight:700; color:#1a1a2e;">2022–2026</div></div>
+                    </div>
+                    <div style="height:60px; background:#f5f5f5; border-radius:6px; padding:8px; display:flex; align-items:flex-end; gap:2px;">
+                      <div style="flex:1; height:85%; background:#2d5aa0; border-radius:3px;"></div>
+                      <div style="flex:1; height:90%; background:#2d5aa0; border-radius:3px;"></div>
+                      <div style="flex:1; height:70%; background:#2d5aa0; border-radius:3px;"></div>
+                      <div style="flex:1; height:75%; background:#2d5aa0; border-radius:3px;"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-<!-- ===== HOW FAST ===== -->
-<section class="speed" id="speed">
-  <div class="container">
-    <div class="speed-split">
-      <div class="speed-left reveal-left">
-        <p class="speed-label">How Fast</p>
-        <h2>From zero to running in weeks, not months.</h2>
-        <p>This isn't a six-month planning exercise. We can have a Counter set up and running inside your organization in a matter of weeks. The format is designed to be lightweight, low-commitment, and immediately valuable.</p>
-        <p style="margin-top: 16px;">It works as a standalone experience. It also works as the first chapter of something bigger.</p>
-      </div>
-      <div class="speed-right reveal-right">
-        <div class="speed-week">
-          <span class="speed-week-label">Week 1</span>
-          <div class="speed-week-content">
-            <h4>Scope and Plan</h4>
-            <p>We align on which teams, which floor, what problems to target. We help you craft the internal announcement.</p>
+              <div class="cs-visual-slide" data-slide="1">
+                <div class="cs-screen">
+                  <div class="cs-screen-bar">
+                    <div class="cs-dot r"></div><div class="cs-dot y"></div><div class="cs-dot g"></div>
+                    <div class="cs-screen-title">Absorb — Correlations</div>
+                  </div>
+                  <div class="cs-screen-body" style="font-size:0.75rem;">
+                    <div style="background:#f5f5f5; padding:8px; border-radius:6px; margin-bottom:12px;"><strong>Analyzing:</strong> Absorption Speed</div>
+                    <div style="display:flex; flex-direction:column; gap:6px;">
+                      <div><div style="color:#6b7280;">Particle Size</div><div style="display:flex; align-items:center; gap:8px; margin-top:2px;"><div style="flex:1; height:6px; background:#e5e7eb; border-radius:3px; position:relative;"><div style="position:absolute; left:50%; width:35%; height:100%; background:#2d5aa0; border-radius:3px;"></div></div><span>r=+0.412</span></div></div>
+                      <div><div style="color:#6b7280;">Surfactant Level</div><div style="display:flex; align-items:center; gap:8px; margin-top:2px;"><div style="flex:1; height:6px; background:#e5e7eb; border-radius:3px; position:relative;"><div style="position:absolute; left:50%; width:22%; height:100%; background:#2d5aa0; border-radius:3px;"></div></div><span>r=+0.287</span></div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cs-visual-slide" data-slide="2">
+                <div class="cs-screen">
+                  <div class="cs-screen-bar">
+                    <div class="cs-dot r"></div><div class="cs-dot y"></div><div class="cs-dot g"></div>
+                    <div class="cs-screen-title">Absorb — What-If Lab</div>
+                  </div>
+                  <div class="cs-screen-body" style="font-size:0.75rem;">
+                    <div style="background:#f5f5f5; padding:8px; border-radius:6px; margin-bottom:12px;">
+                      <div style="font-weight:600; margin-bottom:8px;">Parameters</div>
+                      <div style="display:flex; justify-content:space-between; margin-bottom:4px;"><span>Particle Size</span><span>420 μm</span></div>
+                      <div style="height:4px; background:#e5e7eb; border-radius:2px; margin-bottom:8px;"><div style="width:55%; height:100%; background:#2d5aa0; border-radius:2px;"></div></div>
+                    </div>
+                    <div style="background:var(--celadon); color:var(--charcoal-blue); padding:8px; border-radius:6px; text-align:center; font-weight:600;">Save Scenario</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cs-visual-slide" data-slide="3">
+                <div class="cs-screen">
+                  <div class="cs-screen-bar">
+                    <div class="cs-dot r"></div><div class="cs-dot y"></div><div class="cs-dot g"></div>
+                    <div class="cs-screen-title">Absorb_Report_2026-Q3.pdf</div>
+                  </div>
+                  <div class="cs-screen-body" style="font-size:0.75rem;">
+                    <div style="font-weight:700; margin-bottom:4px;">Absorption Test Cycle Report</div>
+                    <div style="color:#6b7280; margin-bottom:12px;">Cycle 2026-Q3 | 22 combinations</div>
+                    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px;">
+                      <div><div style="color:#6b7280;">Speed</div><div style="font-weight:700; font-size:1rem;">9.32</div><div style="color:#1a8a7d;">+1.1%</div></div>
+                      <div><div style="color:#6b7280;">Capacity</div><div style="font-weight:700; font-size:1rem;">465</div><div style="color:#c44e52;">-3.4%</div></div>
+                      <div><div style="color:#6b7280;">Rewet</div><div style="font-weight:700; font-size:1rem;">3.05</div><div style="color:#1a8a7d;">-4.7%</div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cs-visual-slide" data-slide="4">
+                <div class="cs-shift">
+                  <div class="cs-shift-card before">
+                    <div class="cs-shift-label">Before</div>
+                    <div class="cs-shift-pct">60%</div>
+                    <div class="cs-shift-desc">of time spent on documentation, formatting, and manual analysis.</div>
+                  </div>
+                  <div class="cs-shift-card after">
+                    <div class="cs-shift-label">After</div>
+                    <div class="cs-shift-pct">Inverted</div>
+                    <div class="cs-shift-desc">Reporting happens in clicks. Analysis is live. The hypothesis backlog became a conversation with the data itself.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="cs-text">
+              <div class="cs-text-slide active" data-slide="0">
+                <p>01 — See the Patterns</p>
+                <h4>Ten years of test data, live and answering questions no one had time to ask.</h4>
+                <p>Years of results had been sitting in disconnected spreadsheets. The tool brings it all into one view — surfacing trends, flagging which material properties actually predict performance, and revealing relationships that were suspected but never verified.</p>
+              </div>
+              <div class="cs-text-slide" data-slide="1">
+                <p>02 — Find the Drivers</p>
+                <h4>Which variables actually matter? Now the answer is instant.</h4>
+                <p>Instead of manually running statistical comparisons one variable at a time, the tool surfaces which material properties most predict each performance outcome.</p>
+              </div>
+              <div class="cs-text-slide" data-slide="2">
+                <p>03 — Explore What's Next</p>
+                <h4>Test a hypothesis in seconds instead of scheduling a lab cycle.</h4>
+                <p>Dial in material parameters. The tool scans historical data for the closest matches and predicts performance with confidence ranges.</p>
+              </div>
+              <div class="cs-text-slide" data-slide="3">
+                <p>04 — Generate the Report</p>
+                <h4>The afternoon that used to disappear? Now it's a single click.</h4>
+                <p>Committee-ready reports with cycle performance against baseline, anomaly flagging, weighted composite rankings, and auto-generated observations.</p>
+              </div>
+              <div class="cs-text-slide" data-slide="4">
+                <p>The Shift</p>
+                <h4>Same scientist. Same data. Completely different week.</h4>
+                <p>The tool didn't add anything to the process. It removed everything that was between the expertise and the science.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="cs-nav">
+            <div class="cs-nav-arrows">
+              <button class="cs-arrow" id="cs1-prev" aria-label="Previous" disabled>←</button>
+              <button class="cs-arrow" id="cs1-next" aria-label="Next">→</button>
+            </div>
+            <div class="cs-dots" id="cs1-dots">
+              <button class="cs-dot-nav active" data-slide="0"></button>
+              <button class="cs-dot-nav" data-slide="1"></button>
+              <button class="cs-dot-nav" data-slide="2"></button>
+              <button class="cs-dot-nav" data-slide="3"></button>
+              <button class="cs-dot-nav" data-slide="4"></button>
+            </div>
+            <div class="cs-counter"><span id="cs1-current">1</span> / 5</div>
           </div>
         </div>
-        <div class="speed-week">
-          <span class="speed-week-label">Week 2–3</span>
-          <div class="speed-week-content">
-            <h4>Set Up and Run</h4>
-            <p>The Counter goes live. We're on-site listening, capturing, and building in real time alongside your people.</p>
+      </div>
+
+      <!-- CASE STUDY 2: Financial Services -->
+      <div class="reveal" id="cs-panel-1" style="display:none;">
+        <div class="cs-carousel">
+          <div class="cs-intro">
+            <div class="cs-intro-text">
+              <p class="cs-intro-tag">Financial Services — Fraud & Disputes</p>
+              <h3>A senior dispute analyst could see every pattern. She just couldn't get them out fast enough.</h3>
+            </div>
+            <div class="cs-intro-meta">
+              <div class="cs-meta-item">
+                <div class="val">6–8 hrs</div>
+                <div class="lbl">Weekly report time</div>
+              </div>
+              <div class="cs-meta-item">
+                <div class="val">Days</div>
+                <div class="lbl">Build time</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cs-slide-area" id="cs2-slides">
+            <div class="cs-visual">
+              <div class="cs-visual-slide active" data-slide="0">
+                <div class="d-screen">
+                  <div class="d-screen-bar">
+                    <div class="d-dot r"></div><div class="d-dot y"></div><div class="d-dot g"></div>
+                    <div class="d-screen-title">Disputer — Dispute Analytics Platform</div>
+                  </div>
+                  <div class="d-screen-body">
+                    <div class="d-tabs">
+                      <button class="d-tab active">Overview</button>
+                      <button class="d-tab">Trends</button>
+                      <button class="d-tab">Cross-Reference</button>
+                      <button class="d-tab">WoW Delta</button>
+                      <button class="d-tab">Weekly Report</button>
+                    </div>
+                    <div class="d-kpi-row">
+                      <div class="d-kpi"><div class="d-kpi-label">Filtered Disputes</div><div class="d-kpi-value">2,341</div></div>
+                      <div class="d-kpi"><div class="d-kpi-label">Avg Amount</div><div class="d-kpi-value">$94</div></div>
+                      <div class="d-kpi"><div class="d-kpi-label">Avg Resolution</div><div class="d-kpi-value">18.3d</div></div>
+                      <div class="d-kpi"><div class="d-kpi-label">Cardholder Win</div><div class="d-kpi-value">71.2%</div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cs-visual-slide" data-slide="1">
+                <div class="d-screen">
+                  <div class="d-screen-bar">
+                    <div class="d-dot r"></div><div class="d-dot y"></div><div class="d-dot g"></div>
+                    <div class="d-screen-title">Disputer — Cross-Reference</div>
+                  </div>
+                  <div class="d-screen-body">
+                    <div class="d-tabs">
+                      <button class="d-tab">Overview</button>
+                      <button class="d-tab">Trends</button>
+                      <button class="d-tab active">Cross-Reference</button>
+                      <button class="d-tab">WoW Delta</button>
+                      <button class="d-tab">Weekly Report</button>
+                    </div>
+                    <table class="d-heatmap">
+                      <thead>
+                        <tr><th>Dispute Type</th><th>Online Retail</th><th>Digital / SaaS</th><th>Travel</th><th>Electronics</th></tr>
+                      </thead>
+                      <tbody>
+                        <tr><th>Unauthorized Txn</th><td class="d-heat-intensity-2 d-heat-cell">847</td><td class="d-heat-intensity-4 d-heat-cell">1,527</td><td class="d-heat-intensity-1 d-heat-cell">234</td><td class="d-heat-intensity-2 d-heat-cell">612</td></tr>
+                        <tr><th>Merch Not Received</th><td class="d-heat-intensity-3 d-heat-cell">1,203</td><td class="d-heat-intensity-2 d-heat-cell">456</td><td class="d-heat-intensity-3 d-heat-cell">892</td><td class="d-heat-intensity-2 d-heat-cell">645</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cs-visual-slide" data-slide="2">
+                <div class="d-screen">
+                  <div class="d-screen-bar">
+                    <div class="d-dot r"></div><div class="d-dot y"></div><div class="d-dot g"></div>
+                    <div class="d-screen-title">Disputer — WoW Delta</div>
+                  </div>
+                  <div class="d-screen-body">
+                    <div class="d-tabs">
+                      <button class="d-tab">Overview</button>
+                      <button class="d-tab">Trends</button>
+                      <button class="d-tab">Cross-Reference</button>
+                      <button class="d-tab active">WoW Delta</button>
+                      <button class="d-tab">Weekly Report</button>
+                    </div>
+                    <div class="d-kpi-row">
+                      <div class="d-kpi"><div class="d-kpi-label">Volume Change</div><div class="d-kpi-value" style="color: #22c55e;">+8.3%</div></div>
+                      <div class="d-kpi"><div class="d-kpi-label">Exposure Change</div><div class="d-kpi-value" style="color: #ef4444;">+12.1%</div></div>
+                      <div class="d-kpi"><div class="d-kpi-label">Resolution Speed</div><div class="d-kpi-value">21.4d</div></div>
+                      <div class="d-kpi"><div class="d-kpi-label">Cardholder Win</div><div class="d-kpi-value">69.8%</div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cs-visual-slide" data-slide="3">
+                <div class="d-screen">
+                  <div class="d-screen-bar">
+                    <div class="d-dot r"></div><div class="d-dot y"></div><div class="d-dot g"></div>
+                    <div class="d-screen-title">Disputer — Weekly Report</div>
+                  </div>
+                  <div class="d-screen-body">
+                    <div class="d-tabs">
+                      <button class="d-tab">Overview</button>
+                      <button class="d-tab">Trends</button>
+                      <button class="d-tab">Cross-Reference</button>
+                      <button class="d-tab">WoW Delta</button>
+                      <button class="d-tab active">Weekly Report</button>
+                    </div>
+                    <div style="font-weight: 700; margin-bottom: 8px;">Weekly Intelligence Report</div>
+                    <p style="font-size: 0.8rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 12px;">This week shows elevated unauthorized transaction activity concentrated in digital services. Exposure increased 12.1% driven by SaaS merchants.</p>
+                    <div style="background: rgba(239, 68, 68, 0.15); border-left: 3px solid #ef4444; padding: 8px; border-radius: 4px; font-size: 0.75rem; color: #fca5a5;">HIGH — Unauthorized Txn up 26% vs 4-week avg</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cs-visual-slide" data-slide="4">
+                <div class="cs-shift" style="background: #0f172a; grid-template-columns: 1fr 1fr;">
+                  <div class="cs-shift-card before" style="background: rgba(100, 116, 139, 0.15); border-color: rgba(100, 116, 139, 0.3); color: #cbd5e1;">
+                    <div class="cs-shift-label">Before</div>
+                    <div class="cs-shift-pct">6–8 hrs</div>
+                    <div class="cs-shift-desc">Every week pulling from three systems, rebuilding pivots, hand-calculating deltas.</div>
+                  </div>
+                  <div class="cs-shift-card after" style="background: rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.3); color: #93c5fd;">
+                    <div class="cs-shift-label">After</div>
+                    <div class="cs-shift-pct">Minutes</div>
+                    <div class="cs-shift-desc">Cross-references are instant. Filters reshape every metric at once. She edits instead of assembles.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="cs-text">
+              <div class="cs-text-slide active" data-slide="0">
+                <p>01 — Filter, Don't Dig</p>
+                <h4>Every metric recalculates the moment focus narrows.</h4>
+                <p>She used to maintain separate spreadsheet tabs for each dispute type, each merchant category. Now she taps a filter pill and the entire view reshapes — KPIs recalculate, trends update, charts reflow.</p>
+              </div>
+              <div class="cs-text-slide" data-slide="1">
+                <p>02 — Cross-Reference, Don't Pivot</p>
+                <h4>The two-hour pivot table, replaced by two clicks.</h4>
+                <p>Finding where disputes concentrate used to mean exporting to Excel. Now she picks any two dimensions and the intersection appears instantly.</p>
+              </div>
+              <div class="cs-text-slide" data-slide="2">
+                <p>03 — See What Changed</p>
+                <h4>The 'what happened this week' view, now instant.</h4>
+                <p>Every Monday morning she needed to know what moved. Now the WoW Delta view auto-sorts the deltas for her. The patterns that changed most rise to the top.</p>
+              </div>
+              <div class="cs-text-slide" data-slide="3">
+                <p>04 — Generate the Report</p>
+                <h4>The six-hour report, assembled in minutes.</h4>
+                <p>Her weekly report to leadership isn't just dashboards — it's intelligence. A narrative summary of patterns and changes, conditional alerts built in.</p>
+              </div>
+              <div class="cs-text-slide" data-slide="4">
+                <p>The Shift</p>
+                <h4>Same analyst. Same data. Completely different Monday.</h4>
+                <p>The tool didn't make her smarter — she already knew the patterns. It removed the hours of assembly standing between her expertise and her team's inbox.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="cs-nav">
+            <div class="cs-nav-arrows">
+              <button class="cs-arrow" id="cs2-prev" aria-label="Previous" disabled>←</button>
+              <button class="cs-arrow" id="cs2-next" aria-label="Next">→</button>
+            </div>
+            <div class="cs-dots" id="cs2-dots">
+              <button class="cs-dot-nav active" data-slide="0"></button>
+              <button class="cs-dot-nav" data-slide="1"></button>
+              <button class="cs-dot-nav" data-slide="2"></button>
+              <button class="cs-dot-nav" data-slide="3"></button>
+              <button class="cs-dot-nav" data-slide="4"></button>
+            </div>
+            <div class="cs-counter"><span id="cs2-current">1</span> / 5</div>
           </div>
         </div>
-        <div class="speed-week">
-          <span class="speed-week-label">Week 4</span>
-          <div class="speed-week-content">
-            <h4>Show and Debrief</h4>
-            <p>We deliver prototypes back to the individuals who brought us problems, and present findings and opportunities to leadership.</p>
+      </div>
+
+      <!-- CASE STUDY 3: Healthcare -->
+      <div class="reveal" id="cs-panel-2" style="display:none;">
+        <div class="cs-carousel">
+          <div class="cs-intro">
+            <div class="cs-intro-text">
+              <p class="cs-intro-tag">Top-15 Pharma — Commercial Insights</p>
+              <h3>She had more patient data than ever. She could only look at it twice a year.</h3>
+            </div>
+            <div class="cs-intro-meta">
+              <div class="cs-meta-item">
+                <div class="val">75%</div>
+                <div class="lbl">Time on assembly</div>
+              </div>
+              <div class="cs-meta-item">
+                <div class="val">Days</div>
+                <div class="lbl">Build time</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cs-slide-area" id="cs3-slides">
+            <div class="cs-visual" style="background: #1a1828;">
+              <div class="cs-visual-slide active" data-slide="0">
+                <div class="pj-screen">
+                  <div class="pj-screen-bar">
+                    <div class="pj-bar-icon"></div>
+                    <div class="pj-bar-title">Journey Tracker — Patient Journey Dashboard</div>
+                    <div class="pj-win-controls"><div class="pj-win-btn">—</div><div class="pj-win-btn">□</div><div class="pj-win-btn">✕</div></div>
+                  </div>
+                  <div class="pj-screen-body">
+                    <div class="pj-tabs">
+                      <div class="pj-tab active">Journey Overview</div>
+                      <div class="pj-tab">Treatment Flow</div>
+                      <div class="pj-tab">Segments</div>
+                      <div class="pj-tab">Barriers</div>
+                      <div class="pj-tab">Brief</div>
+                    </div>
+                    <div class="pj-filter">Severity: <span>All</span> Insurance: <span>All</span> Region: <span>All</span><span class="count">2,400 / 2,400 patients</span></div>
+                    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:12px;">
+                      <div style="background:rgba(59,130,246,0.2); padding:8px; border-radius:6px;"><div style="font-size:0.7rem; color:#cbd5e1;">Median Dx Delay</div><div style="font-weight:700; color:#e4e2f0;">14mo</div></div>
+                      <div style="background:rgba(124,58,237,0.2); padding:8px; border-radius:6px;"><div style="font-size:0.7rem; color:#cbd5e1;">Dx → 1L</div><div style="font-weight:700; color:#e4e2f0;">4mo</div></div>
+                      <div style="background:rgba(20,184,166,0.2); padding:8px; border-radius:6px;"><div style="font-size:0.7rem; color:#cbd5e1;">Avg Satisfaction</div><div style="font-weight:700; color:#e4e2f0;">5.8</div></div>
+                      <div style="background:rgba(245,158,11,0.2); padding:8px; border-radius:6px;"><div style="font-size:0.7rem; color:#cbd5e1;">Avg Adherence</div><div style="font-weight:700; color:#e4e2f0;">68%</div></div>
+                    </div>
+                    <div style="font-size:0.75rem;">
+                      <div style="margin-bottom:6px;"><span style="color:#cbd5e1;">Diagnosed Patients</span><span style="float:right;">2,400 (100%)</span></div>
+                      <div style="height:6px; background:rgba(59,130,246,0.3); border-radius:3px; overflow:hidden; margin-bottom:12px;"><div style="height:100%; background:#3b82f6; width:100%;"></div></div>
+                      <div style="margin-bottom:6px;"><span style="color:#cbd5e1;">Started 1L Treatment</span><span style="float:right;">2,400 (100%)</span></div>
+                      <div style="height:6px; background:rgba(124,58,237,0.3); border-radius:3px; overflow:hidden; margin-bottom:12px;"><div style="height:100%; background:#7c3aed; width:100%;"></div></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cs-visual-slide" data-slide="1">
+                <div class="pj-screen">
+                  <div class="pj-screen-bar">
+                    <div class="pj-bar-icon"></div>
+                    <div class="pj-bar-title">Journey Tracker — Treatment Flow</div>
+                    <div class="pj-win-controls"><div class="pj-win-btn">—</div><div class="pj-win-btn">□</div><div class="pj-win-btn">✕</div></div>
+                  </div>
+                  <div class="pj-screen-body">
+                    <div class="pj-tabs">
+                      <div class="pj-tab">Journey Overview</div>
+                      <div class="pj-tab active">Treatment Flow</div>
+                      <div class="pj-tab">Segments</div>
+                      <div class="pj-tab">Barriers</div>
+                      <div class="pj-tab">Brief</div>
+                    </div>
+                    <div class="pj-filter">Insurance: <span style="background:#3d3958; color:#a78bfa; border-color:#7c3aed; border:1px solid;">Medicaid</span> Severity: <span>All</span><span class="count">362 / 2,400 patients</span></div>
+                    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:12px; font-size:0.75rem;">
+                      <div><div style="color:#706c8a;">Advanced Tx</div><div style="font-weight:700; color:#e4e2f0;">46%</div></div>
+                      <div><div style="color:#706c8a;">Reached 3rd Line</div><div style="font-weight:700; color:#e4e2f0;">58</div></div>
+                      <div><div style="color:#706c8a;">Biosimilar 2L</div><div style="font-weight:700; color:#e4e2f0;">38%</div></div>
+                      <div><div style="color:#706c8a;">JAKi 2L</div><div style="font-weight:700; color:#e4e2f0;">8%</div></div>
+                    </div>
+                    <svg viewBox="0 0 400 100" style="width:100%; height:80px;">
+                      <line x1="30" y1="80" x2="370" y2="80" stroke="#302d45" stroke-width="0.5"/>
+                      <line x1="30" y1="15" x2="30" y2="80" stroke="#302d45" stroke-width="0.5"/>
+                      <text x="200" y="98" text-anchor="middle" font-size="6" fill="#706c8a">1st Line → 2nd Line Patient Flows</text>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cs-visual-slide" data-slide="2">
+                <div class="pj-screen">
+                  <div class="pj-screen-bar">
+                    <div class="pj-bar-icon"></div>
+                    <div class="pj-bar-title">Journey Tracker — Barriers & Adherence</div>
+                    <div class="pj-win-controls"><div class="pj-win-btn">—</div><div class="pj-win-btn">□</div><div class="pj-win-btn">✕</div></div>
+                  </div>
+                  <div class="pj-screen-body">
+                    <div class="pj-tabs">
+                      <div class="pj-tab">Journey Overview</div>
+                      <div class="pj-tab">Treatment Flow</div>
+                      <div class="pj-tab">Segments</div>
+                      <div class="pj-tab active">Barriers</div>
+                      <div class="pj-tab">Brief</div>
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px; font-size:0.75rem;">
+                      <div style="border-top:2px solid #3b82f6; padding-top:8px;">
+                        <div style="font-weight:600; color:#e4e2f0; margin-bottom:4px;">Pre-Diagnosis</div>
+                        <div style="color:#cbd5e1;">Lack of education: 312</div>
+                      </div>
+                      <div style="border-top:2px solid #7c3aed; padding-top:8px;">
+                        <div style="font-weight:600; color:#e4e2f0; margin-bottom:4px;">Treatment Initiation</div>
+                        <div style="color:#cbd5e1;">Cost / copay: 487</div>
+                      </div>
+                      <div style="border-top:2px solid #14b8a6; padding-top:8px;">
+                        <div style="font-weight:600; color:#e4e2f0; margin-bottom:4px;">On-Therapy</div>
+                        <div style="color:#cbd5e1;">Side effect concerns: 389</div>
+                      </div>
+                      <div style="border-top:2px solid #f59e0b; padding-top:8px;">
+                        <div style="font-weight:600; color:#e4e2f0; margin-bottom:4px;">Switching</div>
+                        <div style="color:#cbd5e1;">Cost / copay: 298</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cs-visual-slide" data-slide="3">
+                <div class="pj-screen">
+                  <div class="pj-screen-bar">
+                    <div class="pj-bar-icon"></div>
+                    <div class="pj-bar-title">Journey Tracker — Journey Brief</div>
+                    <div class="pj-win-controls"><div class="pj-win-btn">—</div><div class="pj-win-btn">□</div><div class="pj-win-btn">✕</div></div>
+                  </div>
+                  <div class="pj-screen-body" style="font-size:0.7rem;">
+                    <div style="font-weight:700; color:#e4e2f0; margin-bottom:12px;">PATIENT JOURNEY INTELLIGENCE BRIEF</div>
+                    <div style="color:#706c8a; margin-bottom:12px;">[FILTERED] Franchise • Filtered: 87 of 2,400 patients</div>
+                    <div style="border-bottom:1px solid #302d45; padding-bottom:8px; margin-bottom:8px;">
+                      <div style="font-weight:600; color:#e4e2f0; margin-bottom:4px;">Executive Summary</div>
+                      <div style="color:#cbd5e1; line-height:1.5;">Analysis of <strong>87 patient journeys</strong> reveals median diagnosis delay of <strong style="color:#7c3aed;">18 months</strong>. <strong>41%</strong> progress to advanced therapy.</div>
+                    </div>
+                    <div style="border-bottom:1px solid #302d45; padding-bottom:8px;">
+                      <div style="font-weight:600; color:#e4e2f0; margin-bottom:4px;">Key Findings</div>
+                      <div style="color:#cbd5e1;"><strong>1. Diagnosis Bottleneck.</strong> PCP → Referral averaging 11.2 months.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cs-visual-slide" data-slide="4">
+                <div class="cs-shift" style="background: #1a1828;">
+                  <div class="cs-shift-card before" style="background: rgba(100, 116, 139, 0.15); border-color: rgba(100, 116, 139, 0.3); color: #cbd5e1;">
+                    <div class="cs-shift-label">Before</div>
+                    <div class="cs-shift-pct">6–8 wks</div>
+                    <div class="cs-shift-desc">to produce the Patient Journey Landscape. 75% on data assembly. The interpretation compressed into final weeks.</div>
+                  </div>
+                  <div class="cs-shift-card after" style="background: rgba(167, 139, 250, 0.15); border-color: rgba(167, 139, 250, 0.3); color: #d8b4fe;">
+                    <div class="cs-shift-label">After</div>
+                    <div class="cs-shift-pct">Live</div>
+                    <div class="cs-shift-desc">The journey is always on. Any stakeholder can filter to their population. She spends time on hypotheses, not histograms.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="cs-text">
+              <div class="cs-text-slide active" data-slide="0">
+                <p>01 — See the Full Journey</p>
+                <h4>The biannual snapshot became a living, filterable funnel — with trend lines.</h4>
+                <p>The entire patient journey — diagnosis through treatment through long-term management — is now a live funnel she can slice by severity, insurance, region. Conversion rates between stages update instantly.</p>
+              </div>
+              <div class="cs-text-slide" data-slide="1">
+                <p>02 — Map the Treatment Flows</p>
+                <h4>Not just what patients are on — but where they came from and why they moved.</h4>
+                <p>Treatment sequencing used to be two separate bar charts. Now she sees actual patient flows — which first-line therapies feed into which advanced therapies, how thick each pathway is.</p>
+              </div>
+              <div class="cs-text-slide" data-slide="2">
+                <p>03 — See Where Patients Fall Off</p>
+                <h4>Barriers mapped to the stage where they actually matter.</h4>
+                <p>Every barrier is mapped to the journey stage where it causes the drop-off. Adherence isn't a single average anymore: it's a 12-month decay curve, segmented by insurance type.</p>
+              </div>
+              <div class="cs-text-slide" data-slide="3">
+                <p>04 — Generate the Brief</p>
+                <h4>The 50-slide deck she used to build by hand now writes itself.</h4>
+                <p>The Journey Brief recalculates in real time based on whatever filters are active. Filter to Medicaid patients in the Southeast and the brief rewrites itself: different bottleneck, different segment breakdown.</p>
+              </div>
+              <div class="cs-text-slide" data-slide="4">
+                <p>The Shift</p>
+                <h4>Same analyst. Same data sources. Completely different operating rhythm.</h4>
+                <p>The tool didn't give her new data. It removed the six weeks of assembly that stood between her and the interpretation only she could provide.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="cs-nav">
+            <div class="cs-nav-arrows">
+              <button class="cs-arrow" id="cs3-prev" aria-label="Previous" disabled>←</button>
+              <button class="cs-arrow" id="cs3-next" aria-label="Next">→</button>
+            </div>
+            <div class="cs-dots" id="cs3-dots">
+              <button class="cs-dot-nav active" data-slide="0"></button>
+              <button class="cs-dot-nav" data-slide="1"></button>
+              <button class="cs-dot-nav" data-slide="2"></button>
+              <button class="cs-dot-nav" data-slide="3"></button>
+              <button class="cs-dot-nav" data-slide="4"></button>
+            </div>
+            <div class="cs-counter"><span id="cs3-current">1</span> / 5</div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ===== BRIDGE ===== -->
-<section class="bridge">
-  <div class="container">
-    <div class="bridge-split">
-      <div class="bridge-content reveal-left">
-        <h2>This is where the bigger engagement starts — if you want it to.</h2>
-        <p>The Counter gives you something most organizations never get: a grounded, evidence-based starting point. Not a strategy deck built on assumptions, but real problems, real prototypes, and real reactions from the people who do the work.</p>
-        <p>From here, we can help you set a strategic direction and embed with your teams long-term — building proficiency, reshaping how work gets done, and creating the adaptive capacity to keep evolving.</p>
-        <a class="bridge-link" onclick="showPage('main'); document.getElementById('approach').scrollIntoView({behavior: 'smooth', block: 'start'});">Read our full perspective <span>&rarr;</span></a>
-      </div>
-      <div class="bridge-flow reveal-right">
-        <div class="bridge-step">
-          <span class="bridge-dot bridge-dot--warm"></span>
-          The Counter surfaces real problems and potential
-          <span class="bridge-step-label bridge-step-label--counter">Counter</span>
+  <!-- ABOUT SECTION -->
+  <section class="about light-section" id="about">
+    <div class="container">
+      <div class="about-inner">
+        <div class="reveal">
+          <p class="section-label">Who we are</p>
+          <h2>Two people tired of watching AI workshops fail.</h2>
+          <p>We've spent years watching companies spend millions on AI initiatives that go nowhere. Workshops don't stick. Strategy decks don't ship. The only thing that works is sitting with people, showing them what's possible with the problems they actually face every day.</p>
+          <p>That's The Counter. It's not rocket science, but it works because it starts with what real people need.</p>
         </div>
-        <div class="bridge-step">
-          <span class="bridge-dot bridge-dot--warm"></span>
-          Leadership sees evidence, not theory
-          <span class="bridge-step-label bridge-step-label--counter">Counter</span>
-        </div>
-        <div class="bridge-step">
-          <span class="bridge-dot bridge-dot--blue"></span>
-          A strategic challenge is selected
-          <span class="bridge-step-label bridge-step-label--rewire">Rewire</span>
-        </div>
-        <div class="bridge-step">
-          <span class="bridge-dot bridge-dot--blue"></span>
-          We embed with your teams to solve it with AI
-          <span class="bridge-step-label bridge-step-label--rewire">Rewire</span>
-        </div>
-        <div class="bridge-step">
-          <span class="bridge-dot bridge-dot--blue"></span>
-          Proficiency and adaptive capacity — built from within
-          <span class="bridge-step-label bridge-step-label--rewire">Rewire</span>
+        <div class="about-people reveal">
+          <div class="about-person">
+            <div class="about-person-photo">Photo</div>
+            <div class="about-person-info">
+              <h4>Drew Castellaw</h4>
+              <p>Leads the engagements, builds the prototypes, and works directly with your teams. Background in building AI-powered tools for enterprise clients.</p>
+            </div>
+          </div>
+          <div class="about-person">
+            <div class="about-person-photo">Photo</div>
+            <div class="about-person-info">
+              <h4>[Partner Name]</h4>
+              <p>Handles the relationship side — scoping, alignment with leadership, making sure the engagement connects to business priorities.</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ===== CTA ===== -->
-<section class="cta" id="contact">
-  <div class="container">
-    <div class="reveal-scale">
-      <h2>Your teams have the expertise.<br>Let's put it to work.</h2>
-      <p>Tell us about your organization and we'll have a Counter planned and ready in weeks — no long-term commitment required.</p>
-      <a href="mailto:drew@rewire.co" class="btn btn--warm">Set Up a Counter <span>→</span></a>
+  <!-- CTA SECTION -->
+  <section class="cta dark-section" id="contact">
+    <div class="container">
+      <div class="reveal">
+        <h2>Ready to see what your team can actually do with AI?</h2>
+        <p>Tell us about your team and what you're working with. We'll have a plan back to you within a week. No commitment, no 40-page proposal.</p>
+        <a href="mailto:drew@castellawconsulting.com" class="btn btn-primary">Start a Conversation →</a>
+      </div>
+      <div class="cta-footer">
+        <p>&copy; 2026 Rewire</p>
+        <a href="#hero">Back to Top</a>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-</div>
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
 
-<!-- ===== FOOTER ===== -->
-<footer>
-  <div class="container">
-    <p>© 2026 Rewire</p>
-    <a href="#">New York, NY</a>
-  </div>
-</footer>
-
-<!-- ===== SCRIPTS ===== -->
-<script>
-// ===== Page Switching Logic =====
-window.showPage = showPage;
-function showPage(pageName) {
-  const mainPage = document.getElementById('page-main');
-  const counterPage = document.getElementById('page-counter');
-  const body = document.body;
-  const navbar = document.getElementById('navbar');
-  const navPerspective = document.getElementById('nav-perspective');
-  const navCounter = document.getElementById('nav-counter');
-  const navSublinks = document.getElementById('nav-sublinks');
-  const navCta = document.getElementById('nav-cta');
-
-  // Clear all reveals for fresh animation
-  document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => {
-    el.classList.remove('visible');
-  });
-
-  if (pageName === 'main') {
-    mainPage.classList.add('active');
-    counterPage.classList.remove('active');
-    body.classList.remove('page-counter-active');
-    navbar.classList.remove('page-counter-active');
-    navPerspective.classList.add('active');
-    navCounter.classList.remove('active');
-    navCta.textContent = 'Start a Conversation';
-    navCta.href = '#contact';
-
-    // Show main nav sublinks
-    navSublinks.innerHTML = '<a id="nav-sub-main" href="#perspective">Approach</a><a id="nav-sub-main-2" href="#story">In Practice</a>';
-    setupSmoothScroll();
-  } else if (pageName === 'counter') {
-    mainPage.classList.remove('active');
-    counterPage.classList.add('active');
-    body.classList.add('page-counter-active');
-    navbar.classList.add('page-counter-active');
-    navPerspective.classList.remove('active');
-    navCounter.classList.add('active');
-    navCta.textContent = 'Set One Up';
-    navCta.href = '#contact';
-
-    // Show counter nav sublinks
-    navSublinks.innerHTML = '<a id="nav-sub-counter" href="#counter-how">How It Works</a><a id="nav-sub-counter-2" href="#counter-results">What You Get</a>';
-    setupSmoothScroll();
-  }
-
-  // Scroll to top
-  window.scrollTo(0, 0);
-
-  // Re-run reveal observer on the active page
-  setupRevealObserver();
-}
-
-// ===== Scroll Reveal =====
-function setupRevealObserver() {
-  const revealElements = document.querySelectorAll('.page-view.active .reveal, .page-view.active .reveal-left, .page-view.active .reveal-right, .page-view.active .reveal-scale');
-
-  const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-      }
+    // Scroll Progress Bar
+    window.addEventListener('scroll', () => {
+      const scrollPercentage = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+      document.querySelector('.scroll-progress').style.width = scrollPercentage + '%';
     });
-  }, {
-    threshold: 0.15,
-    rootMargin: '0px 0px -60px 0px'
-  });
 
-  revealElements.forEach(el => revealObserver.observe(el));
-}
-
-// ===== Nav Scroll Effect =====
-const navbar = document.getElementById('navbar');
-let lastScroll = 0;
-
-window.addEventListener('scroll', () => {
-  const currentScroll = window.scrollY;
-  const mainPage = document.getElementById('page-main');
-  const heroSpace = document.getElementById('heroScrollSpace');
-
-  // On main page, keep nav transparent while inside the animated hero
-  if (mainPage && mainPage.classList.contains('active') && heroSpace) {
-    const heroBottom = heroSpace.offsetTop + heroSpace.offsetHeight;
-    if (currentScroll < heroBottom - 100) {
-      // Inside hero: dark bg nav
-      navbar.classList.add('hero-dark');
-      navbar.classList.remove('scrolled');
-    } else {
-      navbar.classList.remove('hero-dark');
-      navbar.classList.add('scrolled');
-    }
-  } else {
-    navbar.classList.remove('hero-dark');
-    if (currentScroll > 80) {
-      navbar.classList.add('scrolled');
-    } else {
-      navbar.classList.remove('scrolled');
-    }
-  }
-
-  lastScroll = currentScroll;
-});
-
-// ===== Counter Animation =====
-const counters = document.querySelectorAll('.count-up');
-
-const counterObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const target = parseInt(entry.target.getAttribute('data-target'));
-      if (!target) return;
-
-      let current = 0;
-      const increment = target / 60;
-      const timer = setInterval(() => {
-        current += increment;
-        if (current >= target) {
-          current = target;
-          clearInterval(timer);
-        }
-        entry.target.textContent = Math.floor(current) + '%';
-      }, 20);
-
-      counterObserver.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.5 });
-
-counters.forEach(counter => counterObserver.observe(counter));
-
-// ===== Smooth Scroll for Anchor Links =====
-function setupSmoothScroll() {
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
-      const href = this.getAttribute('href');
-      if (href === '#contact') {
-        e.preventDefault();
-        const target = document.querySelector('#contact');
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      } else if (href.startsWith('#')) {
-        e.preventDefault();
-        const target = document.querySelector(href);
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }
-    });
-  });
-}
-
-// ===== Navigation Tab Click Handlers =====
-document.getElementById('nav-logo').addEventListener('click', () => {
-  window.showPage('main');
-});
-
-document.getElementById('nav-perspective').addEventListener('click', (e) => {
-  e.preventDefault();
-  window.showPage('main');
-});
-
-document.getElementById('nav-counter').addEventListener('click', (e) => {
-  e.preventDefault();
-  window.showPage('counter');
-});
-
-document.getElementById('nav-cta').addEventListener('click', (e) => {
-  e.preventDefault();
-  const contactSection = document.querySelector('.page-view.active #contact');
-  if (contactSection) {
-    contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-});
-
-// ===== NETWORK CANVAS ANIMATION =====
-(function() {
-  const canvas = document.getElementById('heroNetwork');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-
-  let W, H;
-  const nodes = [];
-  const NODE_COUNT = 160;
-  const MAX_DIST = 200;
-
-  // Brand colors
-  const blueR = 59, blueG = 130, blueB = 246;
-  const accentR = 99, accentG = 102, accentB = 241; // indigo to match the gradient
-
-  function resize() {
-    const dpr = window.devicePixelRatio || 1;
-    W = canvas.clientWidth;
-    H = canvas.clientHeight;
-    canvas.width = W * dpr;
-    canvas.height = H * dpr;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-
-  function initNodes() {
-    nodes.length = 0;
-    for (let i = 0; i < NODE_COUNT; i++) {
-      // Scattered position (stage 0)
-      const sx = Math.random() * W;
-      const sy = Math.random() * H;
-
-      // Structured position (connected state) — fill full viewport, ring around center
-      const angle = Math.random() * Math.PI * 2;
-      const centerBias = Math.random();
-      // Some nodes close to edges, some mid-range, fewer dead center (text lives there)
-      let radius;
-      if (centerBias < 0.3) {
-        // Outer ring — edges and corners
-        radius = 0.35 + Math.random() * 0.25;
-      } else if (centerBias < 0.7) {
-        // Mid ring
-        radius = 0.15 + Math.random() * 0.25;
+    // Navigation scroll effect
+    const nav = document.querySelector('nav');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        nav.classList.add('scrolled');
       } else {
-        // Near center but offset enough to not overlap text
-        radius = 0.08 + Math.random() * 0.12;
+        nav.classList.remove('scrolled');
       }
-      const cx = W * 0.5 + Math.cos(angle) * radius * W * 0.95 + (Math.random() - 0.5) * 60;
-      const cy = H * 0.5 + Math.sin(angle) * radius * H * 0.95 + (Math.random() - 0.5) * 60;
+    });
 
-      nodes.push({
-        sx, sy,
-        cx, cy,
-        x: sx, y: sy,
-        size: 1.8 + Math.random() * 2.5,
-        pulse: Math.random() * Math.PI * 2,
-        speed: 0.3 + Math.random() * 0.7,
-        drift: { x: (Math.random() - 0.5) * 0.3, y: (Math.random() - 0.5) * 0.3 }
+    // Waypoint dots
+    const sections = document.querySelectorAll('section[id]');
+    const dots = document.querySelectorAll('.waypoint-dot');
+
+    const updateActiveDot = () => {
+      let currentSection = 0;
+      sections.forEach((section, index) => {
+        const rect = section.getBoundingClientRect();
+        if (rect.top <= window.innerHeight / 2) {
+          currentSection = index;
+        }
       });
-    }
-  }
 
-  function getHeroScrollProgress() {
-    const scrollSpace = document.getElementById('heroScrollSpace');
-    if (!scrollSpace) return 0;
-    const rect = scrollSpace.getBoundingClientRect();
-    const scrollTop = -rect.top;
-    const maxScroll = scrollSpace.offsetHeight - window.innerHeight;
-    return Math.min(1, Math.max(0, scrollTop / maxScroll));
-  }
+      dots.forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentSection);
+      });
+    };
 
-  function easeInOutCubic(t) {
-    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-  }
+    window.addEventListener('scroll', updateActiveDot);
 
-  let animRunning = false;
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        sections[index].scrollIntoView({ behavior: 'smooth' });
+      });
+    });
 
-  function draw() {
-    // Only animate when main page is active
-    const mainPage = document.getElementById('page-main');
-    if (!mainPage || !mainPage.classList.contains('active')) {
-      animRunning = false;
-      return;
-    }
+    // === GAP SHRINK + FLUENCY REVEAL — UNIFIED PINNED TIMELINE ===
+    (function() {
+      const wrapper = document.querySelector('.gap-shrink-wrapper');
+      const pin = document.getElementById('gapPin');
+      const box = document.getElementById('gapBox');
+      const fluencyOverlay = document.getElementById('fluencyOverlay');
+      const raceTable = document.getElementById('raceCompare');
+      if (!wrapper || !pin || !box) return;
 
-    const progress = getHeroScrollProgress();
-    const time = performance.now() * 0.001;
+      const barrierRow = raceTable ? raceTable.querySelector('.race-barrier-row') : null;
 
-    ctx.clearRect(0, 0, W, H);
+      // Pre-check ALL rows immediately — no animation, table is fully populated on reveal
+      for (let row = 1; row <= 7; row++) {
+        const tr = raceTable ? raceTable.querySelector(`.race-row[data-row="${row}"]`) : null;
+        if (tr) tr.classList.add('checked');
+      }
+      if (barrierRow) barrierRow.classList.add('hit');
 
-    // Connection progress: 0 = scattered, 1 = connected
-    let connectProgress;
-    if (progress < 0.15) {
-      connectProgress = 0;
-    } else if (progress < 0.7) {
-      connectProgress = easeInOutCubic((progress - 0.15) / 0.55);
-    } else {
-      connectProgress = 1;
-    }
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: wrapper,
+          start: 'top top',
+          end: 'bottom bottom',
+          pin: pin,
+          scrub: 0.5
+        }
+      });
 
-    // Energy flow ramps up in later stages
-    const energyProgress = Math.max(0, (progress - 0.5) / 0.5);
+      // Phase 1 (0 → 0.12): HOLD — user reads the gap content at full size
+      tl.to(box, { duration: 0.12 });
 
-    // Update node positions
-    for (const node of nodes) {
-      const drift = Math.sin(time * node.speed + node.pulse) * 3 * (1 - connectProgress * 0.7);
-      node.x = node.sx + (node.cx - node.sx) * connectProgress + drift + node.drift.x * Math.sin(time * 0.5);
-      node.y = node.sy + (node.cy - node.sy) * connectProgress + drift * 0.6 + node.drift.y * Math.cos(time * 0.4);
-    }
+      // Phase 2 (0.12 → 0.35): Box shrinks toward corner — still clearly visible
+      tl.to(box, {
+        scale: 0.3,
+        xPercent: 45,
+        yPercent: 70,
+        borderRadius: '20px',
+        opacity: 0.6,
+        ease: 'power1.inOut',
+        duration: 0.23,
+      }, 0.12);
 
-    // Draw connections
-    for (let i = 0; i < nodes.length; i++) {
-      for (let j = i + 1; j < nodes.length; j++) {
-        const dx = nodes[i].x - nodes[j].x;
-        const dy = nodes[i].y - nodes[j].y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const threshold = MAX_DIST * (0.3 + connectProgress * 0.7);
+      // Phase 3 (0.35 → 0.55): Box settles into corner, text+table fade in behind it
+      tl.to(box, {
+        scale: 0.18,
+        xPercent: 58,
+        yPercent: 95,
+        opacity: 0.2,
+        ease: 'power1.inOut',
+        duration: 0.20,
+      }, 0.35);
 
-        if (dist < threshold) {
-          const alpha = (1 - dist / threshold) * (0.04 + connectProgress * 0.22);
-          const warmMix = connectProgress * energyProgress;
-          const r = Math.round(blueR + (accentR - blueR) * warmMix);
-          const g = Math.round(blueG + (accentG - blueG) * warmMix);
-          const b = Math.round(blueB + (accentB - blueB) * warmMix);
+      // Text + table start fading in while box is still visible in corner
+      tl.fromTo(fluencyOverlay,
+        { opacity: 0, y: 20 },
+        { opacity: 0.5, y: 10, ease: 'power2.out', duration: 0.20 },
+        0.35
+      );
 
-          let lineAlpha = alpha;
-          if (energyProgress > 0) {
-            const pulse = Math.sin(time * 2 - dist * 0.02 + i * 0.1) * 0.5 + 0.5;
-            lineAlpha += pulse * energyProgress * 0.15;
-          }
+      // Phase 4 (0.55 → 0.70): Box disappears, content reaches full visibility
+      tl.to(box, {
+        scale: 0.12,
+        xPercent: 62,
+        yPercent: 100,
+        opacity: 0,
+        ease: 'power2.in',
+        duration: 0.15,
+      }, 0.55);
 
-          ctx.beginPath();
-          ctx.moveTo(nodes[i].x, nodes[i].y);
-          ctx.lineTo(nodes[j].x, nodes[j].y);
-          ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${lineAlpha})`;
-          ctx.lineWidth = 0.6 + connectProgress * 1;
-          ctx.stroke();
+      tl.to(fluencyOverlay, {
+        opacity: 1, y: 0,
+        ease: 'power2.out',
+        duration: 0.15,
+      }, 0.55);
+
+      // Phase 5 (0.70 → 0.85): Brief hold at full table, then move on
+      tl.to({}, { duration: 0.15 }, 0.70);
+    })();
+
+    // Hero counter animation
+    function animateCounters() {
+      const spendingEl = document.getElementById('spending-counter');
+      const usageEl = document.getElementById('usage-counter');
+      if (!spendingEl || !usageEl) return;
+
+      function formatSpending(valInBillions) {
+        if (valInBillions >= 1000) {
+          return '$' + (valInBillions / 1000).toFixed(2) + 'T';
+        }
+        return '$' + valInBillions.toFixed(0) + 'B';
+      }
+
+      const spendingStartB = 2500;
+      const usageStart = 5.0;
+      const countUpDuration = 3500;
+      const startTime = performance.now();
+
+      function countUp(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / countUpDuration, 1);
+
+        const spendingEase = 1 - Math.pow(1 - progress, 2);
+        const spendingVal = spendingEase * spendingStartB;
+        spendingEl.textContent = formatSpending(spendingVal);
+
+        const usageEase = 1 - Math.pow(1 - progress, 4);
+        const usageVal = usageEase * usageStart;
+        usageEl.textContent = usageVal.toFixed(1) + '%';
+
+        if (progress < 1) {
+          requestAnimationFrame(countUp);
+        } else {
+          startEndlessTick();
         }
       }
-    }
 
-    // Draw nodes
-    for (const node of nodes) {
-      const pulse = Math.sin(time * 1.5 + node.pulse) * 0.5 + 0.5;
-      const baseBright = 0.15 + connectProgress * 0.6;
-      const alpha = baseBright + pulse * 0.15 * (0.5 + energyProgress * 0.5);
+      function startEndlessTick() {
+        let spendingB = spendingStartB;
+        let usage = usageStart;
+        const spendingPerFrame = 0.014;
+        const usagePerFrame = 0.1 / (50 / spendingPerFrame);
+        let lastTime = performance.now();
 
-      const warmMix = connectProgress * 0.7;
-      const r = Math.round(100 + (blueR - 100) * warmMix);
-      const g = Math.round(100 + (blueG - 100) * warmMix);
-      const b = Math.round(140 + (blueB - 140) * warmMix);
+        function tick(now) {
+          const delta = (now - lastTime) / (1000 / 60);
+          lastTime = now;
+          spendingB += spendingPerFrame * delta;
+          usage += usagePerFrame * delta;
+          spendingEl.textContent = formatSpending(spendingB);
+          usageEl.textContent = usage.toFixed(1) + '%';
+          requestAnimationFrame(tick);
+        }
 
-      const size = node.size * (0.6 + connectProgress * 0.6 + pulse * 0.2 * energyProgress);
-
-      // Glow in later stages
-      if (energyProgress > 0.3) {
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, size * 3, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${blueR}, ${blueG}, ${blueB}, ${energyProgress * 0.04 * pulse})`;
-        ctx.fill();
+        requestAnimationFrame(tick);
       }
 
-      ctx.beginPath();
-      ctx.arc(node.x, node.y, size, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
-      ctx.fill();
+      setTimeout(() => requestAnimationFrame(countUp), 800);
     }
 
-    // Update headlines
-    const headlines = [
-      document.getElementById('hl0'),
-      document.getElementById('hl1'),
-      document.getElementById('hl2')
+    animateCounters();
+
+    // Fade out Spline fallback gradient once the 3D scene loads
+    const splineViewer = document.querySelector('.hero-spline spline-viewer');
+    if (splineViewer) {
+      splineViewer.addEventListener('load', () => {
+        const fallback = document.querySelector('.hero-spline-fallback');
+        if (fallback) fallback.style.opacity = '0';
+      });
+      // Safety timeout: hide fallback after 8 seconds regardless
+      setTimeout(() => {
+        const fallback = document.querySelector('.hero-spline-fallback');
+        if (fallback) fallback.style.opacity = '0';
+      }, 8000);
+    }
+
+    // Reveal animations
+    const reveals = document.querySelectorAll('.reveal');
+    reveals.forEach(el => {
+      gsap.to(el, {
+        scrollTrigger: {
+          trigger: el,
+          onEnter: () => el.classList.add('visible'),
+          once: true,
+          markers: false
+        }
+      });
+    });
+
+    // Process section: scroll-driven card activation
+    (function() {
+      const stepCards = document.querySelectorAll('.process-step-card');
+
+      stepCards.forEach((card) => {
+        ScrollTrigger.create({
+          trigger: card,
+          start: 'top 65%',
+          end: 'bottom 35%',
+          onEnter: () => {
+            stepCards.forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+          },
+          onEnterBack: () => {
+            stepCards.forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+          }
+        });
+      });
+    })();
+
+    // (Fluency reveal + checkmarks now handled by the unified pinned timeline above)
+
+    // Outcome Lottie icons
+    (function() {
+      const cards = document.querySelectorAll('.outcome-card');
+      cards.forEach(card => {
+        const player = card.querySelector('dotlottie-player');
+        const staticImg = card.querySelector('img.icon-static');
+        if (!player) return;
+
+        const shouldAutoplayOnce = player.hasAttribute('data-autoplay-once');
+        let initialPlayDone = false;
+
+        // All players: stop after one play-through
+        player.addEventListener('complete', () => {
+          player.pause();
+          initialPlayDone = true;
+          // Tools card: show the static image again once animation finishes
+          if (staticImg) staticImg.classList.remove('hidden');
+        });
+
+        // Auto-play once on load for marked players (e.g. star)
+        // so they show their final frame instead of starting empty
+        if (shouldAutoplayOnce) {
+          player.addEventListener('ready', () => {
+            player.play();
+          });
+        }
+
+        // On hover: play the animation
+        card.addEventListener('mouseenter', () => {
+          // Tools card: hide the PNG so Lottie is visible
+          if (staticImg) staticImg.classList.add('hidden');
+          player.stop();
+          player.play();
+        });
+      });
+    })();
+
+    // Case study carousels
+    function setupCarousel(prefix, totalSlides) {
+      let current = 0;
+      const visuals = document.querySelectorAll(`#${prefix}-slides .cs-visual-slide`);
+      const texts = document.querySelectorAll(`#${prefix}-slides .cs-text-slide`);
+      const dots = document.querySelectorAll(`#${prefix}-dots .cs-dot-nav`);
+      const prevBtn = document.getElementById(`${prefix}-prev`);
+      const nextBtn = document.getElementById(`${prefix}-next`);
+      const counterEl = document.getElementById(`${prefix}-current`);
+
+      if (!prevBtn || !nextBtn) return;
+
+      function goTo(idx) {
+        if (idx < 0 || idx >= totalSlides) return;
+        current = idx;
+
+        visuals.forEach((el, i) => el.classList.toggle('active', i === current));
+        texts.forEach((el, i) => el.classList.toggle('active', i === current));
+        dots.forEach((el, i) => el.classList.toggle('active', i === current));
+
+        prevBtn.disabled = current === 0;
+        nextBtn.disabled = current === totalSlides - 1;
+        counterEl.textContent = current + 1;
+      }
+
+      prevBtn.addEventListener('click', () => goTo(current - 1));
+      nextBtn.addEventListener('click', () => goTo(current + 1));
+      dots.forEach(dot => {
+        dot.addEventListener('click', () => goTo(parseInt(dot.dataset.slide)));
+      });
+
+      goTo(0);
+    }
+
+    setupCarousel('cs1', 5);
+    setupCarousel('cs2', 5);
+    setupCarousel('cs3', 5);
+
+    // Case study tab switching
+    const tabs = document.querySelectorAll('.cs-tab');
+    const panels = [
+      document.getElementById('cs-panel-0'),
+      document.getElementById('cs-panel-1'),
+      document.getElementById('cs-panel-2')
     ];
 
-    let activeStage;
-    if (progress < 0.3) activeStage = 0;
-    else if (progress < 0.55) activeStage = 1;
-    else activeStage = 2;
-
-    headlines.forEach((h, i) => {
-      if (h) h.classList.toggle('active', i === activeStage);
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const idx = parseInt(tab.dataset.cs);
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        panels.forEach((p, i) => {
+          if (p) p.style.display = i === idx ? '' : 'none';
+        });
+      });
     });
-
-
-    animRunning = true;
-    requestAnimationFrame(draw);
-  }
-
-  function startAnimation() {
-    resize();
-    initNodes();
-    if (!animRunning) {
-      animRunning = true;
-      requestAnimationFrame(draw);
-    }
-  }
-
-  window.addEventListener('resize', () => { resize(); initNodes(); });
-
-  // Start on load
-  startAnimation();
-
-  // Re-start when switching back to main page
-  const origShowPage = window.showPage;
-  if (origShowPage) {
-    window.showPage = function(pageName) {
-      origShowPage(pageName);
-      if (pageName === 'main') {
-        setTimeout(startAnimation, 50);
-      }
-    };
-  }
-})();
-
-// Initial setup
-setupRevealObserver();
-setupSmoothScroll();
-</script>
-
+  </script>
 </body>
 </html>
