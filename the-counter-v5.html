@@ -19,6 +19,21 @@
       box-sizing: border-box;
     }
 
+    /* Force arrow cursor sitewide — override browser text cursor */
+    html, body, h1, h2, h3, h4, h5, h6, p, span, div, section, li, td, th, tr,
+    em, strong, small, blockquote, figcaption, header, footer, main, article, aside {
+      cursor: default !important;
+    }
+
+    a, button, [role="button"], input, select, textarea, label,
+    .btn, .nav-cta, .nav-logo, .cs-dot-nav, .waypoint-dot, video {
+      cursor: pointer !important;
+    }
+
+    spline-viewer, spline-viewer * {
+      cursor: default !important;
+    }
+
     :root {
       --charcoal-blue: #454851;
       --sage-green: #73956F;
@@ -89,14 +104,14 @@
       right: 0;
       z-index: 99;
       padding: 20px 0;
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
       background: transparent;
-      transition: background 0.3s ease;
+      transition: background 0.4s ease, backdrop-filter 0.4s ease;
     }
 
     nav.scrolled {
-      background: rgba(252, 239, 249, 0.9);
+      background: rgba(252, 239, 249, 0.95);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
       border-bottom: 1px solid rgba(115, 149, 111, 0.1);
     }
 
@@ -111,10 +126,11 @@
       font-weight: 800;
       font-size: 1.15rem;
       letter-spacing: -0.03em;
-      color: var(--charcoal-blue);
+      color: #ffffff;
       text-decoration: none;
       position: relative;
       z-index: 3;
+      transition: color 0.4s ease;
     }
 
     nav.scrolled .nav-logo {
@@ -126,6 +142,14 @@
       gap: 36px;
       align-items: center;
       list-style: none;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    nav.scrolled .nav-links {
+      opacity: 1;
+      pointer-events: auto;
     }
 
     .nav-links a {
@@ -200,13 +224,75 @@
     .hero {
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       position: relative;
       overflow: hidden;
       padding-top: 80px;
-      padding-bottom: 80px;
+      padding-bottom: 0;
       background: var(--charcoal-blue);
+    }
+
+    /* Hero Logo Ticker — subtle bar at bottom of hero */
+    .hero-logo-ticker {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      overflow: hidden;
+      padding: 18px 0;
+      background: rgba(252, 239, 249, 0.92);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-top: 1px solid rgba(115, 149, 111, 0.08);
+      z-index: 2;
+    }
+
+    .hero-logo-ticker-label {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 300px;
+      background: linear-gradient(90deg, rgba(252, 239, 249, 1) 70%, transparent);
+      display: flex;
+      align-items: center;
+      padding-left: clamp(24px, 5vw, 80px);
+      z-index: 2;
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--medium-gray);
+      white-space: nowrap;
+    }
+
+    .hero-logo-ticker-fade-right {
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 80px;
+      background: linear-gradient(270deg, rgba(252, 239, 249, 0.95) 20%, transparent);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .hero-logo-ticker .logo-ticker-track {
+      padding-left: 310px;
+    }
+
+    .hero-logo-ticker .logo-ticker-track img {
+      filter: grayscale(100%);
+      opacity: 0.45;
+      transition: filter 0.3s ease, opacity 0.3s ease;
+    }
+
+    .hero-logo-ticker .logo-ticker-track img:hover {
+      filter: grayscale(0%);
+      opacity: 1;
     }
 
     .hero-spline {
@@ -264,68 +350,37 @@
       z-index: 1;
     }
 
-    .hero-counters {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-      margin-bottom: 40px;
-      max-width: 680px;
-      margin-left: auto;
-      margin-right: auto;
-    }
+    
 
-    .hero-counter-block {
-      padding: 40px;
-      border-radius: 16px;
-      position: relative;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(149, 215, 174, 0.2);
-    }
+    
 
-    .hero-counter-label {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--celadon);
-      margin-bottom: 16px;
-    }
+    
 
-    .hero-counter-number {
-      font-family: var(--font-mono);
-      font-size: clamp(2.2rem, 5vw, 3.6rem);
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      line-height: 1;
-      color: var(--celadon);
-      margin-bottom: 8px;
-    }
+    
 
-    .hero-counter-sub {
-      font-size: 0.85rem;
-      color: rgba(255, 255, 255, 0.7);
-    }
+    
 
-    .hero-counter-source {
-      font-size: 0.68rem;
-      color: rgba(255, 255, 255, 0.5);
-      margin-top: 12px;
-      letter-spacing: 0.02em;
-      font-style: italic;
+    
+
+    .hero-statement-box {
+      background: rgba(20, 22, 28, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 48px 44px 40px;
+      max-width: 820px;
+      margin: 0 auto;
     }
 
     .hero h1 {
       font-family: var(--font-display);
-      font-size: clamp(2rem, 3.5vw, 3.2rem);
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
       font-weight: 800;
-      line-height: 1.15;
-      letter-spacing: -0.04em;
+      line-height: 1.2;
+      letter-spacing: -0.03em;
       color: var(--white);
-      margin-bottom: 24px;
-      max-width: 800px;
-      margin-left: auto;
-      margin-right: auto;
+      margin-bottom: 20px;
     }
 
     .hero h1 em {
@@ -333,12 +388,34 @@
       color: var(--celadon);
     }
 
-    .hero-sub {
-      font-size: 1.05rem;
-      line-height: 1.75;
-      color: rgba(255, 255, 255, 0.8);
+    .hero-followup {
+      font-size: 1.1rem;
+      line-height: 1.7;
+      color: rgba(255, 255, 255, 0.7);
       max-width: 600px;
-      margin: 0 auto 36px;
+      margin: 0 auto;
+    }
+
+    .hero-tagline {
+      font-family: var(--font-display);
+      font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--celadon);
+      margin: 0 auto 12px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .hero-tagline::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 10%;
+      right: 10%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--celadon), transparent);
+      border-radius: 1px;
     }
 
     .hero-actions {
@@ -398,6 +475,160 @@
       background: rgba(115, 149, 111, 0.1);
       border-color: var(--muted-teal);
       color: var(--muted-teal);
+    }
+
+    .btn-tertiary {
+      background: transparent;
+      color: var(--celadon);
+      border: 2px solid var(--celadon);
+      cursor: pointer;
+      font-family: var(--font-body);
+    }
+
+    .btn-tertiary:hover {
+      background: rgba(149, 215, 174, 0.1);
+      border-color: var(--muted-teal);
+      color: var(--muted-teal);
+    }
+
+    /* Outcomes Modal */
+    .outcomes-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(26, 26, 30, 0.8);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .outcomes-modal-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .outcomes-modal {
+      background: var(--charcoal-blue);
+      border-radius: 24px;
+      padding: 48px 40px 40px;
+      max-width: 1100px;
+      width: 92vw;
+      position: relative;
+      transform: translateY(20px) scale(0.97);
+      transition: transform 0.3s ease;
+    }
+
+    .outcomes-modal-backdrop.active .outcomes-modal {
+      transform: translateY(0) scale(1);
+    }
+
+    .outcomes-modal-close {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 8px;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+
+    .outcomes-modal-close:hover {
+      color: var(--white);
+    }
+
+    .outcomes-modal-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .outcomes-modal-header h3 {
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+      font-weight: 800;
+      color: var(--white);
+    }
+
+    @media (max-width: 640px) {
+      .outcomes-modal .outcomes-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .outcomes-modal {
+        padding: 40px 20px 32px;
+      }
+    }
+
+    /* Phase Detail Modal (placeholder) */
+    .phase-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(26, 26, 30, 0.8);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .phase-modal-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .phase-modal {
+      background: var(--charcoal-blue);
+      border-radius: 24px;
+      padding: 48px 40px 40px;
+      max-width: 700px;
+      width: 92vw;
+      min-height: 300px;
+      position: relative;
+      transform: translateY(20px) scale(0.97);
+      transition: transform 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .phase-modal-backdrop.active .phase-modal {
+      transform: translateY(0) scale(1);
+    }
+
+    .phase-modal-close {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 8px;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+
+    .phase-modal-close:hover {
+      color: var(--white);
+    }
+
+    .phase-modal h3 {
+      font-family: var(--font-display);
+      font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+      font-weight: 800;
+      color: var(--white);
+      text-align: center;
+      margin-bottom: 24px;
     }
 
     /* Section Label */
@@ -463,187 +694,6 @@
     .dark-section p {
       color: rgba(255, 255, 255, 0.8);
     }
-
-    /* Gap Section — Scroll-Shrink Effect */
-    .gap-shrink-wrapper {
-      position: relative;
-      height: 180vh; /* hold → shrink → box-in-corner + faded content → full reveal → move on */
-      background: var(--lavender-blush);
-    }
-
-    .gap-shrink-pin {
-      position: relative;
-      width: 100%;
-      height: 100vh;
-      overflow: hidden;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      padding-top: 100px; /* clear the fixed nav + breathe */
-    }
-
-    /* The box that shrinks — contains the real v4 gap layout */
-    .gap-content-box {
-      position: relative;
-      transform: scale(1);
-      transform-origin: bottom right;
-      width: 92vw;
-      max-width: 1100px;
-      border-radius: 20px;
-      overflow: hidden;
-      background: var(--white);
-      box-shadow: 0 8px 40px rgba(0,0,0,0.06);
-      z-index: 5;
-      will-change: transform, opacity;
-    }
-
-    .gap-content-box .gap-box-inner {
-      position: relative;
-      width: 100%;
-      padding: 0;
-    }
-
-    /* Mini logo ticker inside the shrink box */
-    .gap-box-logos {
-      overflow: hidden;
-      padding: 14px 0;
-      border-bottom: 1px solid rgba(115, 149, 111, 0.1);
-      position: relative;
-    }
-
-    .gap-box-logos-label {
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 160px;
-      background: linear-gradient(90deg, var(--white) 60%, transparent);
-      display: flex;
-      align-items: center;
-      padding-left: clamp(20px, 3vw, 40px);
-      z-index: 2;
-      font-family: var(--font-mono);
-      font-size: 0.5rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--medium-gray);
-      white-space: nowrap;
-    }
-
-    .logo-ticker-mini .logo-ticker-track {
-      padding-left: 170px;
-    }
-
-    /* Text + Video grid inside the shrink box */
-    .gap-box-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 40px;
-      align-items: center;
-      padding: 40px clamp(32px, 4vw, 56px);
-    }
-
-    .gap-box-text .section-label {
-      font-family: var(--font-mono);
-      font-size: 0.6rem;
-      font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--sage-green);
-      margin-bottom: 16px;
-    }
-
-    .gap-box-text h2 {
-      font-family: var(--font-display);
-      font-size: clamp(1.4rem, 2.4vw, 2rem);
-      font-weight: 800;
-      color: var(--charcoal-blue);
-      line-height: 1.2;
-      margin-bottom: 14px;
-    }
-
-    .gap-box-text h2 em {
-      color: var(--sage-green);
-      font-style: normal;
-    }
-
-    .gap-box-text p {
-      font-size: 0.92rem;
-      color: var(--medium-gray);
-      line-height: 1.7;
-    }
-
-    .gap-box-video {
-      border-radius: 12px;
-      overflow: hidden;
-      aspect-ratio: 4 / 3;
-      background: rgba(0, 0, 0, 0.06);
-    }
-
-    /* Fluency overlay — text + table side-by-side inside the pinned section */
-    .fluency-overlay {
-      position: absolute;
-      top: 100px; /* match pin padding — clear fixed nav */
-      left: 0;
-      right: 0;
-      bottom: 0;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      padding-top: 60px; /* push content down from top edge into visual center */
-      z-index: 3;
-      pointer-events: none;
-      opacity: 0;
-      will-change: opacity;
-    }
-
-    .fluency-overlay-inner {
-      max-width: 1200px;
-      width: 100%;
-      padding: 0 clamp(24px, 5vw, 80px);
-      display: grid;
-      grid-template-columns: 280px 1fr;
-      gap: 40px;
-      align-items: start;
-      pointer-events: auto;
-    }
-
-    .fluency-reveal-left {
-      opacity: 1;
-      padding-top: 60px;
-    }
-
-    .fluency-reveal-left .reveal-label {
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--sage-green);
-      margin-bottom: 20px;
-    }
-
-    .fluency-reveal-left h2 {
-      font-family: var(--font-display);
-      font-size: clamp(1.8rem, 3vw, 2.6rem);
-      font-weight: 800;
-      color: var(--charcoal-blue);
-      line-height: 1.2;
-    }
-
-    .fluency-reveal-left h2 em {
-      color: var(--sage-green);
-      font-style: normal;
-    }
-
-    /* Table container — sits to the right of the text, fades in with overlay */
-    .fluency-reveal-right {
-      opacity: 1;
-    }
-
-    /* Gap section — legacy (unused in v5) */
-    .gap { display: none; }
 
     /* Logo Ticker */
     .logo-ticker {
@@ -727,13 +777,10 @@
     }
 
     @media (max-width: 768px) {
-      .gap-shrink-wrapper { height: 200vh; }
-      .gap-content-box { width: 96vw; }
-      .gap-box-grid { grid-template-columns: 1fr; gap: 16px; }
-      .fluency-overlay-inner {
-        grid-template-columns: 1fr;
-        text-align: center;
-      }
+      
+      
+      
+      
     }
 
     /* Fluency Section — redesigned with text-left layout */
@@ -989,24 +1036,45 @@
     /* What Section */
     .what-section {
       background: var(--charcoal-blue);
-      padding: 80px 0;
+      padding: 100px 0;
+      text-align: center;
+    }
+
+    .what-section h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 4.5vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      color: var(--white);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .what-section h2 em {
+      color: var(--celadon);
+      font-style: normal;
     }
 
     .what-inner {
-      max-width: 800px;
+      max-width: 900px;
       margin: 0 auto;
     }
 
     .what-description {
-      font-size: 1.1rem;
-      line-height: 1.85;
-      color: rgba(255, 255, 255, 0.85);
+      font-size: 1.15rem;
+      line-height: 1.7;
+      color: rgba(255, 255, 255, 0.6);
+      margin-top: 24px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     /* Process Section — Full-width cards with corner Lottie */
     .process {
       background: var(--lavender-blush);
-      padding: 100px 0 80px;
+      padding: 100px 0;
     }
 
     .process-header {
@@ -1018,7 +1086,7 @@
       display: flex;
       flex-direction: column;
       gap: 32px;
-      max-width: 960px;
+      max-width: 1100px;
       margin: 0 auto;
     }
 
@@ -1167,6 +1235,13 @@
     .outcomes-header {
       text-align: center;
       margin-bottom: 60px;
+    }
+
+    .outcomes-header h2 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
     }
 
     .outcomes-grid {
@@ -1912,6 +1987,64 @@
       color: var(--celadon);
     }
 
+    /* CTA Counters (bottom ticker) */
+    .cta-counters {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 16px;
+      max-width: 680px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta-counter-block {
+      padding: 40px;
+      border-radius: 16px;
+      position: relative;
+      background: rgba(40, 42, 48, 0.85);
+      border: 1px solid rgba(100, 100, 110, 0.3);
+    }
+
+    .cta-counter-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--celadon);
+      margin-bottom: 16px;
+    }
+
+    .cta-counter-number {
+      font-family: var(--font-mono);
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      color: var(--celadon);
+      margin-bottom: 8px;
+    }
+
+    .cta-counter-sub {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .cta-counter-source {
+      font-size: 0.68rem;
+      color: rgba(255, 255, 255, 0.5);
+      margin-top: 12px;
+      letter-spacing: 0.02em;
+      font-style: italic;
+    }
+
+    @media (max-width: 768px) {
+      .cta-counters {
+        grid-template-columns: 1fr;
+      }
+    }
+
     /* Reveal Animation */
     .reveal {
       opacity: 0;
@@ -1925,9 +2058,7 @@
 
     /* Responsive */
     @media (max-width: 768px) {
-      .hero-counters {
-        grid-template-columns: 1fr;
-      }
+      
 
       .fluency-split {
         grid-template-columns: 1fr;
@@ -1946,7 +2077,81 @@
       }
 
     }
-  </style>
+  
+
+    /* NEW GAP SECTION */
+    .new-gap-section {
+      padding: 160px 0 140px;
+    }
+
+    .new-gap-content {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .new-gap-content h2 {
+      font-size: clamp(1.75rem, 6vw, 2.5rem);
+      margin-bottom: 28px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .new-gap-content p {
+      font-size: 1rem;
+      margin-bottom: 16px;
+      line-height: 1.6;
+      color: var(--dark-gray);
+    }
+
+    .new-gap-content p u {
+      text-decoration: underline;
+      font-weight: 500;
+    }
+
+    .new-gap-content .race-table {
+      margin-top: 72px;
+      margin-bottom: 40px;
+      width: 100%;
+    }
+
+    /* PHASE CARD ARROWS */
+    .process-step-card {
+      position: relative;
+    }
+
+    .step-card-arrow {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      z-index: 10;
+    }
+
+    .arrow-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid var(--sage-green);
+      background: transparent;
+      color: var(--sage-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      padding: 0;
+    }
+
+    .arrow-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .arrow-btn:hover {
+      background: var(--sage-green);
+      color: white;
+      transform: translateY(-2px);
+    }
+</style>
 </head>
 
 <body>
@@ -1984,101 +2189,64 @@
     </div>
     <div class="container">
       <div class="hero-content">
-        <div class="hero-counters">
-          <div class="hero-counter-block">
-            <p class="hero-counter-label">Global AI Investment in 2026</p>
-            <p class="hero-counter-number" id="spending-counter">$0</p>
-            <p class="hero-counter-sub">and climbing</p>
-            <p class="hero-counter-source">Gartner, 2026</p>
-          </div>
-          <div class="hero-counter-block">
-            <p class="hero-counter-label">Companies seeing real ROI</p>
-            <p class="hero-counter-number" id="usage-counter">0%</p>
-            <p class="hero-counter-sub">barely moving</p>
-            <p class="hero-counter-source">MIT / Ignitec Research, 2025</p>
-          </div>
+        <div class="hero-statement-box">
+          <h1>A billion dollar company was just built <em>by one person</em> using AI.</h1>
+          <p class="hero-followup">Yet most teams and large organizations are using AI to summarize meetings.</p>
         </div>
-
-        <h1>The investment is there. Now it's time to make it <em>pay off.</em></h1>
-        <p class="hero-sub">Your teams have learned what AI can do. But knowing what's possible and knowing how to apply it to your work are two very different things. That's the gap we close.</p>
+        <p class="hero-tagline">The Counter helps you close that gap.</p>
         <div class="hero-actions">
-          <a href="#gap" class="btn btn-primary">See How It Works ↓</a>
-          <a href="#case-studies" class="btn btn-secondary">Case Studies</a>
+          <a href="#contact" class="btn btn-primary">Schedule a Time With Us →</a>
+          <a href="#case-studies" class="btn btn-secondary">Case Studies ↓</a>
         </div>
+      </div>
+    </div>
+
+    <!-- Logo ticker at bottom of hero -->
+    <div class="hero-logo-ticker">
+      <span class="hero-logo-ticker-label">Founders with experience at</span>
+      <div class="hero-logo-ticker-fade-right"></div>
+      <div class="logo-ticker-track">
+        <img src="Logos/AbbVie_logo.svg.png" alt="AbbVie">
+        <img src="Logos/Alexion_Logo.svg.png" alt="Alexion">
+        <img src="Logos/Beam_Suntory_logo.svg.png" alt="Beam Suntory">
+        <img src="Logos/BNY_logo_2024.svg.png" alt="BNY">
+        <img src="Logos/Chase-Logo.png" alt="Chase" class="logo-xl">
+        <img src="Logos/Comcast_(2013-2024)_logo.svg.png" alt="Comcast">
+        <img src="Logos/GSK_logo_2014.svg.png" alt="GSK">
+        <img src="Logos/Inova_Health_System_logo.png" alt="Inova Health System">
+        <img src="Logos/Kaiser-Permanente-Logo.png" alt="Kaiser Permanente" class="logo-xl">
+        <img src="Logos/Kimberly-Clark_Logo.png" alt="Kimberly-Clark">
+        <img src="Logos/Nike-Logo-1978.png" alt="Nike" class="logo-lg">
+        <img src="Logos/NTT_2025.svg.png" alt="NTT">
+        <img src="Logos/tyson-1-logo-png-transparent.png" alt="Tyson" class="logo-xl logo-invert">
+        <img src="Logos/Washington-Post-Symbol.png" alt="The Washington Post" class="logo-xl">
+        <img src="Logos/AbbVie_logo.svg.png" alt="AbbVie">
+        <img src="Logos/Alexion_Logo.svg.png" alt="Alexion">
+        <img src="Logos/Beam_Suntory_logo.svg.png" alt="Beam Suntory">
+        <img src="Logos/BNY_logo_2024.svg.png" alt="BNY">
+        <img src="Logos/Chase-Logo.png" alt="Chase" class="logo-xl">
+        <img src="Logos/Comcast_(2013-2024)_logo.svg.png" alt="Comcast">
+        <img src="Logos/GSK_logo_2014.svg.png" alt="GSK">
+        <img src="Logos/Inova_Health_System_logo.png" alt="Inova Health System">
+        <img src="Logos/Kaiser-Permanente-Logo.png" alt="Kaiser Permanente" class="logo-xl">
+        <img src="Logos/Kimberly-Clark_Logo.png" alt="Kimberly-Clark">
+        <img src="Logos/Nike-Logo-1978.png" alt="Nike" class="logo-lg">
+        <img src="Logos/NTT_2025.svg.png" alt="NTT">
+        <img src="Logos/tyson-1-logo-png-transparent.png" alt="Tyson" class="logo-xl logo-invert">
+        <img src="Logos/Washington-Post-Symbol.png" alt="The Washington Post" class="logo-xl">
       </div>
     </div>
   </section>
 
-  <!-- GAP SECTION — Scroll-Shrink Effect -->
-  <section class="gap-shrink-wrapper light-section" id="gap">
-    <div class="gap-shrink-pin" id="gapPin">
-      <!-- The shrinking content box — contains the REAL v4 gap layout -->
-      <div class="gap-content-box" id="gapBox">
-        <div class="gap-box-inner">
-          <!-- Logo ticker inside the box -->
-          <div class="gap-box-logos">
-            <span class="gap-box-logos-label">Our work includes</span>
-            <div class="logo-ticker-mini">
-              <div class="logo-ticker-track">
-                <img src="Logos/AbbVie_logo.svg.png" alt="AbbVie">
-                <img src="Logos/Alexion_Logo.svg.png" alt="Alexion">
-                <img src="Logos/Beam_Suntory_logo.svg.png" alt="Beam Suntory">
-                <img src="Logos/BNY_logo_2024.svg.png" alt="BNY">
-                <img src="Logos/Chase-Logo.png" alt="Chase" class="logo-xl">
-                <img src="Logos/Comcast_(2013-2024)_logo.svg.png" alt="Comcast">
-                <img src="Logos/GSK_logo_2014.svg.png" alt="GSK">
-                <img src="Logos/Inova_Health_System_logo.png" alt="Inova Health System">
-                <img src="Logos/Kaiser-Permanente-Logo.png" alt="Kaiser Permanente" class="logo-xl">
-                <img src="Logos/Kimberly-Clark_Logo.png" alt="Kimberly-Clark">
-                <img src="Logos/Nike-Logo-1978.png" alt="Nike" class="logo-lg">
-                <img src="Logos/NTT_2025.svg.png" alt="NTT">
-                <img src="Logos/tyson-1-logo-png-transparent.png" alt="Tyson" class="logo-xl logo-invert">
-                <img src="Logos/Washington-Post-Symbol.png" alt="The Washington Post" class="logo-xl">
-                <img src="Logos/AbbVie_logo.svg.png" alt="AbbVie">
-                <img src="Logos/Alexion_Logo.svg.png" alt="Alexion">
-                <img src="Logos/Beam_Suntory_logo.svg.png" alt="Beam Suntory">
-                <img src="Logos/BNY_logo_2024.svg.png" alt="BNY">
-                <img src="Logos/Chase-Logo.png" alt="Chase" class="logo-xl">
-                <img src="Logos/Comcast_(2013-2024)_logo.svg.png" alt="Comcast">
-                <img src="Logos/GSK_logo_2014.svg.png" alt="GSK">
-                <img src="Logos/Inova_Health_System_logo.png" alt="Inova Health System">
-                <img src="Logos/Kaiser-Permanente-Logo.png" alt="Kaiser Permanente" class="logo-xl">
-                <img src="Logos/Kimberly-Clark_Logo.png" alt="Kimberly-Clark">
-                <img src="Logos/Nike-Logo-1978.png" alt="Nike" class="logo-lg">
-                <img src="Logos/NTT_2025.svg.png" alt="NTT">
-                <img src="Logos/tyson-1-logo-png-transparent.png" alt="Tyson" class="logo-xl logo-invert">
-                <img src="Logos/Washington-Post-Symbol.png" alt="The Washington Post" class="logo-xl">
-              </div>
-            </div>
-          </div>
-          <!-- Text + Video grid -->
-          <div class="gap-box-grid">
-            <div class="gap-box-text">
-              <p class="section-label">The gap</p>
-              <h2>A billion-dollar company was just built by <em>one person</em> using AI.</h2>
-              <p>Yet most teams inside large organizations are still using AI to summarize meetings. The Counter helps you close that gap.</p>
-            </div>
-            <div class="gap-box-video">
-              <video controls playsinline preload="metadata" poster="founder-video-poster.jpg" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">
-                <source src="founder-video-headlines.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Fluency overlay — text left, table right, all inside the pinned viewport -->
-      <div class="fluency-overlay" id="fluencyOverlay">
-        <div class="fluency-overlay-inner">
-          <!-- Left: the statement -->
-          <div class="fluency-reveal-left">
-            <p class="reveal-label">The difference</p>
-            <h2>Literacy teaches tools.<br><br><em>Fluency</em> transforms work.</h2>
-          </div>
-          <!-- Right: comparison table — slides in via CSS transition -->
-          <div class="fluency-reveal-right" id="raceCompare">
-            <table class="race-table">
+  <!-- GAP SECTION -->
+    <section class="new-gap-section light-section" id="gap">
+    <div class="container">
+      <div class="new-gap-content">
+        <h2>Organizations are investing in AI literacy through workshops and training.</h2>
+        <p>But that only teaches your teams how to <u>use</u> AI to do things faster.</p>
+        <p>We build AI fluency for your teams so they can think and work <u>with</u> AI to work in ways they couldn't before.</p>
+        
+        <table class="race-table">
               <thead>
                 <tr>
                   <th class="rt-head rt-head--lit">Online Courses</th>
@@ -2104,13 +2272,11 @@
                 </tr>
                 <tr class="race-barrier-row">
                   <td class="rt-barrier" colspan="2">
-                    <div class="rt-barrier-line">
-                      <span class="rt-barrier-x"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>
-                    </div>
+                    <div class="rt-barrier-line"></div>
                     <div class="rt-barrier-label">Most programs stop here</div>
                   </td>
                   <td class="rt-barrier-continues">
-                    <div class="rt-barrier-continues-label">We Do Much More ↓</div>
+                    <div class="rt-barrier-continues-label">We go further ↓</div>
                   </td>
                 </tr>
                 <tr class="race-row race-row--counter-only" data-row="4">
@@ -2135,21 +2301,17 @@
                 </tr>
               </tbody>
             </table>
-          </div>
-        </div>
       </div>
-
-    </div> <!-- closes gap-shrink-pin -->
-  </section> <!-- closes gap-shrink-wrapper -->
+    </div>
+  </section>
 
   <!-- WHAT SECTION -->
   <section class="what-section dark-section" id="what">
     <div class="container">
       <div class="reveal">
-        <p class="section-label">What is the Counter?</p>
         <div class="what-inner">
-          <h2>A pop-up workspace inside <em>your</em> office.</h2>
-          <p class="what-description">We set up in your office for a few days. Individuals show up with a real problem they face in their work. Through the process, they learn to think and work with AI to diagnose their problem, build a working solution in hours, and leave not just with something they made themselves — but with the fluency and belief to keep working this way.</p>
+          <h2>The Counter is a pop-up workspace inside <em>your</em> office.</h2>
+          <p class="what-description">We sit with your people, work on their real problems, and build real solutions — in days, not months.</p>
         </div>
       </div>
     </div>
@@ -2175,7 +2337,14 @@
             <h3 class="step-card-title">We find the right starting point.</h3>
             <p class="step-card-text">Before we arrive, we help you identify the people and problems that are the best fit for this experience. Specifically, those who have something they're working on right now that they wish was faster, better, or simply possible. It could be something for their team, their customers, or just themselves.</p>
           </div>
-        </div>
+        <div class="step-card-arrow">
+              <button class="arrow-btn" aria-label="Next phase">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </button>
+            </div>
+            </div>
 
         <div class="process-step-card" data-step="2">
           <iframe class="step-lottie" src="https://lottie.host/embed/4382fae2-809f-4745-ad1b-f84802c0bae2/B4XLBiDpIr.lottie" loading="lazy"></iframe>
@@ -2187,7 +2356,14 @@
             <h3 class="step-card-title">Your people come to The Counter and build.</h3>
             <p class="step-card-text">In pre-scheduled sessions, individuals sit down with us and their problem. Working side by side, we help them develop AI fluency in real time — learning how to think with AI to diagnose what's really going on, explore a wide range of potential solutions, and build a working minimum viable product that they can take back and test immediately.</p>
           </div>
-        </div>
+        <div class="step-card-arrow">
+              <button class="arrow-btn" aria-label="Next phase">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </button>
+            </div>
+            </div>
 
         <div class="process-step-card" data-step="3">
           <iframe class="step-lottie" src="https://lottie.host/embed/b9f516be-efb9-479c-8800-824ea84d9540/zh8J4X3pqu.lottie" loading="lazy"></iframe>
@@ -2199,7 +2375,14 @@
             <h3 class="step-card-title">They take it back into the real work.</h3>
             <p class="step-card-text">Between sessions, each person puts what they built to work — testing it against real data, real deadlines, and real colleagues. This is where the gap between a demo and a tool becomes obvious, and where the most valuable feedback comes from.</p>
           </div>
-        </div>
+        <div class="step-card-arrow">
+              <button class="arrow-btn" aria-label="Next phase">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </button>
+            </div>
+            </div>
 
         <div class="process-step-card" data-step="4">
           <iframe class="step-lottie" src="https://lottie.host/embed/de69013f-3c44-4962-a02d-2092ac0671e8/PZFM5tc4SJ.lottie" loading="lazy"></iframe>
@@ -2211,7 +2394,14 @@
             <h3 class="step-card-title">We iterate and sharpen together.</h3>
             <p class="step-card-text">They come back with what worked, what didn't, and what they wish it could do next. We rebuild, extend, and refine — not just the tool, but how they think about solving problems with AI. Each cycle compounds their fluency.</p>
           </div>
-        </div>
+        <div class="step-card-arrow">
+              <button class="arrow-btn" aria-label="Next phase">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </button>
+            </div>
+            </div>
 
         <div class="process-step-card" data-step="5">
           <iframe class="step-lottie" src="https://lottie.host/embed/699ab7ac-1740-4d1b-9eda-778cac295022/BvnRC2YmR6.lottie" loading="lazy"></iframe>
@@ -2223,7 +2413,14 @@
             <h3 class="step-card-title">You leave with evidence, not a pitch deck.</h3>
             <p class="step-card-text">Working tools your people built themselves. Increased fluency they can apply again tomorrow. And the proof — visible to leadership, peers, and the builders themselves — that this way of working is real and worth investing in further.</p>
           </div>
-        </div>
+        <div class="step-card-arrow">
+              <button class="arrow-btn" aria-label="Next phase">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </button>
+            </div>
+            </div>
       </div>
     </div>
   </section>
@@ -2232,9 +2429,7 @@
   <section class="outcomes dark-section" id="outcomes">
     <div class="container">
       <div class="outcomes-header reveal">
-        <p class="section-label">This is what capability looks like</p>
-        <h2>What you leave with.</h2>
-        <p>Evidence to build this capability further — not a slide deck about what could be.</p>
+        <h2>What The Counter Delivers.</h2>
       </div>
 
       <div class="outcomes-grid reveal">
@@ -2867,13 +3062,26 @@
     </div>
   </section>
 
-  <!-- CTA SECTION -->
+  <!-- CTA SECTION — Ticker + CTA -->
   <section class="cta dark-section" id="contact">
     <div class="container">
-      <div class="reveal">
-        <h2>Ready to see what your team can actually do with AI?</h2>
-        <p>Tell us about your team and what you're working with. We'll have a plan back to you within a week. No commitment, no 40-page proposal.</p>
-        <a href="mailto:drew@castellawconsulting.com" class="btn btn-primary">Start a Conversation →</a>
+      <div class="reveal" style="text-align: center;">
+        <h2>The investment is there. Now it's time to make it <em>pay off.</em></h2>
+        <div class="cta-counters">
+          <div class="cta-counter-block">
+            <p class="cta-counter-label">Global AI Investment in 2026</p>
+            <p class="cta-counter-number" id="spending-counter">$0</p>
+            <p class="cta-counter-sub">and climbing</p>
+            <p class="cta-counter-source">Gartner, 2026</p>
+          </div>
+          <div class="cta-counter-block">
+            <p class="cta-counter-label">Companies seeing real ROI</p>
+            <p class="cta-counter-number" id="usage-counter">0%</p>
+            <p class="cta-counter-sub">barely moving</p>
+            <p class="cta-counter-source">MIT / Ignitec Research, 2025</p>
+          </div>
+        </div>
+        <a href="mailto:drew@castellawconsulting.com" class="btn btn-primary" style="margin-top: 40px;">Start a Conversation →</a>
       </div>
       <div class="cta-footer">
         <p>&copy; 2026 Rewire</p>
@@ -2927,86 +3135,7 @@
       });
     });
 
-    // === GAP SHRINK + FLUENCY REVEAL — UNIFIED PINNED TIMELINE ===
-    (function() {
-      const wrapper = document.querySelector('.gap-shrink-wrapper');
-      const pin = document.getElementById('gapPin');
-      const box = document.getElementById('gapBox');
-      const fluencyOverlay = document.getElementById('fluencyOverlay');
-      const raceTable = document.getElementById('raceCompare');
-      if (!wrapper || !pin || !box) return;
-
-      const barrierRow = raceTable ? raceTable.querySelector('.race-barrier-row') : null;
-
-      // Pre-check ALL rows immediately — no animation, table is fully populated on reveal
-      for (let row = 1; row <= 7; row++) {
-        const tr = raceTable ? raceTable.querySelector(`.race-row[data-row="${row}"]`) : null;
-        if (tr) tr.classList.add('checked');
-      }
-      if (barrierRow) barrierRow.classList.add('hit');
-
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: wrapper,
-          start: 'top top',
-          end: 'bottom bottom',
-          pin: pin,
-          scrub: 0.5
-        }
-      });
-
-      // Phase 1 (0 → 0.12): HOLD — user reads the gap content at full size
-      tl.to(box, { duration: 0.12 });
-
-      // Phase 2 (0.12 → 0.35): Box shrinks toward corner — still clearly visible
-      tl.to(box, {
-        scale: 0.3,
-        xPercent: 45,
-        yPercent: 70,
-        borderRadius: '20px',
-        opacity: 0.6,
-        ease: 'power1.inOut',
-        duration: 0.23,
-      }, 0.12);
-
-      // Phase 3 (0.35 → 0.55): Box settles into corner, text+table fade in behind it
-      tl.to(box, {
-        scale: 0.18,
-        xPercent: 58,
-        yPercent: 95,
-        opacity: 0.2,
-        ease: 'power1.inOut',
-        duration: 0.20,
-      }, 0.35);
-
-      // Text + table start fading in while box is still visible in corner
-      tl.fromTo(fluencyOverlay,
-        { opacity: 0, y: 20 },
-        { opacity: 0.5, y: 10, ease: 'power2.out', duration: 0.20 },
-        0.35
-      );
-
-      // Phase 4 (0.55 → 0.70): Box disappears, content reaches full visibility
-      tl.to(box, {
-        scale: 0.12,
-        xPercent: 62,
-        yPercent: 100,
-        opacity: 0,
-        ease: 'power2.in',
-        duration: 0.15,
-      }, 0.55);
-
-      tl.to(fluencyOverlay, {
-        opacity: 1, y: 0,
-        ease: 'power2.out',
-        duration: 0.15,
-      }, 0.55);
-
-      // Phase 5 (0.70 → 0.85): Brief hold at full table, then move on
-      tl.to({}, { duration: 0.15 }, 0.70);
-    })();
-
-    // Hero counter animation
+    // Counter animation (bottom ticker)
     function animateCounters() {
       const spendingEl = document.getElementById('spending-counter');
       const usageEl = document.getElementById('usage-counter');
@@ -3022,48 +3151,67 @@
       const spendingStartB = 2500;
       const usageStart = 5.0;
       const countUpDuration = 3500;
-      const startTime = performance.now();
+      let started = false;
 
-      function countUp(now) {
-        const elapsed = now - startTime;
-        const progress = Math.min(elapsed / countUpDuration, 1);
+      function startAnimation() {
+        if (started) return;
+        started = true;
+        const startTime = performance.now();
 
-        const spendingEase = 1 - Math.pow(1 - progress, 2);
-        const spendingVal = spendingEase * spendingStartB;
-        spendingEl.textContent = formatSpending(spendingVal);
+        function countUp(now) {
+          const elapsed = now - startTime;
+          const progress = Math.min(elapsed / countUpDuration, 1);
 
-        const usageEase = 1 - Math.pow(1 - progress, 4);
-        const usageVal = usageEase * usageStart;
-        usageEl.textContent = usageVal.toFixed(1) + '%';
+          const spendingEase = 1 - Math.pow(1 - progress, 2);
+          const spendingVal = spendingEase * spendingStartB;
+          spendingEl.textContent = formatSpending(spendingVal);
 
-        if (progress < 1) {
-          requestAnimationFrame(countUp);
-        } else {
-          startEndlessTick();
+          const usageEase = 1 - Math.pow(1 - progress, 4);
+          const usageVal = usageEase * usageStart;
+          usageEl.textContent = usageVal.toFixed(1) + '%';
+
+          if (progress < 1) {
+            requestAnimationFrame(countUp);
+          } else {
+            startEndlessTick();
+          }
         }
-      }
 
-      function startEndlessTick() {
-        let spendingB = spendingStartB;
-        let usage = usageStart;
-        const spendingPerFrame = 0.014;
-        const usagePerFrame = 0.1 / (50 / spendingPerFrame);
-        let lastTime = performance.now();
+        function startEndlessTick() {
+          let spendingB = spendingStartB;
+          let usage = usageStart;
+          const spendingPerFrame = 0.014;
+          const usagePerFrame = 0.1 / (50 / spendingPerFrame);
+          let lastTime = performance.now();
 
-        function tick(now) {
-          const delta = (now - lastTime) / (1000 / 60);
-          lastTime = now;
-          spendingB += spendingPerFrame * delta;
-          usage += usagePerFrame * delta;
-          spendingEl.textContent = formatSpending(spendingB);
-          usageEl.textContent = usage.toFixed(1) + '%';
+          function tick(now) {
+            const delta = (now - lastTime) / (1000 / 60);
+            lastTime = now;
+            spendingB += spendingPerFrame * delta;
+            usage += usagePerFrame * delta;
+            spendingEl.textContent = formatSpending(spendingB);
+            usageEl.textContent = usage.toFixed(1) + '%';
+            requestAnimationFrame(tick);
+          }
+
           requestAnimationFrame(tick);
         }
 
-        requestAnimationFrame(tick);
+        setTimeout(() => requestAnimationFrame(countUp), 400);
       }
 
-      setTimeout(() => requestAnimationFrame(countUp), 800);
+      // Trigger animation when the counter section scrolls into view
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            startAnimation();
+            observer.disconnect();
+          }
+        });
+      }, { threshold: 0.3 });
+
+      const counterSection = spendingEl.closest('.cta-counters');
+      if (counterSection) observer.observe(counterSection);
     }
 
     animateCounters();
@@ -3094,6 +3242,28 @@
         }
       });
     });
+
+    // Table row check animation — staggered reveal on scroll
+    const raceRows = document.querySelectorAll('.race-row');
+    if (raceRows.length) {
+      const tableObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            raceRows.forEach((row, i) => {
+              setTimeout(() => row.classList.add('checked'), i * 200);
+            });
+            // Also animate barrier row
+            const barrierRow = document.querySelector('.race-barrier-row');
+            if (barrierRow) {
+              setTimeout(() => barrierRow.classList.add('hit'), raceRows.length * 200);
+            }
+            tableObserver.disconnect();
+          }
+        });
+      }, { threshold: 0.2 });
+      const raceTable = document.querySelector('.race-table');
+      if (raceTable) tableObserver.observe(raceTable);
+    }
 
     // Process section: scroll-driven card activation
     (function() {
@@ -3212,5 +3382,136 @@
       });
     });
   </script>
+  <!-- Outcomes Modal -->
+  <div class="outcomes-modal-backdrop" id="outcomesModal">
+    <div class="outcomes-modal">
+      <button class="outcomes-modal-close" id="closeOutcomesModal">&times;</button>
+      <div class="outcomes-modal-header">
+        <h3>What The Counter Delivers.</h3>
+      </div>
+      <div class="outcomes-grid">
+        <div class="outcome-card">
+          <div class="outcome-icon">
+            <img class="icon-static" src="Tool image.png" alt="">
+            <dotlottie-player src="https://lottie.host/7297000c-4e6e-4584-980a-d6f29e5b3156/yyBMuoOWWr.lottie" background="transparent" speed="1"></dotlottie-player>
+          </div>
+          <h3>Functional Tools</h3>
+          <p>Working solutions they built themselves, designed for the problems they actually face.</p>
+        </div>
+        <div class="outcome-card">
+          <div class="outcome-icon">
+            <dotlottie-player src="https://lottie.host/eda13099-406e-40ad-aa62-d417f5ff9816/DX6b9XcEMk.lottie" background="transparent" speed="1"></dotlottie-player>
+          </div>
+          <h3>Increased AI Capability</h3>
+          <p>The ability to keep working with AI to solve problems and prototype solutions in hours.</p>
+        </div>
+        <div class="outcome-card">
+          <div class="outcome-icon">
+            <dotlottie-player src="https://lottie.host/15370f09-883c-4377-87d5-d94769b6f995/f1MexLSjY8.lottie" background="transparent" speed="1" data-autoplay-once="true"></dotlottie-player>
+          </div>
+          <h3>Belief & Inspiration</h3>
+          <p>The conviction that this way of working is real — and the motivation to continue it day-to-day.</p>
+        </div>
+        <div class="outcome-card">
+          <div class="outcome-icon">
+            <dotlottie-player src="https://lottie.host/10a64c2a-add9-4f7e-8967-c13826f38cce/yfwlKEsM4U.lottie" background="transparent" speed="1"></dotlottie-player>
+          </div>
+          <h3>Evidence to Scale</h3>
+          <p>Documented feedback, reported results, and proof points to make the case for continued investment.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Outcomes modal
+    (function() {
+      const btn = document.getElementById('openOutcomesModal');
+      const modal = document.getElementById('outcomesModal');
+      const close = document.getElementById('closeOutcomesModal');
+      if (!btn || !modal) return;
+
+      let modalInitialized = false;
+
+      function initModalLotties() {
+        if (modalInitialized) return;
+        modalInitialized = true;
+        const modalCards = modal.querySelectorAll('.outcome-card');
+        modalCards.forEach(card => {
+          const player = card.querySelector('dotlottie-player');
+          const staticImg = card.querySelector('img.icon-static');
+          if (!player) return;
+
+          const shouldAutoplayOnce = player.hasAttribute('data-autoplay-once');
+
+          player.addEventListener('complete', () => {
+            player.pause();
+            if (staticImg) staticImg.classList.remove('hidden');
+          });
+
+          if (shouldAutoplayOnce) {
+            player.addEventListener('ready', () => { player.play(); });
+          }
+
+          card.addEventListener('mouseenter', () => {
+            if (staticImg) staticImg.classList.add('hidden');
+            player.stop();
+            player.play();
+          });
+        });
+      }
+
+      btn.addEventListener('click', () => {
+        modal.classList.add('active');
+        // Small delay to let modal render, then init Lotties
+        setTimeout(initModalLotties, 100);
+      });
+      close.addEventListener('click', () => modal.classList.remove('active'));
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.classList.remove('active');
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') modal.classList.remove('active');
+      });
+    })();
+
+    // Phase detail popup (blank placeholder)
+    (function() {
+      const phaseModal = document.getElementById('phaseDetailModal');
+      const phaseModalClose = document.getElementById('closePhaseModal');
+      const phaseModalTitle = document.getElementById('phaseModalTitle');
+      if (!phaseModal) return;
+
+      document.querySelectorAll('.arrow-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const card = btn.closest('.process-step-card');
+          const tag = card ? card.querySelector('.step-card-phase-tag') : null;
+          const title = tag ? tag.textContent : 'Phase Detail';
+          phaseModalTitle.textContent = title + ' — Tools & Methodology';
+          phaseModal.classList.add('active');
+        });
+      });
+
+      phaseModalClose.addEventListener('click', () => phaseModal.classList.remove('active'));
+      phaseModal.addEventListener('click', (e) => {
+        if (e.target === phaseModal) phaseModal.classList.remove('active');
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') phaseModal.classList.remove('active');
+      });
+    })();
+  </script>
+
+  <!-- Phase Detail Modal (blank placeholder) -->
+  <div class="phase-modal-backdrop" id="phaseDetailModal">
+    <div class="phase-modal">
+      <button class="phase-modal-close" id="closePhaseModal">&times;</button>
+      <h3 id="phaseModalTitle">Phase Detail</h3>
+      <div class="phase-modal-body">
+        <p style="color: rgba(255,255,255,0.5); text-align: center; padding: 60px 0; font-size: 0.95rem;">Content coming soon — tools, methodology, and examples for this phase.</p>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
