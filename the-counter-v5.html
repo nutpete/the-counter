@@ -3495,23 +3495,4 @@
 
       phaseModalClose.addEventListener('click', () => phaseModal.classList.remove('active'));
       phaseModal.addEventListener('click', (e) => {
-        if (e.target === phaseModal) phaseModal.classList.remove('active');
-      });
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') phaseModal.classList.remove('active');
-      });
-    })();
-  </script>
-
-  <!-- Phase Detail Modal (blank placeholder) -->
-  <div class="phase-modal-backdrop" id="phaseDetailModal">
-    <div class="phase-modal">
-      <button class="phase-modal-close" id="closePhaseModal">&times;</button>
-      <h3 id="phaseModalTitle">Phase Detail</h3>
-      <div class="phase-modal-body">
-        <p style="color: rgba(255,255,255,0.5); text-align: center; padding: 60px 0; font-size: 0.95rem;">Content coming soon — tools, methodology, and examples for this phase.</p>
-      </div>
-    </div>
-  </div>
-</body>
-</html>
+        if (e.target === phaseModal) phaseModal.classList.remove('acti
