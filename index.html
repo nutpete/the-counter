@@ -3235,4 +3235,283 @@
     reveals.forEach(el => {
       gsap.to(el, {
         scrollTrigger: {
-          trigger: el
+          trigger: el,
+          onEnter: () => el.classList.add('visible'),
+          once: true,
+          markers: false
+        }
+      });
+    });
+
+    // Table row check animation — staggered reveal on scroll
+    const raceRows = document.querySelectorAll('.race-row');
+    if (raceRows.length) {
+      const tableObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            raceRows.forEach((row, i) => {
+              setTimeout(() => row.classList.add('checked'), i * 200);
+            });
+            // Also animate barrier row
+            const barrierRow = document.querySelector('.race-barrier-row');
+            if (barrierRow) {
+              setTimeout(() => barrierRow.classList.add('hit'), raceRows.length * 200);
+            }
+            tableObserver.disconnect();
+          }
+        });
+      }, { threshold: 0.2 });
+      const raceTable = document.querySelector('.race-table');
+      if (raceTable) tableObserver.observe(raceTable);
+    }
+
+    // Process section: scroll-driven card activation
+    (function() {
+      const stepCards = document.querySelectorAll('.process-step-card');
+
+      stepCards.forEach((card) => {
+        ScrollTrigger.create({
+          trigger: card,
+          start: 'top 65%',
+          end: 'bottom 35%',
+          onEnter: () => {
+            stepCards.forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+          },
+          onEnterBack: () => {
+            stepCards.forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+          }
+        });
+      });
+    })();
+
+    // (Fluency reveal + checkmarks now handled by the unified pinned timeline above)
+
+    // Outcome Lottie icons
+    (function() {
+      const cards = document.querySelectorAll('.outcome-card');
+      cards.forEach(card => {
+        const player = card.querySelector('dotlottie-player');
+        const staticImg = card.querySelector('img.icon-static');
+        if (!player) return;
+
+        const shouldAutoplayOnce = player.hasAttribute('data-autoplay-once');
+        let initialPlayDone = false;
+
+        // All players: stop after one play-through
+        player.addEventListener('complete', () => {
+          player.pause();
+          initialPlayDone = true;
+          // Tools card: show the static image again once animation finishes
+          if (staticImg) staticImg.classList.remove('hidden');
+        });
+
+        // Auto-play once on load for marked players (e.g. star)
+        // so they show their final frame instead of starting empty
+        if (shouldAutoplayOnce) {
+          player.addEventListener('ready', () => {
+            player.play();
+          });
+        }
+
+        // On hover: play the animation
+        card.addEventListener('mouseenter', () => {
+          // Tools card: hide the PNG so Lottie is visible
+          if (staticImg) staticImg.classList.add('hidden');
+          player.stop();
+          player.play();
+        });
+      });
+    })();
+
+    // Case study carousels
+    function setupCarousel(prefix, totalSlides) {
+      let current = 0;
+      const visuals = document.querySelectorAll(`#${prefix}-slides .cs-visual-slide`);
+      const texts = document.querySelectorAll(`#${prefix}-slides .cs-text-slide`);
+      const dots = document.querySelectorAll(`#${prefix}-dots .cs-dot-nav`);
+      const prevBtn = document.getElementById(`${prefix}-prev`);
+      const nextBtn = document.getElementById(`${prefix}-next`);
+      const counterEl = document.getElementById(`${prefix}-current`);
+
+      if (!prevBtn || !nextBtn) return;
+
+      function goTo(idx) {
+        if (idx < 0 || idx >= totalSlides) return;
+        current = idx;
+
+        visuals.forEach((el, i) => el.classList.toggle('active', i === current));
+        texts.forEach((el, i) => el.classList.toggle('active', i === current));
+        dots.forEach((el, i) => el.classList.toggle('active', i === current));
+
+        prevBtn.disabled = current === 0;
+        nextBtn.disabled = current === totalSlides - 1;
+        counterEl.textContent = current + 1;
+      }
+
+      prevBtn.addEventListener('click', () => goTo(current - 1));
+      nextBtn.addEventListener('click', () => goTo(current + 1));
+      dots.forEach(dot => {
+        dot.addEventListener('click', () => goTo(parseInt(dot.dataset.slide)));
+      });
+
+      goTo(0);
+    }
+
+    setupCarousel('cs1', 5);
+    setupCarousel('cs2', 5);
+    setupCarousel('cs3', 5);
+
+    // Case study tab switching
+    const tabs = document.querySelectorAll('.cs-tab');
+    const panels = [
+      document.getElementById('cs-panel-0'),
+      document.getElementById('cs-panel-1'),
+      document.getElementById('cs-panel-2')
+    ];
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const idx = parseInt(tab.dataset.cs);
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        panels.forEach((p, i) => {
+          if (p) p.style.display = i === idx ? '' : 'none';
+        });
+      });
+    });
+  </script>
+  <!-- Outcomes Modal -->
+  <div class="outcomes-modal-backdrop" id="outcomesModal">
+    <div class="outcomes-modal">
+      <button class="outcomes-modal-close" id="closeOutcomesModal">&times;</button>
+      <div class="outcomes-modal-header">
+        <h3>What The Counter Delivers.</h3>
+      </div>
+      <div class="outcomes-grid">
+        <div class="outcome-card">
+          <div class="outcome-icon">
+            <img class="icon-static" src="Tool image.png" alt="">
+            <dotlottie-player src="https://lottie.host/7297000c-4e6e-4584-980a-d6f29e5b3156/yyBMuoOWWr.lottie" background="transparent" speed="1"></dotlottie-player>
+          </div>
+          <h3>Functional Tools</h3>
+          <p>Working solutions they built themselves, designed for the problems they actually face.</p>
+        </div>
+        <div class="outcome-card">
+          <div class="outcome-icon">
+            <dotlottie-player src="https://lottie.host/eda13099-406e-40ad-aa62-d417f5ff9816/DX6b9XcEMk.lottie" background="transparent" speed="1"></dotlottie-player>
+          </div>
+          <h3>Increased AI Capability</h3>
+          <p>The ability to keep working with AI to solve problems and prototype solutions in hours.</p>
+        </div>
+        <div class="outcome-card">
+          <div class="outcome-icon">
+            <dotlottie-player src="https://lottie.host/15370f09-883c-4377-87d5-d94769b6f995/f1MexLSjY8.lottie" background="transparent" speed="1" data-autoplay-once="true"></dotlottie-player>
+          </div>
+          <h3>Belief & Inspiration</h3>
+          <p>The conviction that this way of working is real — and the motivation to continue it day-to-day.</p>
+        </div>
+        <div class="outcome-card">
+          <div class="outcome-icon">
+            <dotlottie-player src="https://lottie.host/10a64c2a-add9-4f7e-8967-c13826f38cce/yfwlKEsM4U.lottie" background="transparent" speed="1"></dotlottie-player>
+          </div>
+          <h3>Evidence to Scale</h3>
+          <p>Documented feedback, reported results, and proof points to make the case for continued investment.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Outcomes modal
+    (function() {
+      const btn = document.getElementById('openOutcomesModal');
+      const modal = document.getElementById('outcomesModal');
+      const close = document.getElementById('closeOutcomesModal');
+      if (!btn || !modal) return;
+
+      let modalInitialized = false;
+
+      function initModalLotties() {
+        if (modalInitialized) return;
+        modalInitialized = true;
+        const modalCards = modal.querySelectorAll('.outcome-card');
+        modalCards.forEach(card => {
+          const player = card.querySelector('dotlottie-player');
+          const staticImg = card.querySelector('img.icon-static');
+          if (!player) return;
+
+          const shouldAutoplayOnce = player.hasAttribute('data-autoplay-once');
+
+          player.addEventListener('complete', () => {
+            player.pause();
+            if (staticImg) staticImg.classList.remove('hidden');
+          });
+
+          if (shouldAutoplayOnce) {
+            player.addEventListener('ready', () => { player.play(); });
+          }
+
+          card.addEventListener('mouseenter', () => {
+            if (staticImg) staticImg.classList.add('hidden');
+            player.stop();
+            player.play();
+          });
+        });
+      }
+
+      btn.addEventListener('click', () => {
+        modal.classList.add('active');
+        // Small delay to let modal render, then init Lotties
+        setTimeout(initModalLotties, 100);
+      });
+      close.addEventListener('click', () => modal.classList.remove('active'));
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.classList.remove('active');
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') modal.classList.remove('active');
+      });
+    })();
+
+    // Phase detail popup (blank placeholder)
+    (function() {
+      const phaseModal = document.getElementById('phaseDetailModal');
+      const phaseModalClose = document.getElementById('closePhaseModal');
+      const phaseModalTitle = document.getElementById('phaseModalTitle');
+      if (!phaseModal) return;
+
+      document.querySelectorAll('.arrow-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const card = btn.closest('.process-step-card');
+          const tag = card ? card.querySelector('.step-card-phase-tag') : null;
+          const title = tag ? tag.textContent : 'Phase Detail';
+          phaseModalTitle.textContent = title + ' — Tools & Methodology';
+          phaseModal.classList.add('active');
+        });
+      });
+
+      phaseModalClose.addEventListener('click', () => phaseModal.classList.remove('active'));
+      phaseModal.addEventListener('click', (e) => {
+        if (e.target === phaseModal) phaseModal.classList.remove('active');
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') phaseModal.classList.remove('active');
+      });
+    })();
+  </script>
+
+  <!-- Phase Detail Modal (blank placeholder) -->
+  <div class="phase-modal-backdrop" id="phaseDetailModal">
+    <div class="phase-modal">
+      <button class="phase-modal-close" id="closePhaseModal">&times;</button>
+      <h3 id="phaseModalTitle">Phase Detail</h3>
+      <div class="phase-modal-body">
+        <p style="color: rgba(255,255,255,0.5); text-align: center; padding: 60px 0; font-size: 0.95rem;">Content coming soon — tools, methodology, and examples for this phase.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
